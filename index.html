@@ -6,38 +6,40 @@
 		<meta name="color-scheme" content="light dark" />
 
 		<title>ectl.me</title>
-		<meta name="description" content="A simple site deployed on Vercel." />
-
 		<style>
 			:root {
-				--bg0: #0b1020;
-				--bg1: #0a1630;
-				--card: rgba(255, 255, 255, 0.06);
-				--card-border: rgba(255, 255, 255, 0.12);
-				--text: rgba(255, 255, 255, 0.92);
-				--muted: rgba(255, 255, 255, 0.68);
-				--shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
-				--ring: rgba(255, 255, 255, 0.22);
-				--ok-bg: rgba(34, 197, 94, 0.14);
-				--ok-border: rgba(34, 197, 94, 0.35);
-				--ok-text: rgba(172, 255, 209, 0.95);
-				--link: rgba(255, 255, 255, 0.9);
+				--bg: Canvas;
+				--text: CanvasText;
+				--muted: color-mix(in srgb, CanvasText 62%, Canvas);
+				--ring: color-mix(in srgb, CanvasText 26%, Canvas);
+				--link: LinkText;
+				--card-bg: color-mix(in srgb, Canvas 58%, transparent);
+				--card-border: color-mix(in srgb, CanvasText 14%, transparent);
+				--card-shadow: 0 28px 70px color-mix(in srgb, CanvasText 14%, transparent);
+				--card-shadow-2: 0 10px 24px color-mix(in srgb, CanvasText 10%, transparent);
+				--panel-bg: color-mix(in srgb, CanvasText 6%, transparent);
+				--panel-border: color-mix(in srgb, CanvasText 12%, transparent);
+				--ok-bg: color-mix(in srgb, CanvasText 7%, transparent);
+				--ok-border: color-mix(in srgb, CanvasText 14%, transparent);
+				--ok-text: CanvasText;
+				--btn-bg: color-mix(in srgb, CanvasText 7%, transparent);
+				--btn-border: color-mix(in srgb, CanvasText 14%, transparent);
+				--btn-hover: color-mix(in srgb, CanvasText 10%, transparent);
+				--btn-active: color-mix(in srgb, CanvasText 12%, transparent);
+				--input-bg: color-mix(in srgb, Canvas 52%, transparent);
+				--input-border: color-mix(in srgb, CanvasText 14%, transparent);
+				--inset: inset 0 1px 0 color-mix(in srgb, Canvas 40%, transparent);
+				--radius-lg: 22px;
+				--radius-md: 14px;
+				--blur: 18px;
 			}
 
-			@media (prefers-color-scheme: light) {
+			@media (prefers-color-scheme: dark) {
 				:root {
-					--bg0: #f7f8fb;
-					--bg1: #eef2ff;
-					--card: rgba(255, 255, 255, 0.75);
-					--card-border: rgba(15, 23, 42, 0.12);
-					--text: rgba(2, 6, 23, 0.92);
-					--muted: rgba(2, 6, 23, 0.62);
-					--shadow: 0 18px 60px rgba(2, 6, 23, 0.14);
-					--ring: rgba(2, 6, 23, 0.14);
-					--ok-bg: rgba(34, 197, 94, 0.12);
-					--ok-border: rgba(34, 197, 94, 0.3);
-					--ok-text: rgba(7, 94, 39, 0.95);
-					--link: rgba(2, 6, 23, 0.9);
+					--card-border: color-mix(in srgb, CanvasText 18%, transparent);
+					--btn-border: color-mix(in srgb, CanvasText 18%, transparent);
+					--input-border: color-mix(in srgb, CanvasText 18%, transparent);
+					--ring: color-mix(in srgb, CanvasText 30%, Canvas);
 				}
 			}
 
@@ -45,55 +47,72 @@
 				box-sizing: border-box;
 			}
 
-			html,
-			body {
-				height: 100%;
-			}
-
 			body {
 				margin: 0;
-				font-family:
-					ui-sans-serif,
-					system-ui,
-					-apple-system,
-					BlinkMacSystemFont,
-					"Segoe UI",
-					Roboto,
-					Helvetica,
-					Arial,
-					"Apple Color Emoji",
-					"Segoe UI Emoji";
-				line-height: 1.5;
-				color: var(--text);
+				font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 				background:
-					radial-gradient(900px 500px at 15% 10%, rgba(99, 102, 241, 0.28), transparent 55%),
-					radial-gradient(700px 450px at 90% 25%, rgba(16, 185, 129, 0.22), transparent 55%),
-					linear-gradient(180deg, var(--bg0), var(--bg1));
+					radial-gradient(1200px 760px at 16% 12%, color-mix(in srgb, LinkText 32%, transparent), transparent 60%),
+					radial-gradient(950px 720px at 88% 14%, color-mix(in srgb, LinkText 18%, transparent), transparent 55%),
+					radial-gradient(1000px 760px at 46% 92%, color-mix(in srgb, CanvasText 14%, transparent), transparent 62%),
+					linear-gradient(180deg, color-mix(in srgb, CanvasText 7%, transparent), transparent 55%),
+					var(--bg);
+				color: var(--text);
+				min-height: 100vh;
 			}
 
 			.wrap {
-				min-height: 100svh;
+				min-height: 100vh;
 				display: grid;
 				place-items: center;
-				padding: 28px 18px;
+				padding: 30px 18px;
+			}
+
+			/* App stays visually centered, but resizes grow/shrink downward (top stays fixed). */
+			#app.wrap {
+				place-items: start center;
+				padding-top: var(--app-pad-top, 30px);
+				padding-bottom: 30px;
+			}
+
+			/* Login stays visually centered, but auth tab resizes grow/shrink downward (top stays fixed). */
+			#login-screen.wrap {
+				place-items: start center;
+				padding-top: var(--login-pad-top, 30px);
+				padding-bottom: 30px;
 			}
 
 			.card {
 				width: min(860px, 100%);
+				background: var(--card-bg);
 				border: 1px solid var(--card-border);
-				background: var(--card);
-				border-radius: 18px;
-				box-shadow: var(--shadow);
-				padding: 28px;
-				backdrop-filter: blur(10px);
-				-webkit-backdrop-filter: blur(10px);
+				border-radius: var(--radius-lg);
+				padding: 22px;
+				overflow: hidden;
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+				box-shadow: var(--card-shadow), var(--card-shadow-2);
+				backdrop-filter: blur(var(--blur)) saturate(140%);
+				-webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
+			}
+
+			#app .card {
+				transform: none;
+			}
+
+			@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+				.card {
+					background: color-mix(in srgb, Canvas 94%, CanvasText);
+				}
 			}
 
 			header {
 				display: flex;
 				align-items: center;
 				gap: 14px;
-				margin-bottom: 18px;
+			}
+
+			.header-actions {
+				margin-left: auto;
 			}
 
 			.mark {
@@ -106,6 +125,8 @@
 				font-weight: 700;
 				letter-spacing: -0.02em;
 				user-select: none;
+				background: color-mix(in srgb, CanvasText 4%, transparent);
+				box-shadow: var(--inset);
 			}
 
 			h1 {
@@ -121,6 +142,167 @@
 				font-size: 1rem;
 			}
 
+			.row {
+				margin-top: 16px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 12px;
+				flex-wrap: wrap;
+			}
+
+			.auth {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				color: var(--muted);
+				font-size: 0.95rem;
+			}
+
+			#save-status {
+				padding: 4px 10px;
+				border-radius: 999px;
+				border: 1px solid var(--card-border);
+				color: var(--text);
+				background: color-mix(in srgb, CanvasText 6%, Canvas);
+			}
+
+			.tabs {
+				margin-top: 14px;
+				display: inline-flex;
+				gap: 8px;
+				padding: 6px;
+				border-radius: 999px;
+				border: 1px solid var(--card-border);
+				background: color-mix(in srgb, CanvasText 9%, transparent);
+				backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+			}
+
+			.tab {
+				appearance: none;
+				border: 1px solid transparent;
+				background: transparent;
+				color: var(--muted);
+				padding: 8px 12px;
+				border-radius: 999px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			.tab[aria-selected='true'] {
+				color: var(--text);
+				background: color-mix(in srgb, Canvas 72%, transparent);
+				border-color: var(--card-border);
+				box-shadow: var(--inset);
+			}
+
+			.btn {
+				appearance: none;
+				border: 1px solid var(--btn-border);
+				background: var(--btn-bg);
+				color: var(--text);
+				padding: 10px 12px;
+				border-radius: var(--radius-md);
+				font-weight: 600;
+				cursor: pointer;
+				box-shadow: var(--inset);
+			}
+
+			.btn:hover {
+				background: var(--btn-hover);
+			}
+
+			.btn:active {
+				background: var(--btn-active);
+			}
+
+			.btn:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
+
+			.input,
+			textarea {
+				width: 100%;
+				padding: 10px 12px;
+				border-radius: var(--radius-md);
+				border: 1px solid var(--input-border);
+				background: var(--input-bg);
+				color: var(--text);
+				font: inherit;
+				box-shadow: var(--inset);
+			}
+
+			textarea {
+				min-height: 220px;
+				max-width: 100%;
+				display: block;
+				resize: vertical;
+			}
+
+			.fields {
+				margin-top: 16px;
+				display: grid;
+				gap: 12px;
+			}
+
+			.field label {
+				display: block;
+				margin-bottom: 6px;
+				font-size: 0.95rem;
+				color: var(--muted);
+			}
+
+			.actions {
+				margin-top: 14px;
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+			}
+
+			.pwrow {
+				display: flex;
+				gap: 10px;
+				align-items: center;
+			}
+
+			.pwrow .input {
+				flex: 1;
+			}
+
+			.btn.btn-small {
+				padding: 8px 10px;
+				border-radius: 12px;
+				white-space: nowrap;
+			}
+
+			.notes-label {
+				display: block;
+				margin-top: 14px;
+				font-weight: 700;
+			}
+
+			#panel-notes .row {
+				margin-bottom: 10px;
+			}
+
+			#notes {
+				margin-top: 8px;
+				line-height: 1.35;
+			}
+
+			.panel {
+				margin-top: 18px;
+				padding: 14px;
+				border-radius: var(--radius-lg);
+				background: var(--panel-bg);
+				border: 1px solid var(--panel-border);
+				box-shadow: var(--inset);
+				backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+			}
+
 			.status {
 				display: inline-flex;
 				align-items: center;
@@ -133,6 +315,8 @@
 				color: var(--ok-text);
 				font-weight: 600;
 				width: fit-content;
+				backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(140%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(140%);
 			}
 
 			.dot {
@@ -145,7 +329,7 @@
 			.meta {
 				margin-top: 18px;
 				padding-top: 16px;
-				border-top: 1px solid var(--card-border);
+				border-top: 1px solid color-mix(in srgb, CanvasText 10%, transparent);
 				display: flex;
 				flex-wrap: wrap;
 				gap: 10px 16px;
@@ -158,10 +342,20 @@
 				text-underline-offset: 4px;
 			}
 
-			a:focus-visible {
+			a:focus-visible,
+			.tab:focus-visible,
+			.btn:focus-visible,
+			.input:focus-visible,
+			textarea:focus-visible {
 				outline: 2px solid var(--ring);
 				outline-offset: 3px;
-				border-radius: 8px;
+				border-radius: 12px;
+			}
+
+			.hint {
+				margin: 10px 0 0;
+				color: var(--muted);
+				font-size: 0.95rem;
 			}
 
 			@media (prefers-reduced-motion: reduce) {
@@ -175,26 +369,1367 @@
 	</head>
 
 	<body>
-		<div class="wrap">
+		<div class="wrap" id="login-screen">
+			<main class="card">
+				<header>
+					<div class="mark" aria-hidden="true">e</div>
+					<div>
+						<h1>ectl.me</h1>
+						<p class="subtitle">Log in to continue.</p>
+					</div>
+				</header>
+
+				<div class="row" style="margin-bottom: 0">
+					<div class="auth">
+						<span id="login-status">Signed out</span>
+					</div>
+					<div>
+						<button class="btn btn-small" id="btn-toggle-login-debug" type="button" aria-expanded="false">
+							Show status
+						</button>
+					</div>
+				</div>
+
+				<div class="tabs" role="tablist" aria-label="Auth tabs">
+					<button class="tab" id="auth-tab-login" type="button" role="tab" aria-controls="auth-panel-login" aria-selected="true">
+						Log in
+					</button>
+					<button class="tab" id="auth-tab-signup" type="button" role="tab" aria-controls="auth-panel-signup" aria-selected="false">
+						Create account
+					</button>
+				</div>
+
+				<section class="panel" id="auth-panel-login" role="tabpanel" aria-labelledby="auth-tab-login">
+					<div class="fields">
+						<div class="field">
+							<label for="login-identifier">Username or email</label>
+							<input
+								class="input"
+								id="login-identifier"
+								name="username"
+								type="text"
+								autocomplete="username"
+								placeholder="yourname or you@example.com"
+							/>
+						</div>
+						<div class="field">
+							<label for="login-password">Password</label>
+							<div class="pwrow">
+								<input class="input" id="login-password" name="password" type="password" autocomplete="current-password" placeholder="your password" />
+								<button class="btn btn-small" id="btn-toggle-login-password" type="button" aria-pressed="false">
+									Show
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="actions">
+						<button class="btn" id="btn-login" type="button">Log in</button>
+					</div>
+					<p class="hint">You can log in with either username or email.</p>
+				</section>
+
+				<section class="panel" id="auth-panel-signup" role="tabpanel" aria-labelledby="auth-tab-signup" hidden>
+					<div class="fields">
+						<div class="field">
+							<label for="signup-username">Username</label>
+							<input class="input" id="signup-username" name="username" type="text" autocomplete="username" />
+						</div>
+						<div class="field">
+							<label for="signup-email">Email</label>
+							<input class="input" id="signup-email" name="email" type="email" autocomplete="email" />
+						</div>
+						<div class="field">
+							<label for="signup-password">Password</label>
+							<div class="pwrow">
+								<input class="input" id="signup-password" name="password" type="password" autocomplete="new-password" />
+								<button class="btn btn-small" id="btn-toggle-signup-password" type="button" aria-pressed="false">Show</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="actions">
+						<button class="btn" id="btn-signup" type="button">Create account</button>
+					</div>
+					<p class="hint">Create account requires username + email.</p>
+				</section>
+
+				<p class="hint" id="login-debug" hidden></p>
+			</main>
+		</div>
+
+		<div class="wrap" id="app" hidden>
 			<main class="card">
 				<header>
 					<div class="mark" aria-hidden="true">e</div>
 					<div>
 						<h1>ectl.me</h1>
 						<p class="subtitle">A small static site, deployed with Vercel.</p>
+
+						<div class="tabs" role="tablist" aria-label="Page tabs">
+							<button class="tab" id="tab-home" type="button" role="tab" aria-controls="panel-home" aria-selected="true">Home</button>
+							<button class="tab" id="tab-notes" type="button" role="tab" aria-controls="panel-notes" aria-selected="false">Notes</button>
+								<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">
+									Settings
+								</button>
+						</div>
 					</div>
+						<div class="header-actions">
+							<button class="btn" id="btn-signout" type="button" hidden>Sign out</button>
+						</div>
 				</header>
 
-				<div class="status" role="status" aria-live="polite">
-					<span class="dot" aria-hidden="true"></span>
-					<span>It works</span>
-				</div>
+				<section class="panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+					<div class="status" role="status" aria-live="polite">
+						<span class="dot" aria-hidden="true"></span>
+						<span>It works</span>
+					</div>
 
-				<div class="meta">
-					<span>Update this page by editing <code>index.html</code>.</span>
-					<span>Local preview: <a href="/" rel="nofollow">/</a></span>
-				</div>
+					<div class="meta">
+						<span>Update this page by editing <code>index.html</code>.</span>
+						<span>Local preview: <a href="/" rel="nofollow">/</a></span>
+					</div>
+				</section>
+
+				<section class="panel" id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+					<div class="row">
+						<div class="auth">
+							<span id="auth-status">Checking sign-in…</span>
+							<span id="save-status" hidden>Saved</span>
+						</div>
+					</div>
+
+					<label class="notes-label" for="notes">Small notes</label>
+					<textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea>
+					<p class="hint" id="notes-hint">Your notes sync to the cloud.</p>
+				</section>
+
+					<section class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+						<p class="subtitle" style="margin-top: 18px">Account settings</p>
+						<p class="hint" id="acct-current">Signed in</p>
+						<div class="fields">
+							<div class="field">
+								<label for="acct-username">New username</label>
+								<input class="input" id="acct-username" name="acct-username" type="text" autocomplete="username" />
+							</div>
+							<div class="actions">
+								<button class="btn" id="btn-update-username" type="button">Update username</button>
+							</div>
+							<div class="field">
+								<label for="acct-password">New password</label>
+								<div class="pwrow">
+									<input class="input" id="acct-password" name="acct-password" type="password" autocomplete="new-password" />
+									<button class="btn btn-small" id="btn-toggle-acct-password" type="button" aria-pressed="false">Show</button>
+								</div>
+							</div>
+							<div class="actions">
+								<button class="btn" id="btn-update-password" type="button">Update password</button>
+								<button class="btn" id="btn-delete-account" type="button">Delete account</button>
+							</div>
+						</div>
+						<p class="hint" id="acct-status"></p>
+					</section>
 			</main>
 		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+		<script>
+			const SUPABASE_URL = 'https://oxgaltttggmxukslgjxn.supabase.co';
+			const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94Z2FsdHR0Z2dteHVrc2xnanhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxOTA0NDYsImV4cCI6MjA4Nzc2NjQ0Nn0.Q8X_MQs_nFuhtGpY4K-KzvsaXT419Sc2Vx6slXi6Rdw';
+			const USERNAME_MIN_LEN = 3;
+			const USERNAME_MAX_LEN = 24;
+			const AUTH_TIMEOUT_MS = 15000;
+			const BUILD_STAMP = '2026-02-27';
+
+			const loginScreenEl = document.getElementById('login-screen');
+			const appEl = document.getElementById('app');
+			const loginStatusEl = document.getElementById('login-status');
+			const loginDebugEl = document.getElementById('login-debug');
+			const loginDebugToggleBtn = document.getElementById('btn-toggle-login-debug');
+			const authStatusEl = document.getElementById('auth-status');
+			const saveStatusEl = document.getElementById('save-status');
+			const signOutBtn = document.getElementById('btn-signout');
+			const loginIdentifierEl = document.getElementById('login-identifier');
+			const loginPasswordEl = document.getElementById('login-password');
+			const toggleLoginPasswordBtn = document.getElementById('btn-toggle-login-password');
+			const signupUsernameEl = document.getElementById('signup-username');
+			const signupEmailEl = document.getElementById('signup-email');
+			const signupPasswordEl = document.getElementById('signup-password');
+			const toggleSignupPasswordBtn = document.getElementById('btn-toggle-signup-password');
+			const loginBtn = document.getElementById('btn-login');
+			const signupBtn = document.getElementById('btn-signup');
+			const notesEl = document.getElementById('notes');
+			const notesHintEl = document.getElementById('notes-hint');
+			const acctCurrentEl = document.getElementById('acct-current');
+			const acctStatusEl = document.getElementById('acct-status');
+			const acctUsernameEl = document.getElementById('acct-username');
+			const acctPasswordEl = document.getElementById('acct-password');
+			const toggleAcctPasswordBtn = document.getElementById('btn-toggle-acct-password');
+			const updateUsernameBtn = document.getElementById('btn-update-username');
+			const updatePasswordBtn = document.getElementById('btn-update-password');
+			const deleteAccountBtn = document.getElementById('btn-delete-account');
+
+			const tabs = [
+				{ tab: document.getElementById('tab-home'), panel: document.getElementById('panel-home') },
+				{ tab: document.getElementById('tab-notes'), panel: document.getElementById('panel-notes') },
+				{ tab: document.getElementById('tab-settings'), panel: document.getElementById('panel-settings') },
+			];
+
+			const authTabs = [
+				{ tab: document.getElementById('auth-tab-login'), panel: document.getElementById('auth-panel-login') },
+				{ tab: document.getElementById('auth-tab-signup'), panel: document.getElementById('auth-panel-signup') },
+			];
+
+			let inApp = false;
+			let loginDebugVisible = false;
+			const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+			function setLoginStatusText(message) {
+				if (!loginStatusEl) return;
+				loginStatusEl.textContent = message ? String(message) : '';
+			}
+
+			function setLoginDebugText(message) {
+				if (!loginDebugEl) return;
+				const msg = String(message || '').trim();
+				loginDebugEl.textContent = msg ? `${msg} (build ${BUILD_STAMP})` : `build ${BUILD_STAMP}`;
+			}
+
+			function setLoginDebugVisible(visible) {
+				loginDebugVisible = !!visible;
+				if (loginDebugEl) loginDebugEl.hidden = !loginDebugVisible;
+				if (loginDebugToggleBtn) {
+					loginDebugToggleBtn.textContent = loginDebugVisible ? 'Hide status' : 'Show status';
+					loginDebugToggleBtn.setAttribute('aria-expanded', String(loginDebugVisible));
+				}
+			}
+
+			if (loginDebugToggleBtn) {
+				loginDebugToggleBtn.addEventListener('click', () => {
+					setLoginDebugVisible(!loginDebugVisible);
+				});
+			}
+
+			setLoginDebugVisible(false);
+
+			function setSaveStatus(text) {
+				if (!saveStatusEl) return;
+				if (!text) {
+					saveStatusEl.hidden = true;
+					saveStatusEl.textContent = '';
+					return;
+				}
+				saveStatusEl.hidden = false;
+				saveStatusEl.textContent = text;
+			}
+
+			function setButtonsDisabled(disabled) {
+				if (loginBtn) loginBtn.disabled = disabled;
+				if (signupBtn) signupBtn.disabled = disabled;
+				if (loginIdentifierEl) loginIdentifierEl.disabled = disabled;
+				if (loginPasswordEl) loginPasswordEl.disabled = disabled;
+				if (signupUsernameEl) signupUsernameEl.disabled = disabled;
+				if (signupEmailEl) signupEmailEl.disabled = disabled;
+				if (signupPasswordEl) signupPasswordEl.disabled = disabled;
+			}
+
+			function setAccountStatus(text) {
+				if (!acctStatusEl) return;
+				acctStatusEl.textContent = String(text || '');
+			}
+
+			function showLogin(message) {
+				inApp = false;
+				if (loginScreenEl) loginScreenEl.hidden = false;
+				if (appEl) appEl.hidden = true;
+				if (loginScreenEl) loginScreenEl.style.display = '';
+				if (appEl) appEl.style.display = 'none';
+				setLoginStatusText(message);
+				setLoginDebugVisible(false);
+				if (authStatusEl) authStatusEl.textContent = 'Signed out';
+				if (signOutBtn) signOutBtn.hidden = true;
+				if (acctCurrentEl) acctCurrentEl.textContent = 'Signed in';
+				if (acctUsernameEl) acctUsernameEl.value = '';
+				if (acctPasswordEl) acctPasswordEl.value = '';
+				setAccountStatus('');
+				if (notesEl) {
+					notesEl.disabled = true;
+					notesEl.placeholder = 'Sign in to write notes';
+					notesEl.value = '';
+				}
+				if (notesHintEl) notesHintEl.textContent = 'Your notes sync to the cloud.';
+				setSaveStatus('');
+				recenterLoginCard();
+			}
+
+			function showApp(displayName) {
+				inApp = true;
+				if (loginScreenEl) loginScreenEl.hidden = true;
+				if (appEl) appEl.hidden = false;
+				if (loginScreenEl) loginScreenEl.style.display = 'none';
+				if (appEl) appEl.style.display = '';
+				if (authStatusEl) authStatusEl.textContent = `Signed in: ${displayName} (build ${BUILD_STAMP})`;
+				if (signOutBtn) signOutBtn.hidden = false;
+				if (notesEl) {
+					notesEl.disabled = false;
+					notesEl.placeholder = 'Write quick notes here…';
+				}
+				if (notesHintEl) notesHintEl.textContent = 'Auto-saves to the cloud.';
+				recenterAppCard();
+			}
+
+			function getAppCard() {
+				return document.querySelector('#app .card');
+			}
+
+			function getLoginCard() {
+				return document.querySelector('#login-screen .card');
+			}
+
+			function recenterAppCard() {
+				if (!inApp || !appEl) return;
+				window.requestAnimationFrame(() => {
+					const card = getAppCard();
+					if (!card) return;
+					const viewH = window.innerHeight || 0;
+					const cardH = card.getBoundingClientRect().height;
+					const top = Math.max(24, Math.round((viewH - cardH) / 2));
+					appEl.style.setProperty('--app-pad-top', `${top}px`);
+				});
+			}
+
+			function recenterLoginCard() {
+				if (inApp || !loginScreenEl) return;
+				window.requestAnimationFrame(() => {
+					const card = getLoginCard();
+					if (!card) return;
+					const viewH = window.innerHeight || 0;
+					const cardH = card.getBoundingClientRect().height;
+					const top = Math.max(24, Math.round((viewH - cardH) / 2));
+					loginScreenEl.style.setProperty('--login-pad-top', `${top}px`);
+				});
+			}
+
+			function temporarilyDisableBackdrop(card) {
+				if (!card) return () => {};
+				const prevBackdrop = card.style.backdropFilter;
+				const prevWebkitBackdrop = card.style.webkitBackdropFilter;
+				card.style.backdropFilter = 'none';
+				card.style.webkitBackdropFilter = 'none';
+				return () => {
+					card.style.backdropFilter = prevBackdrop;
+					card.style.webkitBackdropFilter = prevWebkitBackdrop;
+				};
+			}
+
+
+			window.addEventListener('resize', () => {
+				recenterAppCard();
+				recenterLoginCard();
+			});
+
+			function setFatalError(err) {
+				const message = err?.message || String(err);
+				showLogin(`Error: ${message}`);
+			}
+
+			window.addEventListener('error', (e) => {
+				setFatalError(e?.error || e?.message || 'Unknown error');
+			});
+			window.addEventListener('unhandledrejection', (e) => {
+				setFatalError(e?.reason || 'Unhandled rejection');
+			});
+
+			function animateAppLayoutChange(changeFn) {
+				const card = getAppCard();
+				if (!card || prefersReducedMotion) {
+					changeFn();
+					return;
+				}
+
+				// Cancel any in-flight layout animation to avoid jitter/stacking.
+				if (card.__layoutAnimCleanup) {
+					try {
+						card.__layoutAnimCleanup();
+					} catch {
+						// ignore
+					}
+					card.__layoutAnimCleanup = null;
+				}
+
+				const firstHeight = card.getBoundingClientRect().height;
+				changeFn();
+				const lastHeight = card.getBoundingClientRect().height;
+				if (Math.abs(firstHeight - lastHeight) < 0.5) return;
+
+				const duration = 720;
+				const easing = 'cubic-bezier(0.18, 1, 0.34, 1)';
+
+				const prevWillChange = card.style.willChange;
+				const prevOverflow = card.style.overflow;
+				const prevTransition = card.style.transition;
+				const restoreBackdrop = temporarilyDisableBackdrop(card);
+
+				card.style.willChange = 'height';
+				card.style.overflow = 'hidden';
+				card.style.transition = 'none';
+				card.style.height = `${firstHeight}px`;
+				// Force style/layout flush so the next transition starts from the inverted state.
+				void card.offsetHeight;
+
+				let finished = false;
+				const cleanup = () => {
+					if (finished) return;
+					finished = true;
+					if (card.__layoutAnimOnEnd) {
+						card.removeEventListener('transitionend', card.__layoutAnimOnEnd);
+						card.__layoutAnimOnEnd = null;
+					}
+					if (card.__layoutAnimTimer) {
+						window.clearTimeout(card.__layoutAnimTimer);
+						card.__layoutAnimTimer = null;
+					}
+					// Freeze at the final pixel height for one frame,
+					// then clear back to auto without any transition (Safari-friendly).
+					card.style.transition = 'none';
+					card.style.height = `${lastHeight}px`;
+					void card.offsetHeight;
+
+					window.requestAnimationFrame(() => {
+						card.style.willChange = prevWillChange;
+						card.style.overflow = prevOverflow;
+						card.style.height = '';
+						card.style.transition = prevTransition;
+						restoreBackdrop();
+						card.__layoutAnimCleanup = null;
+					});
+				};
+				card.__layoutAnimCleanup = cleanup;
+
+				const onEnd = (e) => {
+					if (e.target !== card) return;
+					// Only finalize when height is done; Safari can fire transform earlier and cause snaps.
+					if (e.propertyName !== 'height') return;
+					cleanup();
+				};
+				card.__layoutAnimOnEnd = onEnd;
+				card.addEventListener('transitionend', onEnd);
+				card.__layoutAnimTimer = window.setTimeout(cleanup, duration + 240);
+
+				// Double-rAF makes the start frame more stable across browsers (Safari included).
+				window.requestAnimationFrame(() => {
+					window.requestAnimationFrame(() => {
+						card.style.transition = `height ${duration}ms ${easing}`;
+						card.style.height = `${lastHeight}px`;
+					});
+				});
+			}
+
+			function animateLoginLayoutChange(changeFn) {
+				const card = getLoginCard();
+				if (!card || prefersReducedMotion) {
+					changeFn();
+					return;
+				}
+
+				// Cancel any in-flight layout animation to avoid jitter/stacking.
+				if (card.__layoutAnimCleanup) {
+					try {
+						card.__layoutAnimCleanup();
+					} catch {
+						// ignore
+					}
+				}
+
+				const firstHeight = card.getBoundingClientRect().height;
+				changeFn();
+				const lastHeight = card.getBoundingClientRect().height;
+				if (Math.abs(firstHeight - lastHeight) < 0.5) return;
+
+				const duration = 720;
+				const easing = 'cubic-bezier(0.18, 1, 0.34, 1)';
+
+				const prevWillChange = card.style.willChange;
+				const prevOverflow = card.style.overflow;
+				const prevTransition = card.style.transition;
+				const restoreBackdrop = temporarilyDisableBackdrop(card);
+
+				card.style.willChange = 'height';
+				card.style.overflow = 'hidden';
+				card.style.transition = 'none';
+				card.style.height = `${firstHeight}px`;
+				void card.offsetHeight;
+
+				let finished = false;
+				const cleanup = () => {
+					if (finished) return;
+					finished = true;
+					if (card.__layoutAnimOnEnd) {
+						card.removeEventListener('transitionend', card.__layoutAnimOnEnd);
+						card.__layoutAnimOnEnd = null;
+					}
+					if (card.__layoutAnimTimer) {
+						window.clearTimeout(card.__layoutAnimTimer);
+						card.__layoutAnimTimer = null;
+					}
+					card.style.transition = 'none';
+					card.style.height = `${lastHeight}px`;
+					void card.offsetHeight;
+
+					window.requestAnimationFrame(() => {
+						card.style.willChange = prevWillChange;
+						card.style.overflow = prevOverflow;
+						card.style.height = '';
+						card.style.transition = prevTransition;
+						restoreBackdrop();
+						card.__layoutAnimCleanup = null;
+					});
+				};
+				card.__layoutAnimCleanup = cleanup;
+
+				const onEnd = (e) => {
+					if (e.target !== card) return;
+					if (e.propertyName !== 'height') return;
+					cleanup();
+				};
+				card.__layoutAnimOnEnd = onEnd;
+				card.addEventListener('transitionend', onEnd);
+				card.__layoutAnimTimer = window.setTimeout(cleanup, duration + 240);
+
+				window.requestAnimationFrame(() => {
+					window.requestAnimationFrame(() => {
+						card.style.transition = `height ${duration}ms ${easing}`;
+						card.style.height = `${lastHeight}px`;
+					});
+				});
+			}
+
+			function selectTab(selectedId) {
+				if (!selectedId) return;
+				animateAppLayoutChange(() => {
+					for (const { tab, panel } of tabs) {
+						if (!tab || !panel) continue;
+						const selected = tab.id === selectedId;
+						tab.setAttribute('aria-selected', String(selected));
+						panel.hidden = !selected;
+					}
+				});
+			}
+
+			function selectAuthTab(selectedId) {
+				if (!selectedId) return;
+				animateLoginLayoutChange(() => {
+					for (const { tab, panel } of authTabs) {
+						if (!tab || !panel) continue;
+						const selected = tab.id === selectedId;
+						tab.setAttribute('aria-selected', String(selected));
+						panel.hidden = !selected;
+					}
+				});
+			}
+
+			for (const { tab } of tabs) {
+				if (!tab) continue;
+				tab.addEventListener('click', () => selectTab(tab.id));
+				tab.addEventListener('keydown', (e) => {
+					if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+					e.preventDefault();
+					const idx = tabs.findIndex((t) => t.tab === tab);
+					const next = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+					tabs[next].tab?.focus();
+					selectTab(tabs[next].tab?.id);
+				});
+			}
+
+			for (const { tab } of authTabs) {
+				if (!tab) continue;
+				tab.addEventListener('click', () => selectAuthTab(tab.id));
+				tab.addEventListener('keydown', (e) => {
+					if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+					e.preventDefault();
+					const idx = authTabs.findIndex((t) => t.tab === tab);
+					const next = e.key === 'ArrowRight' ? (idx + 1) % authTabs.length : (idx - 1 + authTabs.length) % authTabs.length;
+					authTabs[next].tab?.focus();
+					selectAuthTab(authTabs[next].tab?.id);
+				});
+			}
+
+			function normalizeUsername(usernameRaw) {
+				const username = String(usernameRaw || '').trim().toLowerCase();
+				if (!username) return null;
+				if (username.includes('@')) return null;
+				if (!/^[a-z0-9._-]+$/.test(username)) return null;
+				if (username.length < USERNAME_MIN_LEN || username.length > USERNAME_MAX_LEN) return null;
+				return username;
+			}
+
+			function normalizeEmail(emailRaw) {
+				const email = String(emailRaw || '').trim().toLowerCase();
+				if (!email) return null;
+				if (!email.includes('@')) return null;
+				return email;
+			}
+
+			function wirePasswordToggle(inputEl, buttonEl) {
+				if (!inputEl || !buttonEl) return;
+				const render = () => {
+					const showing = inputEl.type === 'text';
+					buttonEl.textContent = showing ? 'Hide' : 'Show';
+					buttonEl.setAttribute('aria-pressed', String(showing));
+				};
+				render();
+				buttonEl.addEventListener('click', () => {
+					inputEl.type = inputEl.type === 'password' ? 'text' : 'password';
+					render();
+					try {
+						inputEl.focus();
+					} catch {
+						// ignore
+					}
+				});
+			}
+
+			wirePasswordToggle(loginPasswordEl, toggleLoginPasswordBtn);
+			wirePasswordToggle(signupPasswordEl, toggleSignupPasswordBtn);
+			wirePasswordToggle(acctPasswordEl, toggleAcctPasswordBtn);
+
+			function wireEnterSubmit(panelEl, submitBtn) {
+				if (!panelEl || !submitBtn) return;
+				panelEl.addEventListener('keydown', (e) => {
+					if (e.key !== 'Enter') return;
+					if (e.isComposing) return;
+					const t = e.target;
+					if (!t || t.tagName !== 'INPUT') return;
+					e.preventDefault();
+					if (submitBtn.disabled) return;
+					try {
+						submitBtn.click();
+					} catch {
+						// ignore
+					}
+				});
+			}
+
+			wireEnterSubmit(document.getElementById('auth-panel-login'), loginBtn);
+			wireEnterSubmit(document.getElementById('auth-panel-signup'), signupBtn);
+
+			function withTimeout(promise, ms, label) {
+				let timeoutId;
+				const timeoutPromise = new Promise((_, reject) => {
+					timeoutId = window.setTimeout(() => {
+						reject(new Error(`${label} timed out. Check your network/adblock and Supabase status.`));
+					}, ms);
+				});
+				return Promise.race([promise, timeoutPromise]).finally(() => {
+					if (timeoutId) window.clearTimeout(timeoutId);
+				});
+			}
+
+			function signInWithPasswordXHR(email, password, timeoutMs, onProgress) {
+				return new Promise((resolve, reject) => {
+					const xhr = new XMLHttpRequest();
+					xhr.open('POST', `${SUPABASE_URL}/auth/v1/token?grant_type=password`, true);
+					xhr.timeout = timeoutMs;
+					xhr.setRequestHeader('Content-Type', 'application/json');
+					xhr.setRequestHeader('Accept', 'application/json');
+					xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+					xhr.onreadystatechange = () => {
+						try {
+							if (xhr.readyState === 4) {
+								onProgress?.(`Supabase response state 4 (HTTP ${xhr.status})…`);
+							} else {
+								onProgress?.(`Supabase response state ${xhr.readyState}…`);
+							}
+						} catch {
+							// ignore
+						}
+					};
+					xhr.onload = () => {
+						let payload = null;
+						try {
+							payload = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+						} catch {
+							payload = null;
+						}
+
+						if (xhr.status >= 200 && xhr.status < 300) {
+							resolve(payload);
+							return;
+						}
+
+						const msg =
+							payload?.error_description ||
+							payload?.msg ||
+							payload?.message ||
+							payload?.error ||
+							`Sign in failed (HTTP ${xhr.status})`;
+						reject(new Error(String(msg)));
+					};
+					xhr.onerror = () => reject(new Error('Network error during sign in'));
+					xhr.onabort = () => reject(new Error('Sign in request aborted'));
+					xhr.ontimeout = () => reject(new Error('Sign in timed out. Check your network/adblock.'));
+					try {
+						onProgress?.('Contacting Supabase…');
+					} catch {
+						// ignore
+					}
+					xhr.send(JSON.stringify({ email, password }));
+				});
+			}
+
+			function signUpXHR(email, password, username, timeoutMs, onProgress) {
+				return new Promise((resolve, reject) => {
+					const xhr = new XMLHttpRequest();
+					xhr.open('POST', `${SUPABASE_URL}/auth/v1/signup`, true);
+					xhr.timeout = timeoutMs;
+					xhr.setRequestHeader('Content-Type', 'application/json');
+					xhr.setRequestHeader('Accept', 'application/json');
+					xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+					xhr.onreadystatechange = () => {
+						try {
+							if (xhr.readyState === 4) {
+								onProgress?.(`Supabase response state 4 (HTTP ${xhr.status})…`);
+							} else {
+								onProgress?.(`Supabase response state ${xhr.readyState}…`);
+							}
+						} catch {
+							// ignore
+						}
+					};
+					xhr.onload = () => {
+						let payload = null;
+						try {
+							payload = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+						} catch {
+							payload = null;
+						}
+
+						if (xhr.status >= 200 && xhr.status < 300) {
+							resolve(payload);
+							return;
+						}
+
+						const msg =
+							payload?.error_description ||
+							payload?.msg ||
+							payload?.message ||
+							payload?.error ||
+							`Sign up failed (HTTP ${xhr.status})`;
+						reject(new Error(String(msg)));
+					};
+					xhr.onerror = () => reject(new Error('Network error during sign up'));
+					xhr.onabort = () => reject(new Error('Sign up request aborted'));
+					xhr.ontimeout = () => reject(new Error('Sign up timed out. Check your network/adblock.'));
+					try {
+						onProgress?.('Contacting Supabase…');
+					} catch {
+						// ignore
+					}
+					xhr.send(JSON.stringify({ email, password, data: { username } }));
+				});
+			}
+
+			function authUpdateUserXHR(accessToken, patch, timeoutMs) {
+				return new Promise((resolve, reject) => {
+					const xhr = new XMLHttpRequest();
+					xhr.open('PUT', `${SUPABASE_URL}/auth/v1/user`, true);
+					xhr.timeout = timeoutMs;
+					xhr.setRequestHeader('Content-Type', 'application/json');
+					xhr.setRequestHeader('Accept', 'application/json');
+					xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+					xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+					xhr.onload = () => {
+						let payload = null;
+						try {
+							payload = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+						} catch {
+							payload = null;
+						}
+						if (xhr.status >= 200 && xhr.status < 300) {
+							resolve(payload);
+							return;
+						}
+						const msg =
+							payload?.error_description ||
+							payload?.msg ||
+							payload?.message ||
+							payload?.error ||
+							`Update failed (HTTP ${xhr.status})`;
+						reject(new Error(String(msg)));
+					};
+					xhr.onerror = () => reject(new Error('Network error updating account'));
+					xhr.ontimeout = () => reject(new Error('Account update timed out'));
+					xhr.send(JSON.stringify(patch || {}));
+				});
+			}
+
+			async function deleteAccountViaFunction(accessToken) {
+				const res = await fetch(`${SUPABASE_URL}/functions/v1/delete-account`, {
+					method: 'POST',
+					headers: {
+						apikey: SUPABASE_ANON_KEY,
+						Authorization: `Bearer ${accessToken}`,
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+					body: JSON.stringify({}),
+				});
+				if (res.ok) return;
+				let bodyText = '';
+				try {
+					bodyText = await res.text();
+				} catch {
+					bodyText = '';
+				}
+				const suffix = bodyText ? `: ${bodyText}` : '';
+				throw new Error(`Delete account function failed (HTTP ${res.status})${suffix}`);
+			}
+
+			function startStatusTicker(prefix) {
+				const startedAt = Date.now();
+				let ticks = 0;
+				const render = () => {
+					ticks += 1;
+					const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+					if (!inApp) setLoginDebugText(`${prefix} (${seconds}s, tick ${ticks})`);
+				};
+				render();
+				const id = window.setInterval(render, 250);
+				return () => window.clearInterval(id);
+			}
+
+			async function lookupEmailForUsername(supabase, username) {
+				const { data, error } = await withTimeout(
+					supabase.from('usernames').select('email').eq('username', username).maybeSingle(),
+					AUTH_TIMEOUT_MS,
+					'Username lookup',
+				);
+				if (error) throw error;
+				return data?.email ? String(data.email) : null;
+			}
+
+			const missingConfig =
+				!SUPABASE_URL ||
+				!SUPABASE_ANON_KEY ||
+				SUPABASE_URL.startsWith('YOUR_') ||
+				SUPABASE_ANON_KEY.startsWith('YOUR_');
+
+			if (missingConfig) {
+				showLogin('Missing Supabase config (edit index.html).');
+				setButtonsDisabled(true);
+			} else if (!globalThis.supabase?.createClient) {
+				showLogin('Failed to load Supabase client.');
+				setButtonsDisabled(true);
+			} else {
+				function storageAvailable() {
+					try {
+						const k = '__ectl_storage_test__';
+						window.localStorage.setItem(k, '1');
+						window.localStorage.removeItem(k);
+						return true;
+					} catch {
+						return false;
+					}
+				}
+
+				const canPersist = storageAvailable();
+				const supabase = globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+					auth: {
+						persistSession: canPersist,
+						autoRefreshToken: canPersist,
+					},
+				});
+				let activeUserId = null;
+				let activeUser = null;
+				let activeAccessToken = null;
+				let activeUsingRest = false;
+				let saveTimer = null;
+				let applySessionInFlight = null;
+				let applySessionRun = 0;
+
+				async function pingSupabase() {
+					const res = await fetch(`${SUPABASE_URL}/auth/v1/health`, {
+						method: 'GET',
+						mode: 'cors',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+						},
+					});
+					return res.status;
+				}
+
+				async function lookupEmailForUsernameRest(username) {
+					const url = `${SUPABASE_URL}/rest/v1/usernames?select=email&username=eq.${encodeURIComponent(username)}`;
+					const res = await fetch(url, {
+						method: 'GET',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Accept: 'application/json',
+						},
+					});
+					if (!res.ok) throw new Error(`Username lookup failed (HTTP ${res.status})`);
+					const arr = await res.json();
+					const email = Array.isArray(arr) && arr.length ? arr[0]?.email : null;
+					return email ? String(email) : null;
+				}
+
+				async function restUpsertUsernameMapping(username, userId, email, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/usernames`, {
+						method: 'POST',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							'Content-Type': 'application/json',
+							Prefer: 'resolution=merge-duplicates',
+							Accept: 'application/json',
+						},
+						body: JSON.stringify([
+							{
+								username,
+								user_id: userId,
+								email,
+							},
+						]),
+					});
+					if (!res.ok) {
+						let msg = `Failed to save username mapping (HTTP ${res.status})`;
+						try {
+							const t = await res.text();
+							if (t) msg = `${msg}: ${t}`;
+						} catch {
+							// ignore
+						}
+						throw new Error(msg);
+					}
+				}
+
+				function enterRestMode(user, accessToken) {
+					if (!user?.id) {
+						showLogin('Sign in succeeded but user data is missing.');
+						return false;
+					}
+					activeUsingRest = true;
+					activeAccessToken = accessToken;
+					activeUserId = user.id;
+					activeUser = user;
+					const displayName = user.user_metadata?.username || user.email || 'Account';
+					showApp(`${displayName} (REST mode)`);
+					if (appEl?.hidden) {
+						setLoginStatusText('Internal error: app did not become visible after sign-in.');
+					}
+					if (acctCurrentEl) {
+						const username = user.user_metadata?.username ? `@${user.user_metadata.username}` : '(no username set)';
+						acctCurrentEl.textContent = `Signed in as ${username} — ${user.email || ''}`.trim();
+					}
+					if (acctUsernameEl) acctUsernameEl.value = '';
+					if (acctPasswordEl) acctPasswordEl.value = '';
+					setAccountStatus('');
+					return true;
+				}
+
+				async function restDeleteByUserId(table, userId, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?user_id=eq.${encodeURIComponent(userId)}`, {
+						method: 'DELETE',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							Prefer: 'return=minimal',
+						},
+					});
+					if (!res.ok) throw new Error(`Failed to delete from ${table} (HTTP ${res.status})`);
+				}
+
+				async function restSaveUsernameMapping(username, userId, email, accessToken) {
+					// Try update-by-user_id first; if no row exists, fall back to insert.
+					const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/usernames?user_id=eq.${encodeURIComponent(userId)}`, {
+						method: 'PATCH',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							'Content-Type': 'application/json',
+							Prefer: 'return=representation',
+							Accept: 'application/json',
+						},
+						body: JSON.stringify({ username, email, user_id: userId }),
+					});
+					if (patchRes.ok) {
+						const arr = await patchRes.json().catch(() => []);
+						if (Array.isArray(arr) && arr.length) return;
+					}
+					await restUpsertUsernameMapping(username, userId, email, accessToken);
+				}
+
+				async function restGetNotes(userId, accessToken) {
+					const url = `${SUPABASE_URL}/rest/v1/notes?select=content&user_id=eq.${encodeURIComponent(userId)}`;
+					const res = await fetch(url, {
+						method: 'GET',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							Accept: 'application/json',
+						},
+					});
+					if (!res.ok) throw new Error(`Notes load failed (HTTP ${res.status})`);
+					const arr = await res.json();
+					return Array.isArray(arr) && arr.length ? arr[0]?.content ?? '' : '';
+				}
+
+				async function restUpsertNotes(userId, content, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/notes`, {
+						method: 'POST',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							'Content-Type': 'application/json',
+							Prefer: 'resolution=merge-duplicates',
+							Accept: 'application/json',
+						},
+						body: JSON.stringify([
+							{
+								user_id: userId,
+								content,
+								updated_at: new Date().toISOString(),
+							},
+						]),
+					});
+					if (!res.ok) {
+						let msg = `Notes save failed (HTTP ${res.status})`;
+						try {
+							const t = await res.text();
+							if (t) msg = `${msg}: ${t}`;
+						} catch {
+							// ignore
+						}
+						throw new Error(msg);
+					}
+				}
+
+				async function loadNotes(userId) {
+					if (!notesEl) return;
+					setSaveStatus('Loading…');
+					try {
+						if (activeUsingRest) {
+							notesEl.value = await withTimeout(restGetNotes(userId, activeAccessToken), AUTH_TIMEOUT_MS, 'Notes load');
+						} else {
+							const { data, error } = await supabase
+								.from('notes')
+								.select('content')
+								.eq('user_id', userId)
+								.maybeSingle();
+							if (error) throw error;
+							notesEl.value = data?.content ?? '';
+						}
+						setSaveStatus('');
+					} catch {
+						setSaveStatus('Failed to load');
+					}
+				}
+
+				async function saveNotes(userId, content) {
+					if (!notesEl) return;
+					setSaveStatus('Saving…');
+					try {
+						if (activeUsingRest) {
+							await withTimeout(restUpsertNotes(userId, content, activeAccessToken), AUTH_TIMEOUT_MS, 'Notes save');
+						} else {
+							const { error } = await supabase.from('notes').upsert(
+								{
+									user_id: userId,
+									content,
+									updated_at: new Date().toISOString(),
+								},
+								{ onConflict: 'user_id' },
+							);
+							if (error) throw error;
+						}
+					} catch {
+						setSaveStatus('Failed to save');
+						return;
+					}
+
+					setSaveStatus('Saved');
+					window.setTimeout(() => setSaveStatus(''), 1200);
+				}
+
+				function scheduleSave() {
+					if (!activeUserId || !notesEl) return;
+					if (saveTimer) window.clearTimeout(saveTimer);
+					saveTimer = window.setTimeout(() => {
+						saveNotes(activeUserId, notesEl.value);
+					}, 350);
+				}
+
+				if (notesEl) notesEl.addEventListener('input', scheduleSave);
+
+				async function applySession(session, label) {
+					if (applySessionInFlight) return applySessionInFlight;
+					applySessionRun += 1;
+					const runId = applySessionRun;
+					const authLabel = label ? String(label) : 'unknown';
+					applySessionInFlight = (async () => {
+						try {
+							const user = session?.user ?? null;
+							if (!user) {
+								activeUserId = null;
+								const persistNote = canPersist ? '' : ' Storage blocked; session will not persist.';
+								showLogin(`Signed out (auth ${authLabel} #${runId}).${persistNote}`);
+								return;
+							}
+
+							activeUserId = user.id;
+							const displayName = user.user_metadata?.username || user.email || 'Account';
+							if (activeUsingRest) {
+								showApp(`${displayName} (REST mode)`);
+							} else {
+							showApp(displayName);
+							}
+							await loadNotes(user.id);
+						} catch (e) {
+							activeUserId = null;
+							showLogin(friendlyAuthError(e?.message || String(e)));
+						} finally {
+							applySessionInFlight = null;
+						}
+					})();
+					return applySessionInFlight;
+				}
+
+				async function bootstrap() {
+					const stopTick = startStatusTicker('Bootstrapping…');
+					try {
+						const status = await withTimeout(pingSupabase(), 6000, 'Supabase ping');
+						const persistNote = canPersist ? '' : ' Storage blocked; session will not persist.';
+						if (!inApp) setLoginDebugText(`Supabase ping: HTTP ${status}. Ready.${persistNote}`);
+					} catch (e) {
+						if (!inApp) setLoginDebugText(`Supabase error: ${friendlyAuthError(e?.message || String(e))}`);
+					} finally {
+						stopTick();
+					}
+				}
+
+				function friendlyAuthError(messageRaw) {
+					const message = String(messageRaw || 'Unknown error');
+					if (message.toLowerCase().includes('email not confirmed')) {
+						return 'Email not confirmed. Confirm it, or disable “Confirm email” in Supabase Auth settings.';
+					}
+					return message;
+				}
+
+				if (loginBtn) {
+					loginBtn.addEventListener('click', async () => {
+						setButtonsDisabled(true);
+						try {
+							const identifier = String(loginIdentifierEl?.value || '');
+							const emailDirect = normalizeEmail(identifier);
+							const username = emailDirect ? null : normalizeUsername(identifier);
+							const password = String(loginPasswordEl?.value || '');
+							if ((!emailDirect && !username) || !password) {
+								showLogin('Enter username/email + password');
+								return;
+							}
+
+							let email = emailDirect;
+							if (!email && username) {
+								try {
+									const stopTick = startStatusTicker('Looking up username…');
+									email = await withTimeout(lookupEmailForUsernameRest(username), AUTH_TIMEOUT_MS, 'Username lookup').finally(stopTick);
+								} catch (e) {
+									showLogin(friendlyAuthError(e?.message || String(e)));
+									return;
+								}
+								if (!email) {
+									showLogin('Username not found');
+									return;
+								}
+							}
+
+							showLogin('Signing in…');
+							const tokenData = await signInWithPasswordXHR(email, password, AUTH_TIMEOUT_MS, (msg) => {
+								if (!inApp) setLoginDebugText(`Signing in… ${msg}`);
+							});
+
+							const access_token = tokenData?.access_token;
+							const refresh_token = tokenData?.refresh_token;
+							if (!access_token || !refresh_token) {
+								showLogin('Sign in failed: missing tokens from Supabase');
+								return;
+							}
+							// Use REST mode directly (supabase-js session restore/apply is hanging in this environment)
+							activeUsingRest = true;
+							activeAccessToken = access_token;
+							if (loginPasswordEl) loginPasswordEl.value = '';
+							const user = tokenData?.user ?? null;
+							setLoginStatusText('Entering app…');
+							if (!enterRestMode(user, access_token)) return;
+							// Allow the UI to paint before the notes fetch
+							await new Promise((r) => window.requestAnimationFrame(() => r()));
+							await loadNotes(user.id);
+						} catch (e) {
+							showLogin(friendlyAuthError(e?.message || String(e)));
+						} finally {
+							setButtonsDisabled(false);
+						}
+					});
+				}
+
+				if (signupBtn) {
+					signupBtn.addEventListener('click', async () => {
+						setButtonsDisabled(true);
+						try {
+							const username = normalizeUsername(signupUsernameEl?.value);
+							const email = normalizeEmail(signupEmailEl?.value);
+							const password = String(signupPasswordEl?.value || '');
+							if (!username || !email || !password) {
+								showLogin('Create account requires username + email + password');
+								selectAuthTab('auth-tab-signup');
+								return;
+							}
+							showLogin('Creating account…');
+							const payload = await signUpXHR(email, password, username, AUTH_TIMEOUT_MS, (msg) => {
+								setLoginDebugText(`Creating account… ${msg}`);
+							});
+							const access_token = payload?.access_token;
+							const refresh_token = payload?.refresh_token;
+							const userId = payload?.user?.id;
+							if (userId && (!access_token || !refresh_token)) {
+								showLogin('Account created. Confirm your email, then log in (username login works after first login).');
+								return;
+							}
+
+							// REST mode directly
+							activeUsingRest = true;
+							activeAccessToken = access_token;
+							if (userId) {
+								const stopTick = startStatusTicker('Saving username…');
+								await withTimeout(restUpsertUsernameMapping(username, userId, email, access_token), AUTH_TIMEOUT_MS, 'Saving username').finally(stopTick);
+							}
+							if (signupPasswordEl) signupPasswordEl.value = '';
+							const user = payload?.user ?? null;
+							setLoginStatusText('Entering app…');
+							if (!enterRestMode(user, access_token)) return;
+							await new Promise((r) => window.requestAnimationFrame(() => r()));
+							await loadNotes(user.id);
+						} catch (e) {
+							showLogin(friendlyAuthError(e?.message || String(e)));
+						} finally {
+							setButtonsDisabled(false);
+						}
+					});
+				}
+
+				if (signOutBtn) {
+					signOutBtn.addEventListener('click', async () => {
+						try {
+							if (!activeUsingRest) {
+								await withTimeout(supabase.auth.signOut(), AUTH_TIMEOUT_MS, 'Sign out');
+							}
+						} finally {
+							activeUsingRest = false;
+							activeUser = null;
+							activeAccessToken = null;
+							await applySession(null, 'SIGNED_OUT');
+						}
+					});
+				}
+
+				if (updateUsernameBtn) {
+					updateUsernameBtn.addEventListener('click', async () => {
+						try {
+							if (!activeUserId || !activeAccessToken || !activeUser) {
+								setAccountStatus('Not signed in');
+								return;
+							}
+							const newUsername = normalizeUsername(acctUsernameEl?.value);
+							if (!newUsername) {
+								setAccountStatus('Enter a valid username');
+								return;
+							}
+
+							setAccountStatus('Checking username…');
+							const takenByEmail = await withTimeout(lookupEmailForUsernameRest(newUsername), AUTH_TIMEOUT_MS, 'Username lookup');
+							if (takenByEmail && String(takenByEmail).toLowerCase() !== String(activeUser.email || '').toLowerCase()) {
+								setAccountStatus('That username is taken');
+								return;
+							}
+
+							setAccountStatus('Updating username…');
+							const updated = await authUpdateUserXHR(activeAccessToken, { data: { username: newUsername } }, AUTH_TIMEOUT_MS);
+							activeUser = updated || activeUser;
+							if (!activeUser.user_metadata) activeUser.user_metadata = {};
+							activeUser.user_metadata.username = newUsername;
+
+							setAccountStatus('Saving username mapping…');
+							await withTimeout(restSaveUsernameMapping(newUsername, activeUserId, activeUser.email, activeAccessToken), AUTH_TIMEOUT_MS, 'Saving username');
+
+							enterRestMode(activeUser, activeAccessToken);
+							setAccountStatus('Username updated');
+							if (acctUsernameEl) acctUsernameEl.value = '';
+						} catch (e) {
+							setAccountStatus(friendlyAuthError(e?.message || String(e)));
+						}
+					});
+				}
+
+				if (updatePasswordBtn) {
+					updatePasswordBtn.addEventListener('click', async () => {
+						try {
+							if (!activeAccessToken) {
+								setAccountStatus('Not signed in');
+								return;
+							}
+							const newPassword = String(acctPasswordEl?.value || '');
+							if (!newPassword) {
+								setAccountStatus('Enter a new password');
+								return;
+							}
+							setAccountStatus('Updating password…');
+							await authUpdateUserXHR(activeAccessToken, { password: newPassword }, AUTH_TIMEOUT_MS);
+							if (acctPasswordEl) acctPasswordEl.value = '';
+							setAccountStatus('Password updated');
+						} catch (e) {
+							setAccountStatus(friendlyAuthError(e?.message || String(e)));
+						}
+					});
+				}
+
+				if (deleteAccountBtn) {
+					deleteAccountBtn.addEventListener('click', async () => {
+						try {
+							if (!activeUserId || !activeAccessToken) {
+								setAccountStatus('Not signed in');
+								return;
+							}
+							const ok = window.confirm('Delete your account? This will delete your notes and username mapping too.');
+							if (!ok) return;
+
+							setAccountStatus('Deleting notes…');
+							await withTimeout(restDeleteByUserId('notes', activeUserId, activeAccessToken), AUTH_TIMEOUT_MS, 'Delete notes');
+							setAccountStatus('Deleting username mapping…');
+							await withTimeout(restDeleteByUserId('usernames', activeUserId, activeAccessToken), AUTH_TIMEOUT_MS, 'Delete usernames');
+							setAccountStatus('Deleting auth account…');
+							try {
+								await withTimeout(deleteAccountViaFunction(activeAccessToken), AUTH_TIMEOUT_MS, 'Delete account');
+							} catch (e) {
+								setAccountStatus(
+									`Deleted your data, but could not delete the auth user. ${friendlyAuthError(e?.message || String(e))}`,
+								);
+								return;
+							}
+
+							activeUsingRest = false;
+							activeUser = null;
+							activeAccessToken = null;
+							activeUserId = null;
+							showLogin('Account deleted');
+						} catch (e) {
+							setAccountStatus(friendlyAuthError(e?.message || String(e)));
+						}
+					});
+				}
+
+				recenterLoginCard();
+				bootstrap();
+			}
+		</script>
 	</body>
 </html>
