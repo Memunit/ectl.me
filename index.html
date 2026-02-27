@@ -4,42 +4,126 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="light dark" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
 		<title>ectl.me</title>
 		<style>
+			/* ── Light palette ───────────────────────────────────── */
 			:root {
-				--bg: Canvas;
-				--text: CanvasText;
-				--muted: color-mix(in srgb, CanvasText 62%, Canvas);
-				--ring: color-mix(in srgb, CanvasText 26%, Canvas);
-				--link: LinkText;
-				--card-bg: color-mix(in srgb, Canvas 58%, transparent);
-				--card-border: color-mix(in srgb, CanvasText 14%, transparent);
-				--card-shadow: 0 28px 70px color-mix(in srgb, CanvasText 14%, transparent);
-				--card-shadow-2: 0 10px 24px color-mix(in srgb, CanvasText 10%, transparent);
-				--panel-bg: color-mix(in srgb, CanvasText 6%, transparent);
-				--panel-border: color-mix(in srgb, CanvasText 12%, transparent);
-				--ok-bg: color-mix(in srgb, CanvasText 7%, transparent);
-				--ok-border: color-mix(in srgb, CanvasText 14%, transparent);
-				--ok-text: CanvasText;
-				--btn-bg: color-mix(in srgb, CanvasText 7%, transparent);
-				--btn-border: color-mix(in srgb, CanvasText 14%, transparent);
-				--btn-hover: color-mix(in srgb, CanvasText 10%, transparent);
-				--btn-active: color-mix(in srgb, CanvasText 12%, transparent);
-				--input-bg: color-mix(in srgb, Canvas 52%, transparent);
-				--input-border: color-mix(in srgb, CanvasText 14%, transparent);
-				--inset: inset 0 1px 0 color-mix(in srgb, Canvas 40%, transparent);
-				--radius-lg: 22px;
+				--bg: #f0f2f8;
+				--text: #0f1117;
+				--muted: #697285;
+				--accent: #5b6ef5;
+				--accent-2: #a855f7;
+				--accent-glow: rgba(91,110,245,0.22);
+				--accent-glow-2: rgba(168,85,247,0.14);
+				--ring: rgba(91,110,245,0.35);
+				--link: var(--accent);
+				--card-bg: rgba(255,255,255,0.68);
+				--card-border: rgba(255,255,255,0.85);
+				--card-top-line: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+				--card-shadow: 0 32px 80px rgba(15,17,40,0.13), 0 8px 24px rgba(15,17,40,0.08);
+				--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.6) inset;
+				--panel-bg: rgba(255,255,255,0.42);
+				--panel-border: rgba(91,110,245,0.13);
+				--ok-bg: rgba(91,110,245,0.08);
+				--ok-border: rgba(91,110,245,0.22);
+				--ok-text: var(--accent);
+				--btn-bg: rgba(255,255,255,0.55);
+				--btn-border: rgba(91,110,245,0.22);
+				--btn-hover: rgba(255,255,255,0.80);
+				--btn-active: rgba(91,110,245,0.12);
+				--input-bg: rgba(255,255,255,0.72);
+				--input-border: rgba(91,110,245,0.2);
+				--inset: inset 0 1px 0 rgba(255,255,255,0.7);
+				--radius-lg: 26px;
 				--radius-md: 14px;
-				--blur: 18px;
+				--blur: 22px;
+				/* fluid sizing tokens */
+				--card-max: 1060px;
+				--card-pad: 24px;
+				--base-font: 15px;
+				--textarea-h: 220px;
+				--wrap-pad-x: 14px;
+				/* animation tokens */
+				--ease: cubic-bezier(0.25, 1, 0.5, 1);
+				--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+				--t-fast: 140ms;
+				--t-mid: 260ms;
+				--t-slow: 420ms;
 			}
 
+			/* ≥ 768 px – tablet */
+			@media (min-width: 768px) {
+				:root {
+					--card-max: 1200px;
+					--card-pad: 32px;
+					--base-font: 16px;
+					--textarea-h: 260px;
+					--wrap-pad-x: 24px;
+					--radius-lg: 26px;
+					--radius-md: 16px;
+					--blur: 22px;
+				}
+			}
+
+			/* ≥ 1200 px – desktop */
+			@media (min-width: 1200px) {
+				:root {
+					--card-max: 1420px;
+					--card-pad: 40px;
+					--base-font: 17px;
+					--textarea-h: 320px;
+					--wrap-pad-x: 40px;
+					--radius-lg: 30px;
+					--radius-md: 18px;
+					--blur: 26px;
+				}
+			}
+
+			/* ≥ 1600 px – wide / ultrawide */
+			@media (min-width: 1600px) {
+				:root {
+					--card-max: 1680px;
+					--card-pad: 48px;
+					--base-font: 18px;
+					--textarea-h: 380px;
+					--wrap-pad-x: 60px;
+					--radius-lg: 34px;
+					--radius-md: 20px;
+					--blur: 30px;
+				}
+			}
+
+			/* ── Dark palette ────────────────────────────────────── */
 			@media (prefers-color-scheme: dark) {
 				:root {
-					--card-border: color-mix(in srgb, CanvasText 18%, transparent);
-					--btn-border: color-mix(in srgb, CanvasText 18%, transparent);
-					--input-border: color-mix(in srgb, CanvasText 18%, transparent);
-					--ring: color-mix(in srgb, CanvasText 30%, Canvas);
+					--bg: #0b0d14;
+					--text: #e8eaf6;
+					--muted: #7a84a8;
+					--accent: #818cf8;
+					--accent-2: #c084fc;
+					--accent-glow: rgba(129,140,248,0.25);
+					--accent-glow-2: rgba(192,132,252,0.16);
+					--ring: rgba(129,140,248,0.40);
+					--card-bg: rgba(17,19,35,0.78);
+					--card-border: rgba(129,140,248,0.18);
+					--card-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3);
+					--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.07) inset;
+					--panel-bg: rgba(255,255,255,0.04);
+					--panel-border: rgba(129,140,248,0.16);
+					--ok-bg: rgba(129,140,248,0.12);
+					--ok-border: rgba(129,140,248,0.30);
+					--ok-text: var(--accent);
+					--btn-bg: rgba(255,255,255,0.06);
+					--btn-border: rgba(129,140,248,0.24);
+					--btn-hover: rgba(255,255,255,0.10);
+					--btn-active: rgba(129,140,248,0.18);
+					--input-bg: rgba(255,255,255,0.06);
+					--input-border: rgba(129,140,248,0.22);
+					--inset: inset 0 1px 0 rgba(255,255,255,0.08);
 				}
 			}
 
@@ -47,31 +131,82 @@
 				box-sizing: border-box;
 			}
 
+			/* Ensure [hidden] always wins, even against display:grid/.wrap etc. */
+			[hidden] { display: none !important; }
+
 			body {
 				margin: 0;
-				font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				font-size: var(--base-font);
 				background:
-					radial-gradient(1200px 760px at 16% 12%, color-mix(in srgb, LinkText 32%, transparent), transparent 60%),
-					radial-gradient(950px 720px at 88% 14%, color-mix(in srgb, LinkText 18%, transparent), transparent 55%),
-					radial-gradient(1000px 760px at 46% 92%, color-mix(in srgb, CanvasText 14%, transparent), transparent 62%),
-					linear-gradient(180deg, color-mix(in srgb, CanvasText 7%, transparent), transparent 55%),
+					/* Top-left bloom – primary accent */
+					radial-gradient(ellipse 70% 60% at 5% 0%,   color-mix(in srgb, var(--accent)   62%, transparent), transparent),
+					/* Top-right bloom – secondary accent */
+					radial-gradient(ellipse 55% 50% at 95% 5%,  color-mix(in srgb, var(--accent-2)  48%, transparent), transparent),
+					/* Centre soft haze */
+					radial-gradient(ellipse 80% 55% at 50% 46%, color-mix(in srgb, var(--accent)   18%, transparent), transparent),
+					/* Bottom anchor */
+					radial-gradient(ellipse 90% 55% at 25% 100%,color-mix(in srgb, var(--accent-2)  28%, transparent), transparent),
+					/* Diagonal shimmer */
+					linear-gradient(135deg,
+						color-mix(in srgb, var(--accent) 12%, transparent) 0%,
+						transparent 45%,
+						color-mix(in srgb, var(--accent-2) 10%, transparent) 100%),
 					var(--bg);
 				color: var(--text);
 				min-height: 100vh;
+			}
+
+			/* Grain overlay */
+			body::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 0;
+				opacity: 0.045;
+				background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+				background-size: 200px 200px;
+			}
+			/* Slow-moving aurora shimmer */
+			body::after {
+				content: '';
+				position: fixed;
+				inset: -20%;
+				pointer-events: none;
+				z-index: 0;
+				background:
+					radial-gradient(ellipse 60% 40% at 30% 30%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+					radial-gradient(ellipse 50% 35% at 75% 70%, color-mix(in srgb, var(--accent-2) 9%, transparent), transparent 70%);
+				animation: aurora-drift 18s ease-in-out infinite alternate;
+				will-change: transform;
+			}
+			@keyframes aurora-drift {
+				0%   { transform: translate(0, 0)    scale(1); }
+				33%  { transform: translate(3%, -4%) scale(1.04); }
+				66%  { transform: translate(-4%, 3%) scale(0.97); }
+				100% { transform: translate(2%, 5%)  scale(1.02); }
+			}
+
+			/* Make sure page content sits above the grain */
+			.wrap, header, main {
+				position: relative;
+				z-index: 1;
 			}
 
 			.wrap {
 				min-height: 100vh;
 				display: grid;
 				place-items: center;
-				padding: 30px 18px;
+				padding: 30px var(--wrap-pad-x);
 			}
 
-			/* App stays visually centered, but resizes grow/shrink downward (top stays fixed). */
+			/* App is top-aligned so the card never jumps when tab content changes height. */
 			#app.wrap {
 				place-items: start center;
-				padding-top: var(--app-pad-top, 30px);
-				padding-bottom: 30px;
+				padding-top: 32px;
+				padding-bottom: 48px;
+				align-items: start;
 			}
 
 			/* Login stays visually centered, but auth tab resizes grow/shrink downward (top stays fixed). */
@@ -82,17 +217,34 @@
 			}
 
 			.card {
-				width: min(860px, 100%);
+				width: min(var(--card-max), 100%);
 				background: var(--card-bg);
 				border: 1px solid var(--card-border);
 				border-radius: var(--radius-lg);
-				padding: 22px;
+				padding: var(--card-pad);
 				overflow: hidden;
 				backface-visibility: hidden;
 				-webkit-backface-visibility: hidden;
 				box-shadow: var(--card-shadow), var(--card-shadow-2);
-				backdrop-filter: blur(var(--blur)) saturate(140%);
-				-webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
+				backdrop-filter: blur(var(--blur)) saturate(160%);
+				-webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+				animation: card-enter 0.6s var(--ease) both;
+				position: relative;
+			}
+			/* Coloured accent stripe at the top of the card */
+			.card::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0;
+				height: 3px;
+				background: var(--card-top-line);
+				border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+				opacity: 0.85;
+			}
+
+			@keyframes card-enter {
+				from { opacity: 0; transform: translateY(18px) scale(0.985); }
+				to   { opacity: 1; transform: translateY(0)   scale(1); }
 			}
 
 			#app .card {
@@ -116,30 +268,42 @@
 			}
 
 			.mark {
-				width: 44px;
-				height: 44px;
-				border-radius: 12px;
-				border: 1px solid var(--ring);
+				width: 46px;
+				height: 46px;
+				border-radius: 14px;
+				border: 1.5px solid var(--ring);
 				display: grid;
 				place-items: center;
-				font-weight: 700;
-				letter-spacing: -0.02em;
+				font-size: 1.15rem;
+				font-weight: 800;
+				letter-spacing: -0.03em;
 				user-select: none;
-				background: color-mix(in srgb, CanvasText 4%, transparent);
-				box-shadow: var(--inset);
+				background: linear-gradient(135deg, var(--accent-glow) 0%, var(--accent-glow-2) 100%);
+				box-shadow: var(--inset), 0 0 0 0 var(--accent-glow);
+				color: var(--accent);
+				transition: transform var(--t-mid) var(--ease-spring), box-shadow var(--t-mid) var(--ease);
+			}
+			.mark:hover {
+				transform: scale(1.1) rotate(-4deg);
+				box-shadow: var(--inset), 0 6px 22px var(--accent-glow);
 			}
 
 			h1 {
-				font-size: clamp(1.6rem, 1.1rem + 2vw, 2.3rem);
-				line-height: 1.15;
+				font-size: clamp(1.5rem, 1.1rem + 2vw, 2.2rem);
+				line-height: 1.12;
 				margin: 0;
-				letter-spacing: -0.03em;
+				letter-spacing: -0.04em;
+				background: linear-gradient(110deg, var(--text) 50%, var(--accent) 130%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
 			}
 
 			.subtitle {
-				margin: 6px 0 0;
+				margin: 5px 0 0;
 				color: var(--muted);
-				font-size: 1rem;
+				font-size: 0.92rem;
+				letter-spacing: 0.01em;
 			}
 
 			.row {
@@ -160,23 +324,34 @@
 			}
 
 			#save-status {
-				padding: 4px 10px;
+				padding: 3px 11px;
 				border-radius: 999px;
-				border: 1px solid var(--card-border);
-				color: var(--text);
-				background: color-mix(in srgb, CanvasText 6%, Canvas);
+				border: 1px solid var(--ok-border);
+				color: var(--ok-text);
+				background: var(--ok-bg);
+				font-size: 0.82rem;
+				font-weight: 700;
+				letter-spacing: 0.02em;
+				text-transform: uppercase;
+				animation: badge-pop var(--t-mid) var(--ease-spring) both;
+			}
+
+			@keyframes badge-pop {
+				from { opacity: 0; transform: scale(0.82); }
+				to   { opacity: 1; transform: scale(1); }
 			}
 
 			.tabs {
-				margin-top: 14px;
+				margin-top: 16px;
 				display: inline-flex;
-				gap: 8px;
-				padding: 6px;
+				gap: 4px;
+				padding: 4px;
 				border-radius: 999px;
 				border: 1px solid var(--card-border);
-				background: color-mix(in srgb, CanvasText 9%, transparent);
-				backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+				background: rgba(0,0,0,0.05);
+				backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
+				box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.06);
 			}
 
 			.tab {
@@ -184,17 +359,38 @@
 				border: 1px solid transparent;
 				background: transparent;
 				color: var(--muted);
-				padding: 8px 12px;
+				padding: 7px 14px;
 				border-radius: 999px;
+				font-size: 0.88rem;
 				font-weight: 600;
+				letter-spacing: 0.01em;
 				cursor: pointer;
+				transition:
+					color var(--t-fast) var(--ease),
+					background var(--t-fast) var(--ease),
+					border-color var(--t-fast) var(--ease),
+					box-shadow var(--t-mid) var(--ease),
+					transform var(--t-mid) var(--ease-spring);
+			}
+			.tab:hover:not([aria-selected='true']) {
+				color: var(--text);
+				background: rgba(255,255,255,0.18);
+			}
+			.tab:active {
+				transform: scale(0.93);
 			}
 
 			.tab[aria-selected='true'] {
-				color: var(--text);
-				background: color-mix(in srgb, Canvas 72%, transparent);
-				border-color: var(--card-border);
-				box-shadow: var(--inset);
+				color: var(--accent);
+				background: var(--card-bg);
+				border-color: var(--ring);
+				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
+				animation: tab-select var(--t-mid) var(--ease-spring) both;
+			}
+
+			@keyframes tab-select {
+				from { transform: scale(0.91); opacity: 0.7; }
+				to   { transform: scale(1);    opacity: 1; }
 			}
 
 			.btn {
@@ -202,40 +398,84 @@
 				border: 1px solid var(--btn-border);
 				background: var(--btn-bg);
 				color: var(--text);
-				padding: 10px 12px;
+				padding: 10px 16px;
 				border-radius: var(--radius-md);
+				font-size: 0.9rem;
 				font-weight: 600;
+				letter-spacing: 0.01em;
 				cursor: pointer;
-				box-shadow: var(--inset);
+				box-shadow: var(--inset), 0 1px 3px rgba(0,0,0,0.07);
+				transition:
+					background var(--t-fast) var(--ease),
+					border-color var(--t-fast) var(--ease),
+					box-shadow var(--t-mid) var(--ease),
+					transform var(--t-mid) var(--ease-spring),
+					opacity var(--t-fast) var(--ease);
 			}
 
 			.btn:hover {
 				background: var(--btn-hover);
+				border-color: var(--ring);
+				box-shadow: var(--inset), 0 4px 16px var(--accent-glow);
+				transform: translateY(-1px);
 			}
 
 			.btn:active {
 				background: var(--btn-active);
+				transform: scale(0.95) translateY(0);
+				box-shadow: var(--inset);
 			}
 
 			.btn:disabled {
-				opacity: 0.6;
+				opacity: 0.45;
 				cursor: not-allowed;
+				transform: none;
+			}
+
+			/* Accent/primary button variant */
+			.btn-accent {
+				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+				border-color: transparent;
+				color: #fff;
+				box-shadow: var(--inset), 0 4px 18px var(--accent-glow);
+			}
+			.btn-accent:hover {
+				background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 85%, #fff) 0%, color-mix(in srgb, var(--accent-2) 85%, #fff) 100%);
+				border-color: transparent;
+				box-shadow: var(--inset), 0 6px 24px var(--accent-glow);
+			}
+			.btn-accent:active {
+				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
 			}
 
 			.input,
 			textarea {
 				width: 100%;
-				padding: 10px 12px;
+				padding: 10px 13px;
 				border-radius: var(--radius-md);
-				border: 1px solid var(--input-border);
+				border: 1.5px solid var(--input-border);
 				background: var(--input-bg);
 				color: var(--text);
 				font: inherit;
-				box-shadow: var(--inset);
+				box-shadow: var(--inset), inset 0 1px 3px rgba(0,0,0,0.04);
+				transition:
+					border-color var(--t-fast) var(--ease),
+					box-shadow var(--t-mid) var(--ease),
+					background var(--t-fast) var(--ease);
+			}
+			.input:focus,
+			textarea:focus {
+				outline: none;
+				border-color: var(--accent);
+				box-shadow: var(--inset), 0 0 0 3.5px var(--accent-glow);
+			}
+			.input:hover:not(:focus),
+			textarea:hover:not(:focus) {
+				border-color: color-mix(in srgb, var(--accent) 45%, var(--input-border));
 			}
 
 			textarea {
-				min-height: 220px;
+				min-height: var(--textarea-h);
 				max-width: 100%;
 				display: block;
 				resize: vertical;
@@ -249,8 +489,11 @@
 
 			.field label {
 				display: block;
-				margin-bottom: 6px;
-				font-size: 0.95rem;
+				margin-bottom: 7px;
+				font-size: 0.82rem;
+				font-weight: 700;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
 				color: var(--muted);
 			}
 
@@ -283,6 +526,107 @@
 				font-weight: 700;
 			}
 
+			/* ── Files tab ─────────────────────────────────────── */
+			.upload-zone {
+				margin-top: 14px;
+				border: 2px dashed var(--panel-border);
+				border-radius: var(--radius-md);
+				padding: 28px 16px;
+				text-align: center;
+				cursor: pointer;
+				transition: border-color var(--t-mid) var(--ease), background var(--t-mid) var(--ease), box-shadow var(--t-mid) var(--ease);
+			}
+			.upload-zone:hover, .upload-zone.drag-over {
+				border-color: var(--accent);
+				background: var(--accent-glow);
+				box-shadow: 0 0 0 4px var(--accent-glow);
+			}
+			.upload-zone input[type="file"] {
+				display: none;
+			}
+			.upload-zone-label {
+				display: block;
+				font-weight: 600;
+				margin-bottom: 4px;
+			}
+			.upload-zone-sub {
+				font-size: 0.88rem;
+				color: var(--muted);
+			}
+			.upload-progress {
+				display: none;
+				margin-top: 12px;
+				height: 4px;
+				border-radius: 999px;
+				background: var(--panel-border);
+				overflow: hidden;
+			}
+			.upload-progress.visible { display: block; }
+			.upload-progress-bar {
+				height: 100%;
+				width: 0%;
+				background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+				border-radius: 999px;
+				transition: width 0.3s var(--ease);
+			}
+			.files-status {
+				margin-top: 10px;
+				min-height: 1.4em;
+				font-size: 0.92rem;
+				color: var(--muted);
+			}
+			.file-list {
+				margin-top: 14px;
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+			}
+			.file-row {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 9px 12px;
+				border-radius: var(--radius-md);
+				background: var(--btn-bg);
+				border: 1px solid var(--btn-border);
+				word-break: break-all;
+				transition: background var(--t-fast) var(--ease), transform var(--t-mid) var(--ease-spring), box-shadow var(--t-fast) var(--ease);
+				animation: file-row-in var(--t-slow) var(--ease) both;
+			}
+			.file-row:hover {
+				background: var(--btn-hover);
+				transform: translateY(-1px);
+				box-shadow: 0 4px 12px color-mix(in srgb, CanvasText 8%, transparent);
+			}
+
+			@keyframes file-row-in {
+				from { opacity: 0; transform: translateY(6px); }
+				to   { opacity: 1; transform: translateY(0); }
+			}
+			.file-row-name {
+				flex: 1;
+				font-size: 0.93rem;
+				font-weight: 600;
+			}
+			.file-row-meta {
+				font-size: 0.8rem;
+				color: var(--muted);
+				white-space: nowrap;
+			}
+			.file-row-actions {
+				display: flex;
+				gap: 6px;
+				flex-shrink: 0;
+			}
+
+			/* stagger file rows */
+			.file-row:nth-child(1)  { animation-delay:  0ms; }
+			.file-row:nth-child(2)  { animation-delay: 40ms; }
+			.file-row:nth-child(3)  { animation-delay: 80ms; }
+			.file-row:nth-child(4)  { animation-delay:120ms; }
+			.file-row:nth-child(5)  { animation-delay:160ms; }
+			.file-row:nth-child(n+6){ animation-delay:200ms; }
+
 			#panel-notes .row {
 				margin-bottom: 10px;
 			}
@@ -292,15 +636,104 @@
 				line-height: 1.35;
 			}
 
+			/* ── Multi-doc notes layout ──────────────────────── */
+			.notes-layout {
+				display: grid;
+				grid-template-columns: 220px 1fr;
+				gap: 14px;
+				margin-top: 14px;
+			}
+			@media (max-width: 600px) {
+				.notes-layout { grid-template-columns: 1fr; }
+				.notes-sidebar { max-height: 180px; }
+			}
+
+			.notes-sidebar {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				overflow-y: auto;
+				max-height: 460px;
+				padding-right: 2px;
+			}
+			.notes-sidebar::-webkit-scrollbar { width: 4px; }
+			.notes-sidebar::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 99px; }
+
+			.doc-item {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				padding: 8px 10px;
+				border-radius: var(--radius-md);
+				border: 1px solid transparent;
+				cursor: pointer;
+				background: transparent;
+				width: 100%;
+				text-align: left;
+				transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), transform var(--t-mid) var(--ease-spring);
+				animation: file-row-in var(--t-slow) var(--ease) both;
+			}
+			.doc-item:hover {
+				background: var(--btn-hover);
+				border-color: var(--panel-border);
+				transform: translateX(2px);
+			}
+			.doc-item.active {
+				background: var(--ok-bg);
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+			.doc-item-name {
+				flex: 1;
+				font-size: 0.88rem;
+				font-weight: 600;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			.doc-item-date {
+				font-size: 0.73rem;
+				color: var(--muted);
+				white-space: nowrap;
+			}
+
+			.notes-editor-col {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+			.notes-editor-toolbar {
+				display: flex;
+				gap: 8px;
+				align-items: center;
+				flex-wrap: wrap;
+			}
+			.notes-title-input {
+				flex: 1;
+				min-width: 120px;
+				font-weight: 700;
+				font-size: 1rem;
+			}
+			#notes {
+				margin-top: 0;
+				flex: 1;
+			}
+
 			.panel {
-				margin-top: 18px;
-				padding: 14px;
-				border-radius: var(--radius-lg);
+				margin-top: 20px;
+				padding: 18px;
+				border-radius: calc(var(--radius-lg) - 4px);
 				background: var(--panel-bg);
 				border: 1px solid var(--panel-border);
-				box-shadow: var(--inset);
-				backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.65)) saturate(140%);
+				box-shadow: var(--inset), 0 2px 12px rgba(0,0,0,0.04);
+				backdrop-filter: blur(calc(var(--blur) * 0.7)) saturate(150%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.7)) saturate(150%);
+				animation: panel-in var(--t-slow) var(--ease) both;
+			}
+
+			@keyframes panel-in {
+				from { opacity: 0; transform: translateY(10px) scale(0.99); }
+				to   { opacity: 1; transform: translateY(0)   scale(1); }
 			}
 
 			.status {
@@ -308,22 +741,33 @@
 				align-items: center;
 				gap: 8px;
 				margin: 18px 0 0;
-				padding: 9px 12px;
+				padding: 9px 16px;
 				border-radius: 999px;
 				background: var(--ok-bg);
 				border: 1px solid var(--ok-border);
 				color: var(--ok-text);
-				font-weight: 600;
+				font-size: 0.9rem;
+				font-weight: 700;
+				letter-spacing: 0.01em;
 				width: fit-content;
-				backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(140%);
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(140%);
+				box-shadow: 0 2px 12px var(--accent-glow);
+				backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(150%);
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(150%);
 			}
 
 			.dot {
 				width: 8px;
 				height: 8px;
 				border-radius: 999px;
-				background: currentColor;
+				background: var(--accent);
+				box-shadow: 0 0 0 0 var(--accent-glow);
+				animation: dot-pulse 2.4s var(--ease) infinite;
+			}
+
+			@keyframes dot-pulse {
+				0%   { opacity: 1;   transform: scale(1);    box-shadow: 0 0 0 0   var(--accent-glow); }
+				50%  { opacity: 0.7; transform: scale(0.8);  box-shadow: 0 0 0 5px transparent; }
+				100% { opacity: 1;   transform: scale(1);    box-shadow: 0 0 0 0   var(--accent-glow); }
 			}
 
 			.meta {
@@ -337,20 +781,22 @@
 				font-size: 0.95rem;
 			}
 
-			a {
-				color: var(--link);
-				text-underline-offset: 4px;
-			}
-
 			a:focus-visible,
 			.tab:focus-visible,
 			.btn:focus-visible,
 			.input:focus-visible,
 			textarea:focus-visible {
-				outline: 2px solid var(--ring);
+				outline: 2.5px solid var(--accent);
 				outline-offset: 3px;
 				border-radius: 12px;
 			}
+
+			a {
+				color: var(--accent);
+				text-underline-offset: 4px;
+				transition: color var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+			}
+			a:hover { opacity: 0.78; }
 
 			.hint {
 				margin: 10px 0 0;
@@ -358,10 +804,105 @@
 				font-size: 0.95rem;
 			}
 
+			/* ── Customization settings ───────────────────────────── */
+			.settings-section {
+				margin-top: 22px;
+				padding-top: 18px;
+				border-top: 1px solid var(--panel-border);
+			}
+			.settings-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+			.settings-section-title {
+				font-size: 0.78rem;
+				font-weight: 800;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--muted);
+				margin: 0 0 12px;
+			}
+
+			/* Colour swatches */
+			.swatch-row {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+			}
+			.swatch {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				border: 2.5px solid transparent;
+				cursor: pointer;
+				transition: transform var(--t-mid) var(--ease-spring), box-shadow var(--t-mid) var(--ease), border-color var(--t-fast) var(--ease);
+				outline: none;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+			}
+			.swatch:hover {
+				transform: scale(1.15);
+				box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+			}
+			.swatch.active {
+				border-color: var(--text);
+				transform: scale(1.18);
+				box-shadow: 0 0 0 3px var(--card-bg), 0 0 0 5px var(--text), 0 4px 16px rgba(0,0,0,0.18);
+			}
+
+			/* Option chips (font size, width, bg style) */
+			.chip-row {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+			.chip {
+				appearance: none;
+				border: 1.5px solid var(--btn-border);
+				background: var(--btn-bg);
+				color: var(--muted);
+				padding: 6px 14px;
+				border-radius: 999px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition:
+					background var(--t-fast) var(--ease),
+					border-color var(--t-fast) var(--ease),
+					color var(--t-fast) var(--ease),
+					box-shadow var(--t-mid) var(--ease),
+					transform var(--t-mid) var(--ease-spring);
+			}
+			.chip:hover {
+				border-color: var(--ring);
+				color: var(--text);
+				background: var(--btn-hover);
+			}
+			.chip:active { transform: scale(0.94); }
+			.chip.active {
+				background: var(--accent-glow);
+				border-color: var(--accent);
+				color: var(--accent);
+				box-shadow: 0 0 0 3px var(--accent-glow);
+			}
+
+			.prefs-save-row {
+				margin-top: 18px;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+			#prefs-status {
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
+
+			/* ── end customization ───────────────────────────────── */
+
 			@media (prefers-reduced-motion: reduce) {
 				* {
 					scroll-behavior: auto !important;
 					transition: none !important;
+					animation: none !important;
+				}
+				body::after {
 					animation: none !important;
 				}
 			}
@@ -424,7 +965,7 @@
 					</div>
 
 					<div class="actions">
-						<button class="btn" id="btn-login" type="button">Log in</button>
+						<button class="btn btn-accent" id="btn-login" type="button">Log in</button>
 					</div>
 					<p class="hint">You can log in with either username or email.</p>
 				</section>
@@ -449,7 +990,7 @@
 					</div>
 
 					<div class="actions">
-						<button class="btn" id="btn-signup" type="button">Create account</button>
+						<button class="btn btn-accent" id="btn-signup" type="button">Create account</button>
 					</div>
 					<p class="hint">Create account requires username + email.</p>
 				</section>
@@ -469,9 +1010,8 @@
 						<div class="tabs" role="tablist" aria-label="Page tabs">
 							<button class="tab" id="tab-home" type="button" role="tab" aria-controls="panel-home" aria-selected="true">Home</button>
 							<button class="tab" id="tab-notes" type="button" role="tab" aria-controls="panel-notes" aria-selected="false">Notes</button>
-								<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">
-									Settings
-								</button>
+							<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">Settings</button>
+							<button class="tab" id="tab-files" type="button" role="tab" aria-controls="panel-files" aria-selected="false">Files</button>
 						</div>
 					</div>
 						<div class="header-actions">
@@ -492,21 +1032,41 @@
 				</section>
 
 				<section class="panel" id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
-					<div class="row">
+					<div class="row" style="margin-bottom:0">
 						<div class="auth">
 							<span id="auth-status">Checking sign-in…</span>
 							<span id="save-status" hidden>Saved</span>
 						</div>
+						<div style="display:flex;gap:8px;align-items:center">
+							<button class="btn btn-small btn-accent" id="btn-new-doc" type="button" title="New document">+ New</button>
+							<button class="btn btn-small" id="btn-dl-all" type="button" title="Download all as zip">⤓ All</button>
+						</div>
 					</div>
 
-					<label class="notes-label" for="notes">Small notes</label>
-					<textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea>
-					<p class="hint" id="notes-hint">Your notes sync to the cloud.</p>
+					<div class="notes-layout">
+						<!-- Sidebar: document list -->
+						<div class="notes-sidebar" id="doc-list" role="list" aria-label="Documents"></div>
+
+						<!-- Editor -->
+						<div class="notes-editor-col" id="notes-editor-col">
+							<div class="notes-editor-toolbar">
+								<input class="input notes-title-input" id="doc-title" type="text" placeholder="Document title" />
+								<button class="btn btn-small" id="btn-rename-doc" type="button">Rename</button>
+								<button class="btn btn-small" id="btn-dl-doc" type="button" title="Download as .txt">⤓ .txt</button>
+								<button class="btn btn-small" id="btn-delete-doc" type="button" title="Delete document">🗑</button>
+							</div>
+							<textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea>
+							<p class="hint" id="notes-hint">Your notes sync to the cloud.</p>
+						</div>
+					</div>
 				</section>
 
 					<section class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
-						<p class="subtitle" style="margin-top: 18px">Account settings</p>
-						<p class="hint" id="acct-current">Signed in</p>
+
+					<!-- Account -->
+					<div class="settings-section">
+						<p class="settings-section-title">Account</p>
+						<p class="hint" id="acct-current" style="margin:0 0 14px">Signed in</p>
 						<div class="fields">
 							<div class="field">
 								<label for="acct-username">New username</label>
@@ -528,6 +1088,68 @@
 							</div>
 						</div>
 						<p class="hint" id="acct-status"></p>
+					</div>
+
+					<!-- Customization -->
+					<div class="settings-section">
+						<p class="settings-section-title">Customization</p>
+
+						<!-- Accent colour -->
+						<div class="field" style="margin-bottom:18px">
+							<label style="margin-bottom:10px">Accent colour</label>
+							<div class="swatch-row" id="swatch-row" role="radiogroup" aria-label="Accent colour"></div>
+						</div>
+
+						<!-- Font size -->
+						<div class="field" style="margin-bottom:18px">
+							<label style="margin-bottom:10px">Font size</label>
+							<div class="chip-row" id="chips-fontsize" role="radiogroup" aria-label="Font size">
+								<button class="chip" data-val="small"  type="button">Small</button>
+								<button class="chip" data-val="medium" type="button">Medium</button>
+								<button class="chip" data-val="large"  type="button">Large</button>
+							</div>
+						</div>
+
+						<!-- Card width -->
+						<div class="field" style="margin-bottom:18px">
+							<label style="margin-bottom:10px">Card width</label>
+							<div class="chip-row" id="chips-cardwidth" role="radiogroup" aria-label="Card width">
+								<button class="chip" data-val="compact" type="button">Compact</button>
+								<button class="chip" data-val="regular" type="button">Regular</button>
+								<button class="chip" data-val="wide"    type="button">Wide</button>
+							</div>
+						</div>
+
+						<!-- Background style -->
+						<div class="field">
+							<label style="margin-bottom:10px">Background</label>
+							<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
+								<button class="chip" data-val="aurora"  type="button">Aurora</button>
+								<button class="chip" data-val="subtle"  type="button">Subtle</button>
+								<button class="chip" data-val="minimal" type="button">Minimal</button>
+							</div>
+						</div>
+
+						<div class="prefs-save-row">
+							<button class="btn btn-accent" id="btn-save-prefs" type="button">Save preferences</button>
+							<span id="prefs-status"></span>
+						</div>
+					</div>
+
+				</section>
+
+					<section class="panel" id="panel-files" role="tabpanel" aria-labelledby="tab-files" hidden>
+						<p class="subtitle" style="margin-top: 4px; margin-bottom: 2px">Files</p>
+						<div class="upload-zone" id="files-upload-zone" role="button" tabindex="0" aria-label="Upload files">
+							<input type="file" id="files-input" multiple />
+							<span class="upload-zone-label">Click or drag files here to upload</span>
+							<span class="upload-zone-sub">Files are private to your account</span>
+						</div>
+						<div class="upload-progress" id="files-upload-progress">
+							<div class="upload-progress-bar" id="files-upload-bar"></div>
+						</div>
+						<p class="files-status" id="files-status" aria-live="polite"></p>
+						<div class="file-list" id="file-list"></div>
 					</section>
 			</main>
 		</div>
@@ -573,6 +1195,7 @@
 				{ tab: document.getElementById('tab-home'), panel: document.getElementById('panel-home') },
 				{ tab: document.getElementById('tab-notes'), panel: document.getElementById('panel-notes') },
 				{ tab: document.getElementById('tab-settings'), panel: document.getElementById('panel-settings') },
+				{ tab: document.getElementById('tab-files'), panel: document.getElementById('panel-files') },
 			];
 
 			const authTabs = [
@@ -675,7 +1298,6 @@
 					notesEl.placeholder = 'Write quick notes here…';
 				}
 				if (notesHintEl) notesHintEl.textContent = 'Auto-saves to the cloud.';
-				recenterAppCard();
 			}
 
 			function getAppCard() {
@@ -687,15 +1309,7 @@
 			}
 
 			function recenterAppCard() {
-				if (!inApp || !appEl) return;
-				window.requestAnimationFrame(() => {
-					const card = getAppCard();
-					if (!card) return;
-					const viewH = window.innerHeight || 0;
-					const cardH = card.getBoundingClientRect().height;
-					const top = Math.max(24, Math.round((viewH - cardH) / 2));
-					appEl.style.setProperty('--app-pad-top', `${top}px`);
-				});
+				// App is now top-aligned — no dynamic centring needed.
 			}
 
 			function recenterLoginCard() {
@@ -904,6 +1518,13 @@
 				});
 			}
 
+			function replayPanelAnimation(panel) {
+				if (!panel) return;
+				panel.style.animation = 'none';
+				void panel.offsetWidth; // reflow
+				panel.style.animation = '';
+			}
+
 			function selectTab(selectedId) {
 				if (!selectedId) return;
 				animateAppLayoutChange(() => {
@@ -912,6 +1533,7 @@
 						const selected = tab.id === selectedId;
 						tab.setAttribute('aria-selected', String(selected));
 						panel.hidden = !selected;
+						if (selected) replayPanelAnimation(panel);
 					}
 				});
 			}
@@ -924,6 +1546,7 @@
 						const selected = tab.id === selectedId;
 						tab.setAttribute('aria-selected', String(selected));
 						panel.hidden = !selected;
+						if (selected) replayPanelAnimation(panel);
 					}
 				});
 			}
@@ -1243,7 +1866,6 @@
 				let activeUser = null;
 				let activeAccessToken = null;
 				let activeUsingRest = false;
-				let saveTimer = null;
 				let applySessionInFlight = null;
 				let applySessionRun = 0;
 
@@ -1324,6 +1946,8 @@
 					if (acctUsernameEl) acctUsernameEl.value = '';
 					if (acctPasswordEl) acctPasswordEl.value = '';
 					setAccountStatus('');
+					// Load and apply this account's saved preferences
+					loadPrefs(user.id);
 					return true;
 				}
 
@@ -1359,23 +1983,101 @@
 					await restUpsertUsernameMapping(username, userId, email, accessToken);
 				}
 
-				async function restGetNotes(userId, accessToken) {
-					const url = `${SUPABASE_URL}/rest/v1/notes?select=content&user_id=eq.${encodeURIComponent(userId)}`;
-					const res = await fetch(url, {
-						method: 'GET',
-						headers: {
-							apikey: SUPABASE_ANON_KEY,
-							Authorization: `Bearer ${accessToken}`,
-							Accept: 'application/json',
-						},
-					});
-					if (!res.ok) throw new Error(`Notes load failed (HTTP ${res.status})`);
-					const arr = await res.json();
-					return Array.isArray(arr) && arr.length ? arr[0]?.content ?? '' : '';
+				// ── Multi-doc notes ──────────────────────────────────────
+
+				// In-memory store: [{ id, title, content, updated_at }]
+				let noteDocs = [];
+				let activeDocId = null;
+				let docSaveTimer = null;
+
+				const docListEl      = document.getElementById('doc-list');
+				const docTitleEl     = document.getElementById('doc-title');
+				const newDocBtn      = document.getElementById('btn-new-doc');
+				const renameDocBtn   = document.getElementById('btn-rename-doc');
+				const deleteDocBtn   = document.getElementById('btn-delete-doc');
+				const dlDocBtn       = document.getElementById('btn-dl-doc');
+				const dlAllBtn       = document.getElementById('btn-dl-all');
+
+				function notesLocalKey(userId) { return `ectl_notedocs_${userId}`; }
+
+				function saveDocsLocally(userId) {
+					try { localStorage.setItem(notesLocalKey(userId), JSON.stringify(noteDocs)); } catch { /* ignore */ }
 				}
 
-				async function restUpsertNotes(userId, content, accessToken) {
-					const res = await fetch(`${SUPABASE_URL}/rest/v1/notes`, {
+				function loadDocsLocally(userId) {
+					try {
+						const raw = localStorage.getItem(notesLocalKey(userId));
+						return raw ? JSON.parse(raw) : null;
+					} catch { return null; }
+				}
+
+				function genId() {
+					return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+				}
+
+				function fmtDate(iso) {
+					if (!iso) return '';
+					const d = new Date(iso);
+					const now = new Date();
+					const sameDay = d.toDateString() === now.toDateString();
+					if (sameDay) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+					return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+				}
+
+				function renderDocList() {
+					if (!docListEl) return;
+					docListEl.innerHTML = '';
+					const sorted = [...noteDocs].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+					for (const doc of sorted) {
+						const btn = document.createElement('button');
+						btn.className = 'doc-item' + (doc.id === activeDocId ? ' active' : '');
+						btn.type = 'button';
+						btn.setAttribute('role', 'listitem');
+						btn.innerHTML = `
+							<span class="doc-item-name">${escHtml(doc.title || 'Untitled')}</span>
+							<span class="doc-item-date">${fmtDate(doc.updated_at)}</span>
+						`;
+						btn.addEventListener('click', () => switchDoc(doc.id));
+						docListEl.appendChild(btn);
+					}
+				}
+
+				function escHtml(s) {
+					return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+				}
+
+				function switchDoc(id) {
+					// Flush any pending save to the old doc first
+					if (docSaveTimer) { clearTimeout(docSaveTimer); docSaveTimer = null; }
+					if (activeDocId && notesEl) {
+						const prev = noteDocs.find(d => d.id === activeDocId);
+						if (prev) prev.content = notesEl.value;
+					}
+					activeDocId = id;
+					const doc = noteDocs.find(d => d.id === id);
+					if (!doc) return;
+					if (notesEl)    { notesEl.value = doc.content ?? ''; }
+					if (docTitleEl) { docTitleEl.value = doc.title ?? ''; }
+					notesEl?.focus();
+					renderDocList();
+				}
+
+				function createDoc(title) {
+					return { id: genId(), title: title || 'Untitled', content: '', updated_at: new Date().toISOString() };
+				}
+
+				// ── REST helpers for note_docs table ──
+				async function restGetDocs(userId, accessToken) {
+					const url = `${SUPABASE_URL}/rest/v1/note_docs?select=id,title,content,updated_at&user_id=eq.${encodeURIComponent(userId)}&order=updated_at.desc`;
+					const res = await fetch(url, {
+						headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${accessToken}`, Accept: 'application/json' },
+					});
+					if (!res.ok) throw new Error(`Docs load failed (HTTP ${res.status})`);
+					return res.json();
+				}
+
+				async function restUpsertDoc(userId, doc, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/note_docs?on_conflict=id`, {
 						method: 'POST',
 						headers: {
 							apikey: SUPABASE_ANON_KEY,
@@ -1384,82 +2086,222 @@
 							Prefer: 'resolution=merge-duplicates',
 							Accept: 'application/json',
 						},
-						body: JSON.stringify([
-							{
-								user_id: userId,
-								content,
-								updated_at: new Date().toISOString(),
-							},
-						]),
+						body: JSON.stringify([{ id: doc.id, user_id: userId, title: doc.title, content: doc.content, updated_at: doc.updated_at }]),
 					});
 					if (!res.ok) {
-						let msg = `Notes save failed (HTTP ${res.status})`;
-						try {
-							const t = await res.text();
-							if (t) msg = `${msg}: ${t}`;
-						} catch {
-							// ignore
-						}
-						throw new Error(msg);
+						let d = ''; try { d = await res.text(); } catch { /* ignore */ }
+						throw new Error(`HTTP ${res.status}${d ? ': ' + d : ''}`);
 					}
 				}
 
+				async function restDeleteDoc(userId, docId, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/note_docs?id=eq.${encodeURIComponent(docId)}&user_id=eq.${encodeURIComponent(userId)}`, {
+						method: 'DELETE',
+						headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${accessToken}`, Prefer: 'return=minimal' },
+					});
+					if (!res.ok) throw new Error(`Doc delete failed (HTTP ${res.status})`);
+				}
+
+				// ── Load / save ──
 				async function loadNotes(userId) {
 					if (!notesEl) return;
+					notesEl.disabled = true;
 					setSaveStatus('Loading…');
 					try {
-						if (activeUsingRest) {
-							notesEl.value = await withTimeout(restGetNotes(userId, activeAccessToken), AUTH_TIMEOUT_MS, 'Notes load');
-						} else {
-							const { data, error } = await supabase
-								.from('notes')
-								.select('content')
-								.eq('user_id', userId)
-								.maybeSingle();
-							if (error) throw error;
-							notesEl.value = data?.content ?? '';
-						}
-						setSaveStatus('');
-					} catch {
-						setSaveStatus('Failed to load');
+						const rows = await withTimeout(restGetDocs(userId, activeAccessToken), AUTH_TIMEOUT_MS, 'Docs load');
+						noteDocs = Array.isArray(rows) ? rows : [];
+						saveDocsLocally(userId);
+					} catch (e) {
+						console.warn('Cloud docs load failed, using localStorage:', e?.message);
+						const local = loadDocsLocally(userId);
+						noteDocs = Array.isArray(local) ? local : [];
 					}
+					// Ensure at least one document
+					if (noteDocs.length === 0) { const d = createDoc('My Notes'); noteDocs.push(d); }
+					notesEl.disabled = false;
+					notesEl.placeholder = 'Write your notes here…';
+					switchDoc(noteDocs[0].id);
+					renderDocList();
+					setSaveStatus('');
 				}
 
-				async function saveNotes(userId, content) {
-					if (!notesEl) return;
+				async function saveCurrentDoc() {
+					if (!activeDocId || !activeUserId) return;
+					const doc = noteDocs.find(d => d.id === activeDocId);
+					if (!doc) return;
+					if (notesEl) doc.content = notesEl.value;
+					doc.updated_at = new Date().toISOString();
+					saveDocsLocally(activeUserId);
+					renderDocList();
 					setSaveStatus('Saving…');
 					try {
-						if (activeUsingRest) {
-							await withTimeout(restUpsertNotes(userId, content, activeAccessToken), AUTH_TIMEOUT_MS, 'Notes save');
-						} else {
-							const { error } = await supabase.from('notes').upsert(
-								{
-									user_id: userId,
-									content,
-									updated_at: new Date().toISOString(),
-								},
-								{ onConflict: 'user_id' },
-							);
-							if (error) throw error;
+						await withTimeout(restUpsertDoc(activeUserId, doc, activeAccessToken), AUTH_TIMEOUT_MS, 'Doc save');
+						setSaveStatus('Saved');
+					} catch (e) {
+						console.warn('Cloud save failed, kept locally:', e?.message);
+						setSaveStatus('Saved locally');
+					}
+					window.setTimeout(() => setSaveStatus(''), 1400);
+				}
+
+				function scheduleDocSave() {
+					if (docSaveTimer) clearTimeout(docSaveTimer);
+					docSaveTimer = setTimeout(saveCurrentDoc, 600);
+				}
+
+				if (notesEl) notesEl.addEventListener('input', scheduleDocSave);
+
+				// ── New doc ──
+				if (newDocBtn) {
+					newDocBtn.addEventListener('click', () => {
+						const title = prompt('Document title:', 'Untitled');
+						if (title === null) return; // cancelled
+						const doc = createDoc(title.trim() || 'Untitled');
+						noteDocs.unshift(doc);
+						renderDocList();
+						switchDoc(doc.id);
+						if (activeUserId) saveDocsLocally(activeUserId);
+						// Also save to cloud immediately
+						if (activeUserId && activeAccessToken) {
+							restUpsertDoc(activeUserId, doc, activeAccessToken).catch(e => console.warn('New doc cloud save:', e?.message));
 						}
-					} catch {
-						setSaveStatus('Failed to save');
-						return;
+					});
+				}
+
+				// ── Rename doc ──
+				if (renameDocBtn) {
+					renameDocBtn.addEventListener('click', () => {
+						const doc = noteDocs.find(d => d.id === activeDocId);
+						if (!doc) return;
+						const newTitle = (docTitleEl?.value ?? '').trim();
+						if (!newTitle) return;
+						doc.title = newTitle;
+						doc.updated_at = new Date().toISOString();
+						renderDocList();
+						if (activeUserId) saveDocsLocally(activeUserId);
+						if (activeUserId && activeAccessToken) {
+							restUpsertDoc(activeUserId, doc, activeAccessToken).catch(e => console.warn('Rename cloud save:', e?.message));
+						}
+					});
+				}
+
+				// ── Delete doc ──
+				if (deleteDocBtn) {
+					deleteDocBtn.addEventListener('click', async () => {
+						const doc = noteDocs.find(d => d.id === activeDocId);
+						if (!doc) return;
+						if (!confirm(`Delete "${doc.title}"? This cannot be undone.`)) return;
+						noteDocs = noteDocs.filter(d => d.id !== activeDocId);
+						if (activeUserId) {
+							saveDocsLocally(activeUserId);
+							if (activeAccessToken) restDeleteDoc(activeUserId, doc.id, activeAccessToken).catch(e => console.warn('Delete cloud:', e?.message));
+						}
+						if (noteDocs.length === 0) { const d = createDoc('My Notes'); noteDocs.push(d); }
+						switchDoc(noteDocs[0].id);
+						renderDocList();
+					});
+				}
+
+				// ── Download single doc as .txt ──
+				if (dlDocBtn) {
+					dlDocBtn.addEventListener('click', () => {
+						const doc = noteDocs.find(d => d.id === activeDocId);
+						if (!doc) return;
+						if (notesEl) doc.content = notesEl.value;
+						const blob = new Blob([doc.content ?? ''], { type: 'text/plain' });
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = `${(doc.title || 'note').replace(/[^\w\s-]/g, '')}.txt`;
+						a.click();
+						URL.revokeObjectURL(a.href);
+					});
+				}
+
+				// ── Download all docs as .zip (pure JS, no library needed) ──
+				if (dlAllBtn) {
+					dlAllBtn.addEventListener('click', async () => {
+						// Flush current editor content
+						if (activeDocId && notesEl) {
+							const cur = noteDocs.find(d => d.id === activeDocId);
+							if (cur) cur.content = notesEl.value;
+						}
+						const zip = buildZip(noteDocs.map(doc => ({
+							name: `${(doc.title || 'note').replace(/[^\w\s-]/g, '') || 'note'}.txt`,
+							data: doc.content ?? '',
+						})));
+						const blob = new Blob([zip], { type: 'application/zip' });
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = 'notes.zip';
+						a.click();
+						URL.revokeObjectURL(a.href);
+					});
+				}
+
+				// Minimal pure-JS ZIP builder (STORE method, no compression – fine for text)
+				function buildZip(files) {
+					const enc = new TextEncoder();
+					const parts = [];
+					const centralDir = [];
+					let offset = 0;
+
+					function u16(n) { const b = new Uint8Array(2); new DataView(b.buffer).setUint16(0, n, true); return b; }
+					function u32(n) { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, n, true); return b; }
+
+					function crc32(data) {
+						let crc = 0xFFFFFFFF;
+						for (const byte of data) {
+							crc ^= byte;
+							for (let i = 0; i < 8; i++) crc = (crc & 1) ? (crc >>> 1) ^ 0xEDB88320 : crc >>> 1;
+						}
+						return (crc ^ 0xFFFFFFFF) >>> 0;
 					}
 
-					setSaveStatus('Saved');
-					window.setTimeout(() => setSaveStatus(''), 1200);
+					for (const file of files) {
+						const nameBytes = enc.encode(file.name);
+						const dataBytes = enc.encode(file.data);
+						const crc = crc32(dataBytes);
+						const local = new Uint8Array([
+							...u32(0x04034b50), // local file header sig
+							...u16(20), ...u16(0), ...u16(0), // version, flags, method (STORE)
+							...u16(0), ...u16(0),             // mod time/date
+							...u32(crc),
+							...u32(dataBytes.length), ...u32(dataBytes.length), // compressed = uncompressed
+							...u16(nameBytes.length), ...u16(0),
+							...nameBytes,
+							...dataBytes,
+						]);
+						parts.push(local);
+						centralDir.push(new Uint8Array([
+							...u32(0x02014b50), // central dir sig
+							...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0),
+							...u16(0), ...u16(0),
+							...u32(crc),
+							...u32(dataBytes.length), ...u32(dataBytes.length),
+							...u16(nameBytes.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0),
+							...u32(0), ...u32(offset),
+							...nameBytes,
+						]));
+						offset += local.length;
+					}
+
+					const cdSize = centralDir.reduce((s, b) => s + b.length, 0);
+					const eocd = new Uint8Array([
+						...u32(0x06054b50),
+						...u16(0), ...u16(0),
+						...u16(files.length), ...u16(files.length),
+						...u32(cdSize), ...u32(offset),
+						...u16(0),
+					]);
+
+					const total = [...parts, ...centralDir, eocd].reduce((s,b) => s+b.length, 0);
+					const out = new Uint8Array(total);
+					let pos = 0;
+					for (const b of [...parts, ...centralDir, eocd]) { out.set(b, pos); pos += b.length; }
+					return out;
 				}
 
-				function scheduleSave() {
-					if (!activeUserId || !notesEl) return;
-					if (saveTimer) window.clearTimeout(saveTimer);
-					saveTimer = window.setTimeout(() => {
-						saveNotes(activeUserId, notesEl.value);
-					}, 350);
-				}
-
-				if (notesEl) notesEl.addEventListener('input', scheduleSave);
+				// ── end multi-doc notes ─────────────────────────────────
 
 				async function applySession(session, label) {
 					if (applySessionInFlight) return applySessionInFlight;
@@ -1621,13 +2463,23 @@
 					signOutBtn.addEventListener('click', async () => {
 						try {
 							if (!activeUsingRest) {
-								await withTimeout(supabase.auth.signOut(), AUTH_TIMEOUT_MS, 'Sign out');
+								try {
+									await withTimeout(supabase.auth.signOut(), AUTH_TIMEOUT_MS, 'Sign out');
+								} catch {
+									// ignore supabase sign-out errors; we clear local state regardless
+								}
 							}
 						} finally {
+							// Clear all local auth state immediately.
 							activeUsingRest = false;
 							activeUser = null;
 							activeAccessToken = null;
-							await applySession(null, 'SIGNED_OUT');
+							activeUserId = null;
+							// Reset the in-flight guard so a second sign-out/login is never blocked.
+							applySessionInFlight = null;
+							// Reset preferences to defaults
+							applyPrefs({ accentIndex: 0, fontSize: 'medium', cardWidth: 'regular', bgStyle: 'aurora' });
+							showLogin('Signed out.');
 						}
 					});
 				}
@@ -1726,6 +2578,511 @@
 						}
 					});
 				}
+
+				// ── Files tab ────────────────────────────────────────────────────────
+				const FILES_BUCKET = 'user-files';
+
+				const filesUploadZoneEl = document.getElementById('files-upload-zone');
+				const filesInputEl = document.getElementById('files-input');
+				const filesUploadProgressEl = document.getElementById('files-upload-progress');
+				const filesUploadBarEl = document.getElementById('files-upload-bar');
+				const filesStatusEl = document.getElementById('files-status');
+				const fileListEl = document.getElementById('file-list');
+
+				function setFilesStatus(text) {
+					if (filesStatusEl) filesStatusEl.textContent = text || '';
+				}
+
+				function formatBytes(bytes) {
+					if (bytes == null) return '';
+					if (bytes < 1024) return `${bytes} B`;
+					if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+					return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+				}
+
+				function formatDate(iso) {
+					if (!iso) return '';
+					try {
+						return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+					} catch {
+						return '';
+					}
+				}
+
+				// Storage path is user-scoped so RLS/policies can gate by prefix.
+				function storagePath(fileName) {
+					return `${activeUserId}/${fileName}`;
+				}
+
+				async function storageListFiles() {
+					const res = await fetch(
+						`${SUPABASE_URL}/storage/v1/object/list/${FILES_BUCKET}`,
+						{
+							method: 'POST',
+							headers: {
+								apikey: SUPABASE_ANON_KEY,
+								Authorization: `Bearer ${activeAccessToken}`,
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({ prefix: `${activeUserId}/`, limit: 200, offset: 0, sortBy: { column: 'created_at', order: 'desc' } }),
+						},
+					);
+					if (!res.ok) throw new Error(`List files failed (HTTP ${res.status})`);
+					const items = await res.json();
+					// Filter out placeholder folders (name ends with /)
+					return (Array.isArray(items) ? items : []).filter((f) => f.name && !f.name.endsWith('/'));
+				}
+
+				async function storageUploadFile(file, onProgress) {
+					// Use XHR so we can get upload progress.
+					const path = storagePath(file.name);
+					return new Promise((resolve, reject) => {
+						const xhr = new XMLHttpRequest();
+						// Use PUT with upsert header so re-uploading the same file works.
+						xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/${FILES_BUCKET}/${encodeURIComponent(path)}`, true);
+						xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+						xhr.setRequestHeader('Authorization', `Bearer ${activeAccessToken}`);
+						xhr.setRequestHeader('x-upsert', 'true');
+						xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+						xhr.upload.onprogress = (e) => {
+							if (e.lengthComputable) onProgress?.(e.loaded / e.total);
+						};
+						xhr.onload = () => {
+							if (xhr.status >= 200 && xhr.status < 300) {
+								resolve();
+							} else {
+								let msg = `Upload failed (HTTP ${xhr.status})`;
+								try { const b = JSON.parse(xhr.responseText); if (b?.message) msg = b.message; } catch {}
+								reject(new Error(msg));
+							}
+						};
+						xhr.onerror = () => reject(new Error('Upload network error'));
+						xhr.send(file);
+					});
+				}
+
+				async function storageDeleteFile(fileName) {
+					const path = storagePath(fileName);
+					const res = await fetch(
+						`${SUPABASE_URL}/storage/v1/object/${FILES_BUCKET}/${encodeURIComponent(path)}`,
+						{
+							method: 'DELETE',
+							headers: {
+								apikey: SUPABASE_ANON_KEY,
+								Authorization: `Bearer ${activeAccessToken}`,
+							},
+						},
+					);
+					if (!res.ok) throw new Error(`Delete failed (HTTP ${res.status})`);
+				}
+
+				function storageDownloadUrl(fileName) {
+					// Authenticated download via signed URL approach — just link directly with the token.
+					const path = storagePath(fileName);
+					return `${SUPABASE_URL}/storage/v1/object/authenticated/${FILES_BUCKET}/${encodeURIComponent(path)}`;
+				}
+
+				async function storageDownloadFile(fileName) {
+					const path = storagePath(fileName);
+					const res = await fetch(
+						`${SUPABASE_URL}/storage/v1/object/${FILES_BUCKET}/${encodeURIComponent(path)}`,
+						{
+							headers: {
+								apikey: SUPABASE_ANON_KEY,
+								Authorization: `Bearer ${activeAccessToken}`,
+							},
+						},
+					);
+					if (!res.ok) throw new Error(`Download failed (HTTP ${res.status})`);
+					const blob = await res.blob();
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = fileName;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					URL.revokeObjectURL(url);
+				}
+
+				async function refreshFileList() {
+					if (!activeUserId || !activeAccessToken) return;
+					setFilesStatus('Loading…');
+					try {
+						const files = await withTimeout(storageListFiles(), AUTH_TIMEOUT_MS, 'List files');
+						renderFileList(files);
+						setFilesStatus(files.length === 0 ? 'No files yet.' : '');
+					} catch (e) {
+						console.error('Files list error', e);
+						setFilesStatus(`Failed to load files: ${e?.message || e}`);
+					}
+				}
+
+				function renderFileList(files) {
+					if (!fileListEl) return;
+					fileListEl.innerHTML = '';
+					for (const f of files) {
+						const row = document.createElement('div');
+						row.className = 'file-row';
+
+						const nameEl = document.createElement('span');
+						nameEl.className = 'file-row-name';
+						nameEl.textContent = f.name;
+
+						const metaEl = document.createElement('span');
+						metaEl.className = 'file-row-meta';
+						const size = f.metadata?.size ?? f.metadata?.contentLength ?? null;
+						const date = f.created_at || f.updated_at || null;
+						metaEl.textContent = [formatBytes(size), formatDate(date)].filter(Boolean).join(' · ');
+
+						const actionsEl = document.createElement('div');
+						actionsEl.className = 'file-row-actions';
+
+						const dlBtn = document.createElement('button');
+						dlBtn.className = 'btn btn-small';
+						dlBtn.textContent = 'Download';
+						dlBtn.type = 'button';
+						dlBtn.addEventListener('click', async () => {
+							dlBtn.disabled = true;
+							try {
+								await storageDownloadFile(f.name);
+							} catch (e) {
+								setFilesStatus(`Download failed: ${e?.message || e}`);
+							} finally {
+								dlBtn.disabled = false;
+							}
+						});
+
+						const delBtn = document.createElement('button');
+						delBtn.className = 'btn btn-small';
+						delBtn.textContent = 'Delete';
+						delBtn.type = 'button';
+						delBtn.addEventListener('click', async () => {
+							if (!window.confirm(`Delete "${f.name}"?`)) return;
+							delBtn.disabled = true;
+							try {
+								await withTimeout(storageDeleteFile(f.name), AUTH_TIMEOUT_MS, 'Delete file');
+								await refreshFileList();
+							} catch (e) {
+								setFilesStatus(`Delete failed: ${e?.message || e}`);
+								delBtn.disabled = false;
+							}
+						});
+
+						actionsEl.appendChild(dlBtn);
+						actionsEl.appendChild(delBtn);
+						row.appendChild(nameEl);
+						row.appendChild(metaEl);
+						row.appendChild(actionsEl);
+						fileListEl.appendChild(row);
+					}
+				}
+
+				async function handleUploadFiles(fileList) {
+					if (!fileList || !fileList.length) return;
+					const files = Array.from(fileList);
+					if (filesUploadProgressEl) filesUploadProgressEl.classList.add('visible');
+					let done = 0;
+					const errors = [];
+					for (const file of files) {
+						setFilesStatus(`Uploading ${file.name}…`);
+						try {
+							await storageUploadFile(file, (pct) => {
+								const overall = (done + pct) / files.length;
+								if (filesUploadBarEl) filesUploadBarEl.style.width = `${Math.round(overall * 100)}%`;
+							});
+							done += 1;
+							if (filesUploadBarEl) filesUploadBarEl.style.width = `${Math.round((done / files.length) * 100)}%`;
+						} catch (e) {
+							console.error('Upload error', e);
+							errors.push(`${file.name}: ${e?.message || e}`);
+						}
+					}
+					if (filesUploadProgressEl) filesUploadProgressEl.classList.remove('visible');
+					if (filesUploadBarEl) filesUploadBarEl.style.width = '0%';
+					if (filesInputEl) filesInputEl.value = '';
+					if (errors.length) {
+						setFilesStatus(`Errors: ${errors.join('; ')}`);
+					} else {
+						setFilesStatus(`${done} file${done !== 1 ? 's' : ''} uploaded.`);
+					}
+					await refreshFileList();
+				}
+
+				// Click to open file picker
+				if (filesUploadZoneEl && filesInputEl) {
+					filesUploadZoneEl.addEventListener('click', (e) => {
+						if (e.target === filesInputEl) return;
+						filesInputEl.click();
+					});
+					filesUploadZoneEl.addEventListener('keydown', (e) => {
+						if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); filesInputEl.click(); }
+					});
+					filesInputEl.addEventListener('change', () => handleUploadFiles(filesInputEl.files));
+				}
+
+				// Drag-and-drop
+				if (filesUploadZoneEl) {
+					filesUploadZoneEl.addEventListener('dragover', (e) => { e.preventDefault(); filesUploadZoneEl.classList.add('drag-over'); });
+					filesUploadZoneEl.addEventListener('dragleave', () => filesUploadZoneEl.classList.remove('drag-over'));
+					filesUploadZoneEl.addEventListener('drop', (e) => {
+						e.preventDefault();
+						filesUploadZoneEl.classList.remove('drag-over');
+						handleUploadFiles(e.dataTransfer?.files);
+					});
+				}
+
+				// Refresh file list whenever the Files tab becomes active
+				const filesTab = document.getElementById('tab-files');
+				if (filesTab) {
+					filesTab.addEventListener('click', () => {
+						if (activeUserId && activeAccessToken) refreshFileList();
+					});
+				}
+
+				// ── Preferences ────────────────────────────────────────────────
+
+				const ACCENT_PRESETS = [
+					{ name: 'Indigo',  light: '#5b6ef5', dark: '#818cf8' },
+					{ name: 'Violet',  light: '#7c3aed', dark: '#a78bfa' },
+					{ name: 'Pink',    light: '#db2777', dark: '#f472b6' },
+					{ name: 'Rose',    light: '#e11d48', dark: '#fb7185' },
+					{ name: 'Amber',   light: '#d97706', dark: '#fbbf24' },
+					{ name: 'Emerald', light: '#059669', dark: '#34d399' },
+					{ name: 'Cyan',    light: '#0891b2', dark: '#22d3ee' },
+				];
+
+				// Current pref state (defaults)
+				let currentPrefs = {
+					accentIndex: 0,   // index into ACCENT_PRESETS
+					fontSize:    'medium',
+					cardWidth:   'regular',
+					bgStyle:     'aurora',
+				};
+
+				const FONT_SCALE   = { small: 0.88, medium: 1, large: 1.15 };
+				const CARD_SCALE   = { compact: 0.72, regular: 1, wide: 1.22 };
+
+				// Base card-max values (read from the stylesheet's --card-max at each bp).
+				// We store base values and multiply by CARD_SCALE.
+				const BASE_CARD_MAX = { base: 1060, md: 1200, lg: 1420, xl: 1680 };
+				const BASE_FONT     = { base: 15, md: 16, lg: 17, xl: 18 };
+
+				function applyPrefs(prefs) {
+					currentPrefs = { ...currentPrefs, ...prefs };
+					const root = document.documentElement;
+					const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					const preset = ACCENT_PRESETS[currentPrefs.accentIndex] ?? ACCENT_PRESETS[0];
+
+					// Accent colour
+					const accentColor  = isDark ? preset.dark  : preset.light;
+					const accent2Color = isDark
+						? ACCENT_PRESETS[(currentPrefs.accentIndex + 1) % ACCENT_PRESETS.length].dark
+						: ACCENT_PRESETS[(currentPrefs.accentIndex + 1) % ACCENT_PRESETS.length].light;
+
+					root.style.setProperty('--accent', accentColor);
+					root.style.setProperty('--accent-2', accent2Color);
+					// Recompute glow from accent
+					root.style.setProperty('--accent-glow',   hexToRgba(accentColor,  isDark ? 0.25 : 0.22));
+					root.style.setProperty('--accent-glow-2', hexToRgba(accent2Color, isDark ? 0.16 : 0.14));
+					root.style.setProperty('--ring',          hexToRgba(accentColor,  isDark ? 0.40 : 0.35));
+
+					// Font size
+					const fs = FONT_SCALE[currentPrefs.fontSize] ?? 1;
+					root.style.setProperty('--base-font',   `${Math.round(BASE_FONT.base * fs)}px`);
+
+					// Card width
+					const cw = CARD_SCALE[currentPrefs.cardWidth] ?? 1;
+					root.style.setProperty('--card-max', `${Math.round(BASE_CARD_MAX.base * cw)}px`);
+
+					// Background style
+					applyBgStyle(currentPrefs.bgStyle);
+
+					// Sync UI
+					syncPrefsUI();
+				}
+
+				function applyBgStyle(style) {
+					const body = document.body;
+					// Remove any previously set custom bg class
+					body.classList.remove('bg-aurora', 'bg-subtle', 'bg-minimal');
+					body.classList.add(`bg-${style}`);
+				}
+
+				function hexToRgba(hex, alpha) {
+					const h = hex.replace('#', '');
+					const r = parseInt(h.slice(0,2),16);
+					const g = parseInt(h.slice(2,4),16);
+					const b = parseInt(h.slice(4,6),16);
+					return `rgba(${r},${g},${b},${alpha})`;
+				}
+
+				// Inject dynamic bg-style rules once
+				(function injectBgStyleRules() {
+					const s = document.createElement('style');
+					s.id = 'bg-style-rules';
+					s.textContent = `
+						body.bg-subtle::after { opacity: 0.45 !important; }
+						body.bg-minimal::after { display: none !important; }
+						body.bg-minimal {
+							background: var(--bg) !important;
+						}
+					`;
+					document.head.appendChild(s);
+				})();
+
+				// Build swatch row
+				(function buildSwatches() {
+					const row = document.getElementById('swatch-row');
+					if (!row) return;
+					const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					ACCENT_PRESETS.forEach((p, i) => {
+						const btn = document.createElement('button');
+						btn.className = 'swatch';
+						btn.type = 'button';
+						btn.title = p.name;
+						btn.setAttribute('aria-label', p.name);
+						btn.dataset.index = String(i);
+						btn.style.background = isDark ? p.dark : p.light;
+						btn.addEventListener('click', () => {
+							currentPrefs.accentIndex = i;
+							applyPrefs(currentPrefs);
+						});
+						row.appendChild(btn);
+					});
+				})();
+
+				function syncPrefsUI() {
+					// Swatches
+					document.querySelectorAll('.swatch').forEach(s => {
+						s.classList.toggle('active', Number(s.dataset.index) === currentPrefs.accentIndex);
+					});
+					// Chips
+					[
+						{ id: 'chips-fontsize', key: 'fontSize' },
+						{ id: 'chips-cardwidth', key: 'cardWidth' },
+						{ id: 'chips-bgstyle',   key: 'bgStyle'   },
+					].forEach(({ id, key }) => {
+						document.querySelectorAll(`#${id} .chip`).forEach(c => {
+							c.classList.toggle('active', c.dataset.val === currentPrefs[key]);
+						});
+					});
+				}
+
+				// Wire chip clicks
+				['chips-fontsize','chips-cardwidth','chips-bgstyle'].forEach(id => {
+					const container = document.getElementById(id);
+					if (!container) return;
+					const key = id === 'chips-fontsize' ? 'fontSize'
+					          : id === 'chips-cardwidth' ? 'cardWidth' : 'bgStyle';
+					container.addEventListener('click', e => {
+						const chip = e.target.closest('.chip');
+						if (!chip) return;
+						currentPrefs[key] = chip.dataset.val;
+						applyPrefs(currentPrefs);
+					});
+				});
+
+				// REST helpers for preferences table
+				async function restGetPrefs(userId, accessToken) {
+					const url = `${SUPABASE_URL}/rest/v1/preferences?select=prefs&user_id=eq.${encodeURIComponent(userId)}&limit=1`;
+					const res = await fetch(url, {
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							Accept: 'application/json',
+						},
+					});
+					if (!res.ok) {
+						let detail = '';
+						try { detail = await res.text(); } catch { /* ignore */ }
+						throw new Error(`Prefs load failed (HTTP ${res.status})${detail ? ': ' + detail : ''}`);
+					}
+					const arr = await res.json();
+					return Array.isArray(arr) && arr.length ? (arr[0]?.prefs ?? null) : null;
+				}
+
+				async function restUpsertPrefs(userId, prefs, accessToken) {
+					const res = await fetch(`${SUPABASE_URL}/rest/v1/preferences?on_conflict=user_id`, {
+						method: 'POST',
+						headers: {
+							apikey: SUPABASE_ANON_KEY,
+							Authorization: `Bearer ${accessToken}`,
+							'Content-Type': 'application/json',
+							Prefer: 'resolution=merge-duplicates',
+							Accept: 'application/json',
+						},
+						body: JSON.stringify([{ user_id: userId, prefs }]),
+					});
+					if (!res.ok) {
+						let detail = '';
+						try { detail = await res.text(); } catch { /* ignore */ }
+						throw new Error(`HTTP ${res.status}${detail ? ': ' + detail : ''}`);
+					}
+				}
+
+				// localStorage key scoped to user so multiple accounts work
+				function prefsLocalKey(userId) { return `ectl_prefs_${userId}`; }
+
+				function savePrefsLocally(userId, prefs) {
+					try { localStorage.setItem(prefsLocalKey(userId), JSON.stringify(prefs)); } catch { /* ignore */ }
+				}
+
+				function loadPrefsLocally(userId) {
+					try {
+						const raw = localStorage.getItem(prefsLocalKey(userId));
+						return raw ? JSON.parse(raw) : null;
+					} catch { return null; }
+				}
+
+				async function loadPrefs(userId) {
+					try {
+						const saved = await restGetPrefs(userId, activeAccessToken);
+						if (saved && typeof saved === 'object') {
+							applyPrefs(saved);
+							savePrefsLocally(userId, saved); // keep local copy in sync
+							return;
+						}
+					} catch (e) {
+						console.warn('Prefs cloud load failed, trying localStorage:', e?.message);
+					}
+					// Fall back to localStorage (works without the DB table)
+					const local = loadPrefsLocally(userId);
+					applyPrefs(local ?? currentPrefs);
+				}
+
+				const prefsStatusEl  = document.getElementById('prefs-status');
+				const savePrefsBtn   = document.getElementById('btn-save-prefs');
+
+				function setPrefsStatus(msg) {
+					if (prefsStatusEl) prefsStatusEl.textContent = msg;
+				}
+
+				if (savePrefsBtn) {
+					savePrefsBtn.addEventListener('click', async () => {
+						if (!activeUserId || !activeAccessToken) {
+							setPrefsStatus('Not signed in.');
+							return;
+						}
+						savePrefsBtn.disabled = true;
+						setPrefsStatus('Saving…');
+						// Always save locally first — this never fails
+						savePrefsLocally(activeUserId, currentPrefs);
+						try {
+							await withTimeout(restUpsertPrefs(activeUserId, currentPrefs, activeAccessToken), AUTH_TIMEOUT_MS, 'Prefs save');
+							setPrefsStatus('Saved!');
+						} catch (e) {
+							console.error('Prefs cloud save failed:', e?.message);
+							// Local save already succeeded — tell user
+							setPrefsStatus(`Saved locally (cloud: ${e?.message ?? 'error'})`);
+						} finally {
+							savePrefsBtn.disabled = false;
+							setTimeout(() => setPrefsStatus(''), 3500);
+						}
+					});
+				}
+
+				// ── end preferences ─────────────────────────────────────────────
 
 				recenterLoginCard();
 				bootstrap();
