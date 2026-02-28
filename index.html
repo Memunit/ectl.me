@@ -6319,6 +6319,7 @@
 						}
 						function putSaved(arr) {
 							try { localStorage.setItem(SAVED_KEY, JSON.stringify(arr)); } catch {}
+							pushContactsToCloud();
 						}
 						function renderSavedClients() {
 							const saved = getSaved();
@@ -6383,6 +6384,7 @@
 						}
 						function putSavedTechs(arr) {
 							try { localStorage.setItem(SAVED_TECH_KEY, JSON.stringify(arr)); } catch {}
+							pushContactsToCloud();
 						}
 						function renderSavedTechs() {
 							const saved = getSavedTechs();
@@ -6425,7 +6427,58 @@
 							else { arr[idx] = { ...arr[idx], ...entry }; }
 							putSavedTechs(arr);
 							renderSavedTechs();
-						}					// ── Jira paste import ────────────────────────────────
+						}
+
+						// ── Cloud sync for contacts ──────────────────────────────
+						async function pushContactsToCloud() {
+							if (!activeUserId || !activeAccessToken) return;
+							try {
+								const getUrl = `${SUPABASE_URL}/rest/v1/preferences?select=prefs&user_id=eq.${encodeURIComponent(activeUserId)}&limit=1`;
+								const getRes = await fetch(getUrl, {
+									headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${activeAccessToken}`, Accept: 'application/json' },
+								});
+								const rows = getRes.ok ? await getRes.json() : [];
+								const existing = (Array.isArray(rows) && rows[0]?.prefs) ? rows[0].prefs : {};
+								const merged = { ...existing, rpt_clients: getSaved(), rpt_techs: getSavedTechs() };
+								await fetch(`${SUPABASE_URL}/rest/v1/preferences?on_conflict=user_id`, {
+									method: 'POST',
+									headers: {
+										apikey: SUPABASE_ANON_KEY,
+										Authorization: `Bearer ${activeAccessToken}`,
+										'Content-Type': 'application/json',
+										Prefer: 'resolution=merge-duplicates',
+										Accept: 'application/json',
+									},
+									body: JSON.stringify([{ user_id: activeUserId, prefs: merged }]),
+								});
+							} catch { /* silent — localStorage still has data */ }
+						}
+
+						async function loadContactsFromCloud() {
+							if (!activeUserId || !activeAccessToken) return;
+							try {
+								const url = `${SUPABASE_URL}/rest/v1/preferences?select=prefs&user_id=eq.${encodeURIComponent(activeUserId)}&limit=1`;
+								const res = await fetch(url, {
+									headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${activeAccessToken}`, Accept: 'application/json' },
+								});
+								if (!res.ok) return;
+								const rows = await res.json();
+								const prefs = Array.isArray(rows) && rows[0]?.prefs ? rows[0].prefs : null;
+								if (!prefs) return;
+								if (Array.isArray(prefs.rpt_clients)) {
+									try { localStorage.setItem(SAVED_KEY, JSON.stringify(prefs.rpt_clients)); } catch {}
+									renderSavedClients();
+								}
+								if (Array.isArray(prefs.rpt_techs)) {
+									try { localStorage.setItem(SAVED_TECH_KEY, JSON.stringify(prefs.rpt_techs)); } catch {}
+									renderSavedTechs();
+								}
+							} catch { /* silent */ }
+						}
+
+						window._loadRptContacts = loadContactsFromCloud;
+
+						// ── Jira paste import ────────────────────────────────
 					document.getElementById('btn-rpt-jira-toggle')?.addEventListener('click', () => {
 						const panel = document.getElementById('rpt-jira-panel');
 						if (panel) { panel.style.display = panel.style.display === 'none' ? '' : 'none'; }
@@ -6889,6 +6942,7 @@ body {
 
 						renderSavedClients();
 						renderSavedTechs();
+						loadContactsFromCloud();
 					})();				// ════════════════════════════════════════════════════
 				function insertWrapping(before, after) {
 					if (!notesEl) return;
@@ -8747,6 +8801,7 @@ body {
 					// Fall back to localStorage (works without the DB table)
 					const local = loadPrefsLocally(userId);
 					applyPrefs(local ?? currentPrefs);
+					window._loadRptContacts?.();
 				}
 
 				const prefsStatusEl  = document.getElementById('prefs-status');
