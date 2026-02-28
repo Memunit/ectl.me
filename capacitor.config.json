@@ -1,0 +1,9 @@
+{
+  "appId": "com.ectl.apps",
+  "appName": "ectltools",
+  "webDir": "public",
+  "server": {
+    "url": "https://ectl.me",
+    "cleartext": false
+  }
+}
