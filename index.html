@@ -506,12 +506,19 @@
 				border-color: var(--accent);
 				box-shadow: var(--inset), 0 0 0 3.5px var(--accent-glow);
 			}
-			.input:hover:not(:focus),
-			textarea:hover:not(:focus) {
-				border-color: color-mix(in srgb, var(--accent) 45%, var(--input-border));
-			}
-
-			textarea {
+                    .input:hover:not(:focus),
+                    textarea:hover:not(:focus) {
+                            border-color: color-mix(in srgb, var(--accent) 45%, var(--input-border));
+                    }
+                    /* All native <select> elements inherit the page color-scheme
+                       so Brave/Chrome render the picker popup in dark mode too */
+                    select {
+                            color-scheme: inherit;
+                    }
+                    select option {
+                            background: var(--bg, #fff);
+                            color: var(--text, #111);
+                    }			textarea {
 				min-height: var(--textarea-h);
 				max-width: 100%;
 				display: block;
@@ -2208,7 +2215,7 @@
 				border-radius: var(--radius-sm);
 				border: 1.5px solid var(--input-border);
 				background: var(--input-bg);
-				color: var(--fg);
+				color: var(--text);
 				font-size: 0.83rem;
 			}
 			.tool-pw-strength {
