@@ -6460,38 +6460,36 @@
 								: String(f.description).trim();
 						}
 
-						// Comments — join all comment bodies
-						const comments = (f.comment?.comments || []).map(c => {
-							const author = c.author?.displayName || 'Unknown';
-							const date   = c.created ? c.created.slice(0,10) : '';
-							const body   = (typeof c.body === 'object') ? adfToText(c.body).trim() : String(c.body || '').trim();
-							return `[${author}${date ? ' ' + date : ''}] ${body}`;
-						}).join('\n');
+				// ── Custom fields ────────────────────────────────────
+				const troubleshooting = (() => {
+					const v = f['customfield_10106'];
+					if (!v) return '';
+					return (typeof v === 'object') ? adfToText(v).trim() : String(v).trim();
+				})();
+				const solution = (() => {
+					const v = f['customfield_10107'];
+					if (!v) return '';
+					return (typeof v === 'object') ? adfToText(v).trim() : String(v).trim();
+				})();
+				const solutionDate = f['customfield_10112'] ? String(f['customfield_10112']).slice(0,10) : '';
 
-						// Device / serial — check common custom field labels
-						const customDevice = Object.values(f).find(v =>
-							v && typeof v === 'string' &&
-							/model|device|hardware|computer|laptop|computer/i.test(
-								Object.keys(f).find(k => f[k] === v) || ''
-							)
-						) || '';
-						const components  = (f.components || []).map(c => c.name).join(', ');
+				const components = (f.components || []).map(c => c.name).join(', ');
 
-						// Created date → date received
-						const created = f.created ? f.created.slice(0,10) : '';
+				// Created date → date received
+				const created = f.created ? f.created.slice(0,10) : '';
 
-						// ── Apply to form ────────────────────────────────────
-						let filled = 0;
-						if (summary)        { set('rpt-issue',   summary);              filled++; }
-						if (reporter)       { set('rpt-name',    reporter);             filled++; }
-						if (reporterEmail)  { set('rpt-email',   reporterEmail);        filled++; }
-						if (components)     { set('rpt-device',  components);           filled++; }
-						if (description)    { set('rpt-findings', description);         filled++; }
-						if (created)        { set('rpt-date-received', created);        filled++; }
-						if (issueKey)       { set('rpt-ref-input', issueKey);           filled++; }
-						if (comments)       { set('rpt-recommendations', comments);     filled++; }
-
-						// Status → match dropdown
+				// ── Apply to form ────────────────────────────────────
+				let filled = 0;
+				if (summary)         { set('rpt-issue',           summary);         filled++; }
+				if (reporter)        { set('rpt-name',            reporter);         filled++; }
+				if (reporterEmail)   { set('rpt-email',           reporterEmail);    filled++; }
+				if (components)      { set('rpt-device',          components);       filled++; }
+				if (description)     { set('rpt-issue',           description);      filled++; }
+				if (troubleshooting) { set('rpt-findings',        troubleshooting);  filled++; }
+				if (solution)        { set('rpt-recommendations', solution);         filled++; }
+				if (solutionDate)    { set('rpt-solution-date',   solutionDate);     filled++; }
+				if (created)         { set('rpt-date-received',   created);          filled++; }
+				if (issueKey)        { set('rpt-ref-input',       issueKey);         filled++; }						// Status → match dropdown
 						if (statusName) {
 							const sel = document.getElementById('rpt-status');
 							if (sel) {
