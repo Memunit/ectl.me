@@ -2393,8 +2393,7 @@
 				color: var(--muted);
 				white-space: nowrap;
 			}
-			#rpt-client-select,
-			#rpt-tech-select {
+			#rpt-client-select {
 				flex: 1;
 				min-width: 180px;
 				max-width: 380px;
@@ -3578,11 +3577,7 @@
 							<option value="">— Select a saved client —</option>
 						</select>
 						<button class="btn btn-small" id="btn-rpt-del-saved" type="button" title="Remove selected saved client" style="flex-shrink:0">✕ Remove</button>
-						<label class="rpt-topbar-label" for="rpt-tech-select" style="margin-left:8px">🔧 Saved Technicians</label>
-						<select class="input rpt-client-select" id="rpt-tech-select" aria-label="Load saved technician">
-							<option value="">— Select a saved technician —</option>
-						</select>
-						<button class="btn btn-small" id="btn-rpt-del-saved-tech" type="button" title="Remove selected saved technician" style="flex-shrink:0">✕ Remove</button>
+
 					</div>
 
 					<div class="tools-grid">
@@ -3598,37 +3593,22 @@
 								<button class="btn btn-small" id="btn-rpt-ref-regen" type="button" title="Regenerate reference">↻ New Ref</button>
 							</div>
 
-						<div class="work-report-section-label">Client</div>
+                                          <div class="work-report-section-label">Client</div>
+                                          <div class="tool-row" style="flex-wrap:wrap;gap:8px">
+                                                  <input class="input" id="rpt-client" type="text" placeholder="Company / Organisation name" style="flex:1;min-width:160px" aria-label="Client name" />
+                                                  <input class="input" id="rpt-name" type="text" placeholder="Contact person name" style="flex:1;min-width:140px" aria-label="Contact person" />
+                                          </div>
+                                          <div class="tool-row" style="flex-wrap:wrap;gap:8px">
+                                                  <input class="input" id="rpt-email" type="email" placeholder="Email" style="flex:1;min-width:140px" aria-label="Client email" />
+                                                  <input class="input" id="rpt-phone" type="tel" placeholder="Phone" style="flex:1;min-width:120px" aria-label="Client phone" />
+                                          </div>
+                                          <div class="tool-row" style="flex-wrap:wrap;gap:8px">
+                                                  <input class="input" id="rpt-street" type="text" placeholder="Street address" style="flex:2;min-width:160px" aria-label="Street" />
+                                                  <input class="input" id="rpt-postal" type="text" placeholder="Postal code" style="flex:0 0 90px" aria-label="Postal code" />
+                                                  <input class="input" id="rpt-city" type="text" placeholder="City" style="flex:1;min-width:100px" aria-label="City" />
+                                          </div>						<div class="work-report-section-label">Device</div>
 						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-client" type="text" placeholder="Client / Company name" style="flex:1;min-width:160px" aria-label="Client name" />
-						</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-email" type="email" placeholder="Email" style="flex:1;min-width:140px" aria-label="Client email" />
-							<input class="input" id="rpt-phone" type="tel" placeholder="Phone" style="flex:1;min-width:120px" aria-label="Client phone" />
-						</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-street" type="text" placeholder="Street address" style="flex:2;min-width:160px" aria-label="Street" />
-							<input class="input" id="rpt-postal" type="text" placeholder="Postal code" style="flex:0 0 90px" aria-label="Postal code" />
-							<input class="input" id="rpt-city" type="text" placeholder="City" style="flex:1;min-width:100px" aria-label="City" />
-						</div>
-
-						<div class="work-report-section-label">Technician</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-tech" type="text" placeholder="Technician name" style="flex:1;min-width:160px" aria-label="Technician" />
-						</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-tech-email" type="email" placeholder="Technician email" style="flex:1;min-width:140px" aria-label="Technician email" />
-							<input class="input" id="rpt-tech-phone" type="tel" placeholder="Technician phone" style="flex:1;min-width:120px" aria-label="Technician phone" />
-						</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-tech-street" type="text" placeholder="Return address (street)" style="flex:2;min-width:160px" aria-label="Technician street" />
-							<input class="input" id="rpt-tech-postal" type="text" placeholder="Postal" style="flex:0 0 90px" aria-label="Technician postal code" />
-							<input class="input" id="rpt-tech-city" type="text" placeholder="City" style="flex:1;min-width:100px" aria-label="Technician city" />
-						</div>
-
-						<div class="work-report-section-label">Device</div>
-						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-							<input class="input" id="rpt-device" type="text" placeholder="Device (e.g. Dell Inspiron 15)" style="flex:2;min-width:160px" aria-label="Device" />
+							<input class="input" id="rpt-device" type="text" placeholder="Device (e.g. Dell Inspiron 15)" style="flex:1;min-width:140px" aria-label="Device" />
 							<input class="input" id="rpt-serial" type="text" placeholder="Serial number" style="flex:1;min-width:120px" aria-label="Serial number" />
 						</div>
 						<div class="tool-row" style="flex-wrap:wrap;gap:8px">
@@ -3666,7 +3646,7 @@
 									<span class="rpt-field-label">Solution</span>
 									<input class="input rpt-date-input" id="rpt-solution-date" type="date" aria-label="Solution date" />
 								</div>
-								<textarea class="input tool-textarea" id="rpt-recommendations" placeholder="Work carried out / fix applied — one item per line…" rows="3" aria-label="Solution notes"></textarea>
+								<textarea class="input tool-textarea" id="rpt-recommendations" placeholder="Work carried out / fix applied — one item per line…" rows="2" aria-label="Solution notes"></textarea>
 							</div>
 
 							<div class="work-report-section-label">Status &amp; Type</div>
@@ -6305,10 +6285,7 @@
 
 				// ── Client Report Generator (panel-reports) ──────────
 					(function() {
-						const SAVED_KEY      = 'ectl_rpt_saved_clients';
-						const SAVED_TECH_KEY = 'ectl_rpt_saved_techs';
-						
-						function pad(label, value, width) {
+                                          const SAVED_KEY = 'ectl_rpt_saved_clients';						function pad(label, value, width) {
 							return label.padEnd(width) + ': ' + value;
 						}
 						function bulletLines(raw) {
@@ -6346,6 +6323,7 @@
 						function loadClient(c) {
 							const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
 							set('rpt-client', c.client);
+							set('rpt-name',   c.name);
 							set('rpt-email',  c.email);
 							set('rpt-phone',  c.phone);
 							set('rpt-street', c.street);
@@ -6368,6 +6346,7 @@
 							const get = id => (document.getElementById(id)?.value || '').trim();
 							const entry = {
 								client: get('rpt-client'),
+								name:   get('rpt-name'),
 								email:  get('rpt-email'),
 								phone:  get('rpt-phone'),
 								street: get('rpt-street'),
@@ -6386,56 +6365,6 @@
 						}
 
 						// ── Technicians ──────────────────────────────────────
-						function getSavedTechs() {
-							try { return JSON.parse(localStorage.getItem(SAVED_TECH_KEY) || '[]'); } catch { return []; }
-						}
-						function putSavedTechs(arr) {
-							try { localStorage.setItem(SAVED_TECH_KEY, JSON.stringify(arr)); } catch {}
-							pushContactsToCloud();
-						}
-						function renderSavedTechs() {
-							const saved = getSavedTechs();
-							const sel   = document.getElementById('rpt-tech-select');
-							if (!sel) return;
-							const cur = sel.value;
-							sel.innerHTML = '<option value="">— Select a saved technician —</option>';
-							saved.forEach((t, i) => {
-								const opt = document.createElement('option');
-								opt.value = i;
-								opt.textContent = t.tech + (t.techCity ? ' — ' + t.techCity : '');
-								opt.title = [t.techEmail, t.techPhone].filter(Boolean).join(' | ') || '';
-								sel.appendChild(opt);
-							});
-							if (cur !== '' && sel.options[parseInt(cur, 10) + 1]) sel.value = cur;
-						}
-						function loadTech(t) {
-							const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-							set('rpt-tech',        t.tech);
-							set('rpt-tech-email',  t.techEmail);
-							set('rpt-tech-phone',  t.techPhone);
-							set('rpt-tech-street', t.techStreet);
-							set('rpt-tech-postal', t.techPostal);
-							set('rpt-tech-city',   t.techCity);
-						}
-						function saveTechIfNew() {
-							const get = id => (document.getElementById(id)?.value || '').trim();
-							const entry = {
-								tech:       get('rpt-tech'),
-								techEmail:  get('rpt-tech-email'),
-								techPhone:  get('rpt-tech-phone'),
-								techStreet: get('rpt-tech-street'),
-								techPostal: get('rpt-tech-postal'),
-								techCity:   get('rpt-tech-city'),
-							};
-							if (!entry.tech) return;
-							const arr = getSavedTechs();
-							const idx = arr.findIndex(t => t.tech.toLowerCase() === entry.tech.toLowerCase());
-							if (idx === -1) { arr.unshift(entry); if (arr.length > 20) arr.length = 20; }
-							else { arr[idx] = { ...arr[idx], ...entry }; }
-							putSavedTechs(arr);
-							renderSavedTechs();
-						}
-
 						// ── Cloud sync for contacts ──────────────────────────────
 						async function pushContactsToCloud() {
 							if (!activeUserId || !activeAccessToken) return;
@@ -6446,7 +6375,7 @@
 								});
 								const rows = getRes.ok ? await getRes.json() : [];
 								const existing = (Array.isArray(rows) && rows[0]?.prefs) ? rows[0].prefs : {};
-								const merged = { ...existing, rpt_clients: getSaved(), rpt_techs: getSavedTechs() };
+								const merged = { ...existing, rpt_clients: getSaved() };
 								await fetch(`${SUPABASE_URL}/rest/v1/preferences?on_conflict=user_id`, {
 									method: 'POST',
 									headers: {
@@ -6475,10 +6404,6 @@
 								if (Array.isArray(prefs.rpt_clients)) {
 									try { localStorage.setItem(SAVED_KEY, JSON.stringify(prefs.rpt_clients)); } catch {}
 									renderSavedClients();
-								}
-								if (Array.isArray(prefs.rpt_techs)) {
-									try { localStorage.setItem(SAVED_TECH_KEY, JSON.stringify(prefs.rpt_techs)); } catch {}
-									renderSavedTechs();
 								}
 							} catch { /* silent */ }
 						}
@@ -6565,7 +6490,6 @@
 						let filled = 0;
 						if (summary)     { set('rpt-issue',   summary);     filled++; }
 						if (reporter)    { set('rpt-client',  reporter);    filled++; }
-						if (assignee)    { set('rpt-tech',    assignee);    filled++; }
 						if (device)      { set('rpt-device',  device);      filled++; }
 						if (serial)      { set('rpt-serial',  serial);      filled++; }
 						if (description) { set('rpt-findings', description); filled++; }
@@ -6609,19 +6533,6 @@
 							if (sel) sel.value = '';
 						});
 
-						// Saved technicians dropdown interactions
-						document.getElementById('rpt-tech-select')?.addEventListener('change', (e) => {
-							const idx = parseInt(e.target.value, 10);
-							if (!isNaN(idx)) { const arr = getSavedTechs(); if (arr[idx]) loadTech(arr[idx]); }
-						});
-						document.getElementById('btn-rpt-del-saved-tech')?.addEventListener('click', () => {
-							const sel = document.getElementById('rpt-tech-select');
-							const idx = parseInt(sel?.value, 10);
-							if (isNaN(idx)) return;
-							const arr = getSavedTechs(); arr.splice(idx, 1); putSavedTechs(arr); renderSavedTechs();
-							if (sel) sel.value = '';
-						});
-
 					// ── Regen reference button
 					document.getElementById('btn-rpt-ref-regen')?.addEventListener('click', () => {
 						const el = document.getElementById('rpt-ref-input');
@@ -6634,12 +6545,7 @@
 						const refEl2 = document.getElementById('rpt-ref-input');
 						if (refEl2 && !refEl2.value.trim()) refEl2.value = refNumber();
 						const client     = get('rpt-client')          || 'N/A';
-						const tech       = get('rpt-tech')            || 'N/A';
-						const techEmail  = get('rpt-tech-email')      || '';
-						const techPhone  = get('rpt-tech-phone')      || '';
-						const techStreet = get('rpt-tech-street')     || '';
-						const techPostal = get('rpt-tech-postal')     || '';
-						const techCity   = get('rpt-tech-city')       || '';
+						const contactName = get('rpt-name')           || '';
 						const email      = get('rpt-email')           || '';
 						const phone      = get('rpt-phone')           || '';
 						const street     = get('rpt-street')          || '';
@@ -6672,14 +6578,11 @@
 							pad('  Reference',   ref,        14),
 							pad('  Date',        dateStr,    14),
 							pad('  Time',        timeStr,    14),
-							pad('  Technician',  tech,       14),
-							...(techEmail  ? [pad('  Tech Email',  techEmail,  14)] : []),
-							...(techPhone  ? [pad('  Tech Phone',  techPhone,  14)] : []),
-							...([techStreet,techPostal,techCity].filter(Boolean).length ? [pad('  Return Addr', [techStreet,techPostal,techCity].filter(Boolean).join(', '), 14)] : []),
 							LINE,
 							'  CLIENT',
 							LINE,
-							pad('  Name',        client,     14),
+							pad('  Company',     client,     14),
+							...(contactName ? [pad('  Contact',  contactName, 14)] : []),
 							...(email   ? [pad('  Email',    email,  14)] : []),
 							...(phone   ? [pad('  Phone',    phone,  14)] : []),
 							...(address ? [pad('  Address',  address, 14)] : []),
@@ -6722,7 +6625,6 @@
 
 							// Save client and technician entries for quick re-use
 							saveClientIfNew();
-							saveTechIfNew();
 						});
 
 						document.getElementById('btn-rpt-copy')?.addEventListener('click', (e) => {
@@ -6731,7 +6633,7 @@
 					});
 
 					document.getElementById('btn-rpt-clear')?.addEventListener('click', () => {
-						['rpt-client','rpt-tech','rpt-tech-email','rpt-tech-phone','rpt-tech-street','rpt-tech-postal','rpt-tech-city',
+						['rpt-client','rpt-name',
 						 'rpt-email','rpt-phone','rpt-street','rpt-postal','rpt-city',
 						 'rpt-device','rpt-serial','rpt-date-received',
 						 'rpt-issue','rpt-troubleshoot-date','rpt-findings','rpt-solution-date','rpt-recommendations'].forEach(id => {
@@ -6768,19 +6670,13 @@
 						</div>
 
 						<div class="rpt-meta-grid">
-							<div class="rpt-meta-box">
+							<div class="rpt-meta-box" style="grid-column:1/-1">
 								<h2>Client Information</h2>
-								<div class="rpt-meta-row"><span class="rpt-meta-label">Client</span><span class="rpt-meta-val">${esc(data.client)}</span></div>
+								<div class="rpt-meta-row"><span class="rpt-meta-label">Company</span><span class="rpt-meta-val">${esc(data.client)}</span></div>
+								${data.name   ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Contact</span><span class="rpt-meta-val">${esc(data.name)}</span></div>` : ''}
 								${data.email  ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Email</span><span class="rpt-meta-val">${esc(data.email)}</span></div>` : ''}
 								${data.phone  ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Phone</span><span class="rpt-meta-val">${esc(data.phone)}</span></div>` : ''}
 								${(data.street||data.postal||data.city) ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Address</span><span class="rpt-meta-val">${esc([data.street,data.postal,data.city].filter(Boolean).join(', '))}</span></div>` : ''}
-							</div>
-							<div class="rpt-meta-box">
-								<h2>Technician</h2>
-								<div class="rpt-meta-row"><span class="rpt-meta-label">Name</span><span class="rpt-meta-val">${esc(data.tech)}</span></div>
-								${data.techEmail ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Email</span><span class="rpt-meta-val">${esc(data.techEmail)}</span></div>` : ''}
-								${data.techPhone ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Phone</span><span class="rpt-meta-val">${esc(data.techPhone)}</span></div>` : ''}
-								${(data.techStreet||data.techPostal||data.techCity) ? `<div class="rpt-meta-row"><span class="rpt-meta-label">Return Address</span><span class="rpt-meta-val">${esc([data.techStreet,data.techPostal,data.techCity].filter(Boolean).join(', '))}</span></div>` : ''}
 							</div>
 							<div class="rpt-meta-box" style="grid-column:1/-1">
 								<h2>Device</h2>
@@ -6837,12 +6733,7 @@
 						const fmtD = iso => { if (!iso) return ''; try { return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); } catch { return iso; } };
 						const d = {
 							client:          get('rpt-client')          || 'N/A',
-							tech:            get('rpt-tech')            || 'N/A',
-							techEmail:       get('rpt-tech-email')      || '',
-							techPhone:       get('rpt-tech-phone')      || '',
-							techStreet:      get('rpt-tech-street')     || '',
-							techPostal:      get('rpt-tech-postal')     || '',
-							techCity:        get('rpt-tech-city')       || '',
+							name:            get('rpt-name')            || '',
 							email:           get('rpt-email')           || '',
 							phone:           get('rpt-phone')           || '',
 							street:          get('rpt-street')          || '',
@@ -6948,7 +6839,6 @@ body {
 					if (refInitEl && !refInitEl.value) refInitEl.value = refNumber();
 
 						renderSavedClients();
-						renderSavedTechs();
 						loadContactsFromCloud();
 					})();				// ════════════════════════════════════════════════════
 				function insertWrapping(before, after) {
