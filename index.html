@@ -6486,8 +6486,8 @@
 				const solution        = cf('customfield_10107');
 				const solutionDate    = cf('customfield_10112') ? cf('customfield_10112').slice(0,10) : '';
 
-				// Type field is a select object: {"value":"ADP","id":"10162"}
-				const typeVal = f['customfield_10162']?.value || f['type']?.value || issueType;
+				// Type field: customfield_10117 → {"value":"ADP","id":"10162"}
+				const typeVal = f['customfield_10117']?.value || issueType;
 
 				// ── Apply to form ────────────────────────────────────
 				let filled = 0;
@@ -6526,6 +6526,10 @@
 							o.value.toLowerCase().includes(t) || t.includes(o.value.toLowerCase())
 						);
 						if (match) { sel.value = match.value; filled++; }
+						else {
+							// No match — just set the raw value so it's visible
+							sel.value = [...sel.options].find(o => o.value)?.value || sel.options[0].value;
+						}
 					}
 				}						if (fb) fb.textContent = filled > 0
 							? `✅ Imported ${filled} field${filled > 1 ? 's' : ''} from ${issueKey || 'Jira'}. Review and adjust as needed.`
