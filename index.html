@@ -3605,10 +3605,11 @@
 						</div>							<!-- Jira import -->
 							<div class="work-report-section-label" style="display:flex;align-items:center;justify-content:space-between">
 								<span>Import from Jira</span>
-								<button class="btn btn-small" id="btn-rpt-jira-toggle" type="button">📋 Paste Jira text</button>
+								<button class="btn btn-small" id="btn-rpt-jira-toggle" type="button">📋 Paste Jira JSON</button>
 							</div>
 							<div id="rpt-jira-panel" style="display:none;margin-bottom:10px">
-								<textarea class="input tool-textarea" id="rpt-jira-paste" rows="6" placeholder="Copy the Jira issue page text (Ctrl+A, Ctrl+C on the issue page) and paste it here…" style="font-size:0.78rem;color:var(--muted)"></textarea>
+								<div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px">Go to <code style="font-size:0.72rem">https://yourcompany.atlassian.net/rest/api/2/issue/PROJ-123</code> while logged in, copy all the JSON, and paste it below.</div>
+								<textarea class="input tool-textarea" id="rpt-jira-paste" rows="7" placeholder='Paste Jira issue JSON here… (from /rest/api/2/issue/PROJ-123)' style="font-size:0.78rem;color:var(--muted);font-family:monospace"></textarea>
 								<div style="display:flex;gap:8px;margin-top:6px">
 									<button class="btn" id="btn-rpt-jira-import" type="button" style="flex:1">⬇ Import fields</button>
 									<button class="btn btn-small" id="btn-rpt-jira-cancel" type="button">✕</button>
@@ -6411,98 +6412,113 @@
 					});
 
 					document.getElementById('btn-rpt-jira-import')?.addEventListener('click', () => {
-						const raw  = (document.getElementById('rpt-jira-paste')?.value || '').trim();
-						const fb   = document.getElementById('rpt-jira-feedback');
+						const raw = (document.getElementById('rpt-jira-paste')?.value || '').trim();
+						const fb  = document.getElementById('rpt-jira-feedback');
 						if (!raw) { if (fb) fb.textContent = '⚠ Nothing pasted yet.'; return; }
 
+						// ── Try to parse as Jira REST API JSON ──────────────
+						let j;
+						try { j = JSON.parse(raw); } catch(e) {
+							if (fb) fb.textContent = '⚠ Invalid JSON — make sure you copied the full response from /rest/api/2/issue/PROJ-123';
+							return;
+						}
+
+						const f = j.fields || {};
 						const set = (id, val) => { if (!val) return; const el = document.getElementById(id); if (el) el.value = val; };
-						const find = (patterns) => {
-							for (const p of patterns) {
-								const m = raw.match(p);
-								if (m && m[1] && m[1].trim()) return m[1].trim();
-							}
-							return '';
-						};
 
-						// ── Field extraction heuristics ──────────────────
-						// Summary / title — often first bold line, or after "Summary"
-						const summary = find([
-							/Summary\s*[:\-]?\s*(.+)/i,
-							/^([^\n]{10,120})/m,   // fallback: first substantial line
-						]);
+						// ── Helper: flatten Atlassian Document Format (ADF) to plain text ──
+						function adfToText(node) {
+							if (!node) return '';
+							if (typeof node === 'string') return node;
+							if (node.type === 'text') return node.text || '';
+							if (node.type === 'hardBreak') return '\n';
+							const kids = (node.content || []).map(adfToText).join('');
+							if (['paragraph','heading'].includes(node.type)) return kids + '\n';
+							if (node.type === 'listItem') return '- ' + kids.trim() + '\n';
+							return kids;
+						}
 
-						// Reporter / customer
-						const reporter = find([
-							/Reporter\s*[:\-]?\s*([^\n]+)/i,
-							/Raised by\s*[:\-]?\s*([^\n]+)/i,
-							/Customer\s*[:\-]?\s*([^\n]+)/i,
-						]);
+						// ── Extract fields ───────────────────────────────────
+						const summary     = f.summary || '';
+						const issueKey    = j.key || '';
+						const statusName  = f.status?.name || '';
+						const issueType   = f.issuetype?.name || '';
+						const reporter    = f.reporter?.displayName || '';
+						const reporterEmail = f.reporter?.emailAddress || '';
+						const assignee    = f.assignee?.displayName || '';
 
-						// Assignee / technician
-						const assignee = find([
-							/Assignee\s*[:\-]?\s*([^\n]+)/i,
-							/Assigned to\s*[:\-]?\s*([^\n]+)/i,
-						]);
+						// Description — ADF (api/3) or plain string (api/2)
+						let description = '';
+						if (f.description) {
+							description = (typeof f.description === 'object')
+								? adfToText(f.description).trim()
+								: String(f.description).trim();
+						}
 
-						// Issue type → repair type
-						const issueType = find([
-							/Issue Type\s*[:\-]?\s*([^\n]+)/i,
-							/Type\s*[:\-]?\s*([^\n]+)/i,
-						]);
+						// Comments — join all comment bodies
+						const comments = (f.comment?.comments || []).map(c => {
+							const author = c.author?.displayName || 'Unknown';
+							const date   = c.created ? c.created.slice(0,10) : '';
+							const body   = (typeof c.body === 'object') ? adfToText(c.body).trim() : String(c.body || '').trim();
+							return `[${author}${date ? ' ' + date : ''}] ${body}`;
+						}).join('\n');
 
-						// Status
-						const status = find([
-							/Status\s*[:\-]?\s*([^\n]+)/i,
-						]);
+						// Device / serial — check common custom field labels
+						const customDevice = Object.values(f).find(v =>
+							v && typeof v === 'string' &&
+							/model|device|hardware|computer|laptop|computer/i.test(
+								Object.keys(f).find(k => f[k] === v) || ''
+							)
+						) || '';
+						const components  = (f.components || []).map(c => c.name).join(', ');
 
-						// Description block — everything after "Description" until next section header
-						const descMatch = raw.match(/Description\s*[:\-]?\s*\n?([\s\S]{10,800?}?)(?:\n[A-Z][a-z][\w ]+\s*[:\-]|$)/);
-						const description = descMatch ? descMatch[1].trim() : '';
+						// Created date → date received
+						const created = f.created ? f.created.slice(0,10) : '';
 
-						// Device / component
-						const device = find([
-							/Component[s]?\s*[:\-]?\s*([^\n]+)/i,
-							/Hardware\s*[:\-]?\s*([^\n]+)/i,
-							/Device\s*[:\-]?\s*([^\n]+)/i,
-						]);
-
-						// Serial
-						const serial = find([
-							/Serial\s*(?:No|Number|#)?\s*[:\-]?\s*([^\n]+)/i,
-							/S\/N\s*[:\-]?\s*([^\n]+)/i,
-						]);
-
-						// ── Apply to form ────────────────────────────────
+						// ── Apply to form ────────────────────────────────────
 						let filled = 0;
-						if (summary)     { set('rpt-issue',   summary);     filled++; }
-						if (reporter)    { set('rpt-client',  reporter);    filled++; }
-						if (device)      { set('rpt-device',  device);      filled++; }
-						if (serial)      { set('rpt-serial',  serial);      filled++; }
-						if (description) { set('rpt-findings', description); filled++; }
-						if (status) {
+						if (summary)        { set('rpt-issue',   summary);              filled++; }
+						if (reporter)       { set('rpt-name',    reporter);             filled++; }
+						if (reporterEmail)  { set('rpt-email',   reporterEmail);        filled++; }
+						if (components)     { set('rpt-device',  components);           filled++; }
+						if (description)    { set('rpt-findings', description);         filled++; }
+						if (created)        { set('rpt-date-received', created);        filled++; }
+						if (issueKey)       { set('rpt-ref-input', issueKey);           filled++; }
+						if (comments)       { set('rpt-recommendations', comments);     filled++; }
+
+						// Status → match dropdown
+						if (statusName) {
 							const sel = document.getElementById('rpt-status');
 							if (sel) {
-								const match = [...sel.options].find(o => o.value.toLowerCase().includes(status.toLowerCase()) || status.toLowerCase().includes(o.value.toLowerCase()));
+								const s = statusName.toLowerCase();
+								const match = [...sel.options].find(o =>
+									o.value.toLowerCase().includes(s) || s.includes(o.value.toLowerCase())
+								);
 								if (match) { sel.value = match.value; filled++; }
 							}
 						}
+
+						// Issue type → repair type dropdown
 						if (issueType) {
 							const sel = document.getElementById('rpt-repairtype');
 							if (sel) {
-								const match = [...sel.options].find(o => o.value.toLowerCase().includes(issueType.toLowerCase()) || issueType.toLowerCase().includes(o.value.toLowerCase()));
+								const t = issueType.toLowerCase();
+								const match = [...sel.options].find(o =>
+									o.value.toLowerCase().includes(t) || t.includes(o.value.toLowerCase())
+								);
 								if (match) { sel.value = match.value; filled++; }
 							}
 						}
 
 						if (fb) fb.textContent = filled > 0
-							? `✅ Imported ${filled} field${filled > 1 ? 's' : ''}. Review and adjust as needed.`
-							: '⚠ Couldn\'t extract any fields — try copying more of the Jira issue page.';
+							? `✅ Imported ${filled} field${filled > 1 ? 's' : ''} from ${issueKey || 'Jira'}. Review and adjust as needed.`
+							: '⚠ JSON parsed but no matching fields found — check the issue has summary/description/reporter.';
 
 						if (filled > 0) {
 							setTimeout(() => {
 								const panel = document.getElementById('rpt-jira-panel');
 								if (panel) panel.style.display = 'none';
-							}, 1800);
+							}, 2200);
 						}
 					});
 
