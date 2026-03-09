@@ -3144,6 +3144,10 @@
 					<!-- Account -->
 					<div class="settings-section">
 						<p class="settings-section-title">Account</p>
+						<!-- Local-mode notice (shown in Electron desktop app) -->
+						<p id="acct-local-notice" class="hint" style="margin:0 0 12px" hidden>
+							🖥 Running as desktop app — data is saved on this device. No account needed.
+						</p>
 						<p class="hint" id="acct-current" style="margin:0 0 8px">Signed in</p>
 						<div id="acct-badges" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div>
 						<div class="fields">
@@ -3772,6 +3776,12 @@
 			const AUTH_TIMEOUT_MS = 15000;
 			const BUILD_STAMP = '2026-02-27';
 
+			// ── Electron / local-only mode ────────────────────────────
+			// When running inside the desktop app (preload.js sets window.ELECTRON_MODE),
+			// skip all auth and store everything in localStorage instead of Supabase.
+			const IS_ELECTRON = !!window.ELECTRON_MODE;
+			const ELECTRON_USER_ID = 'local-device-user';
+
 			// ── Admin config ──────────────────────────────────────────
 			const ADMIN_SEED_EMAIL = 'elias@ectl.me';
 			const ADMIN_EMAILS_KEY = 'ectl_admin_emails';
@@ -3978,13 +3988,14 @@
 				if (appEl) appEl.hidden = false;
 				if (loginScreenEl) loginScreenEl.style.display = 'none';
 				if (appEl) appEl.style.display = '';
-				if (authStatusEl) authStatusEl.textContent = `Signed in: ${displayName} (build ${BUILD_STAMP})`;
-				if (signOutBtn) signOutBtn.hidden = false;
+				if (authStatusEl) authStatusEl.textContent = IS_ELECTRON ? `Desktop app (build ${BUILD_STAMP})` : `Signed in: ${displayName} (build ${BUILD_STAMP})`;
+				if (signOutBtn) signOutBtn.hidden = true; // hidden in Electron; shown for web via sign-out handler
+				if (!IS_ELECTRON && signOutBtn) signOutBtn.hidden = false;
 				if (notesEl) {
 					notesEl.disabled = false;
 					notesEl.placeholder = 'Write quick notes here…';
 				}
-				if (notesHintEl) notesHintEl.textContent = 'Auto-saves to the cloud.';
+				if (notesHintEl) notesHintEl.textContent = IS_ELECTRON ? 'Saved on this device.' : 'Auto-saves to the cloud.';
 				// Show admin tab only for admins; redirect away if not admin
 				const adminTab = document.getElementById('tab-admin');
 				const userIsAdmin = isUserAdmin(userEmail || '');
@@ -5078,6 +5089,7 @@
 				}
 
 				async function restUpsertDoc(userId, doc, accessToken) {
+					if (IS_ELECTRON) { saveDocsLocally(userId); return; }
 					const res = await fetch(`${SUPABASE_URL}/rest/v1/note_docs?on_conflict=id`, {
 						method: 'POST',
 						headers: {
@@ -5096,6 +5108,7 @@
 				}
 
 				async function restDeleteDoc(userId, docId, accessToken) {
+					if (IS_ELECTRON) { saveDocsLocally(userId); return; }
 					const res = await fetch(`${SUPABASE_URL}/rest/v1/note_docs?id=eq.${encodeURIComponent(docId)}&user_id=eq.${encodeURIComponent(userId)}`, {
 						method: 'DELETE',
 						headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${accessToken}`, Prefer: 'return=minimal' },
@@ -5108,6 +5121,11 @@
 					if (!notesEl) return;
 					notesEl.disabled = true;
 					setSaveStatus('Loading…');
+					if (IS_ELECTRON) {
+						// Local-only: always use localStorage
+						const local = loadDocsLocally(userId);
+						noteDocs = Array.isArray(local) ? local : [];
+					} else {
 					try {
 						const rows = await withTimeout(restGetDocs(userId, activeAccessToken), AUTH_TIMEOUT_MS, 'Docs load');
 						noteDocs = Array.isArray(rows) ? rows : [];
@@ -5116,6 +5134,7 @@
 						console.warn('Cloud docs load failed, using localStorage:', e?.message);
 						const local = loadDocsLocally(userId);
 						noteDocs = Array.isArray(local) ? local : [];
+					}
 					}
 					// Ensure at least one document
 					if (noteDocs.length === 0) { const d = createDoc('My Notes'); noteDocs.push(d); }
@@ -6354,7 +6373,7 @@
 						// ── Technicians ──────────────────────────────────────
 						// ── Cloud sync for contacts ──────────────────────────────
 						async function pushContactsToCloud() {
-							if (!activeUserId || !activeAccessToken) return;
+							if (IS_ELECTRON || !activeUserId || !activeAccessToken) return;
 							try {
 								const getUrl = `${SUPABASE_URL}/rest/v1/preferences?select=prefs&user_id=eq.${encodeURIComponent(activeUserId)}&limit=1`;
 								const getRes = await fetch(getUrl, {
@@ -6378,7 +6397,7 @@
 						}
 
 						async function loadContactsFromCloud() {
-							if (!activeUserId || !activeAccessToken) return;
+							if (IS_ELECTRON || !activeUserId || !activeAccessToken) return;
 							try {
 								const url = `${SUPABASE_URL}/rest/v1/preferences?select=prefs&user_id=eq.${encodeURIComponent(activeUserId)}&limit=1`;
 								const res = await fetch(url, {
@@ -8669,6 +8688,7 @@ body {
 				}
 
 				async function restUpsertPrefs(userId, prefs, accessToken) {
+					if (IS_ELECTRON) { savePrefsLocally(userId, prefs); return; }
 					const res = await fetch(`${SUPABASE_URL}/rest/v1/preferences?on_conflict=user_id`, {
 						method: 'POST',
 						headers: {
@@ -8702,6 +8722,11 @@ body {
 				}
 
 				async function loadPrefs(userId) {
+					if (IS_ELECTRON) {
+						const local = loadPrefsLocally(userId);
+						applyPrefs(local ?? currentPrefs);
+						return;
+					}
 					try {
 						const saved = await restGetPrefs(userId, activeAccessToken);
 						if (saved && typeof saved === 'object') {
@@ -8727,7 +8752,7 @@ body {
 
 				if (savePrefsBtn) {
 					savePrefsBtn.addEventListener('click', async () => {
-						if (!activeUserId || !activeAccessToken) {
+						if (!IS_ELECTRON && (!activeUserId || !activeAccessToken)) {
 							setPrefsStatus('Not signed in.');
 							return;
 						}
@@ -8919,7 +8944,56 @@ body {
 				// ── end Account Manager ──────────────────────────────────────────
 
 				recenterLoginCard();
-				bootstrap();
+
+				if (IS_ELECTRON) {
+					// ── Desktop app: skip login entirely ──────────────────
+					// Use a fixed local user ID so all localStorage keys are stable.
+					activeUserId       = ELECTRON_USER_ID;
+					activeUser         = { id: ELECTRON_USER_ID, email: 'local@device', user_metadata: { username: 'You' }, created_at: null };
+					activeAccessToken  = null;
+					activeUsingRest    = false;
+
+					// Hide login screen, show app immediately
+					showApp('Desktop', 'local@device');
+
+					// Hide settings that only make sense with an account
+					const signOutEl = document.getElementById('btn-signout');
+					if (signOutEl) signOutEl.hidden = true;
+					// Hide account tab panel sections that require cloud
+					['acct-current','acct-badges','btn-update-username','btn-update-password','btn-delete-account',
+					 'update-username-section','update-password-section','delete-account-section'].forEach(id => {
+						const el = document.getElementById(id);
+						if (el) el.hidden = true;
+					});
+					// Show local-mode notice in account panel if it exists
+					const acctLocal = document.getElementById('acct-local-notice');
+					if (acctLocal) acctLocal.hidden = false;
+
+					// Greeting
+					renderHomeGreeting(activeUser);
+					const qa = document.getElementById('home-quick-actions');
+					if (qa) qa.hidden = false;
+
+					// Load notes and prefs from localStorage
+					(async () => {
+						// Prefs
+						const localPrefs = loadPrefsLocally(ELECTRON_USER_ID);
+						applyPrefs(localPrefs ?? currentPrefs);
+
+						// Clients (already in localStorage under SAVED_KEY — no cloud needed)
+						window._loadRptContacts = () => {}; // no-op: already local
+
+						// Notes
+						await loadNotes(ELECTRON_USER_ID);
+						renderStats();
+					})();
+
+					if (window.__hideSplash) window.__hideSplash();
+
+				} else {
+					bootstrap();
+				}
+
 				// Init auth tab indicator on first paint
 				requestAnimationFrame(() => {
 					const firstAuthTab = authTabs.find(t => t.tab?.getAttribute('aria-selected') === 'true')?.tab;

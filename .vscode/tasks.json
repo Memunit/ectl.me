@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Git commit and push",
+			"type": "shell",
+			"command": "cd /Users/test/Projects/ectl.me && git add index.html && git commit -m 'Electron: local-only mode — skip login, all data stored on device' && git push"
+		}
+	]
+}
