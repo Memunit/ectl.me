@@ -1,5 +1,17 @@
 {
   "outputDirectory": ".",
   "buildCommand": null,
-  "installCommand": null
+  "installCommand": null,
+  "redirects": [
+    {
+      "source": "/download/mac",
+      "destination": "https://github.com/Memunit/ectl-app/releases/latest/download/ectl.dmg",
+      "permanent": false
+    },
+    {
+      "source": "/download/win",
+      "destination": "https://github.com/Memunit/ectl-app/releases/latest/download/ectl-setup.exe",
+      "permanent": false
+    }
+  ]
 }

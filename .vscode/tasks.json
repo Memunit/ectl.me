@@ -5,6 +5,23 @@
 			"label": "Git commit and push",
 			"type": "shell",
 			"command": "cd /Users/test/Projects/ectl.me && git add index.html && git commit -m 'Electron: local-only mode — skip login, all data stored on device' && git push"
+		},
+		{
+			"label": "Remove iOS folder",
+			"type": "shell",
+			"command": "rm -rf /Users/test/Projects/ectl.me/ios && rm -f /Users/test/Projects/ectl.me/capacitor.config.json"
+		},
+		{
+			"label": "Terminal probe",
+			"type": "shell",
+			"command": "pwd",
+			"isBackground": false
+		},
+		{
+			"label": "Terminal test",
+			"type": "shell",
+			"command": "echo hello",
+			"isBackground": false
 		}
 	]
 }

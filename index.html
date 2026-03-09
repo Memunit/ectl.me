@@ -6,7 +6,8 @@
 		<meta name="color-scheme" content="light dark" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+		<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
 
 		<title>ectl.me</title>
 		<style>
@@ -379,7 +380,7 @@
 				background: rgba(0,0,0,0.05);
 				backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
 				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
-				box-§shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.06);
+				box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.06);
 				overflow-x: auto;
 				-webkit-overflow-scrolling: touch;
 				scrollbar-width: none;
@@ -3256,6 +3257,17 @@
 						</div>
 					</div>
 
+					<!-- Desktop App Download -->
+					<div class="settings-section">
+						<p class="settings-section-title">Desktop App</p>
+						<p class="hint" style="margin:0 0 12px">Download the native desktop app — works fully offline, all data stays on your device.</p>
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+							<a class="btn btn-accent" id="btn-download-primary" href="/download/mac" style="text-decoration:none">⤓ Download for Mac</a>
+							<a class="btn btn-small" id="btn-download-secondary" href="/download/win" style="text-decoration:none">Windows</a>
+						</div>
+						<p class="hint" id="download-hint" style="margin-top:8px;font-size:0.78rem">macOS 12+ · Universal</p>
+					</div>
+
 				</section>
 
 					<section class="panel" id="panel-files" role="tabpanel" aria-labelledby="tab-files" hidden>
@@ -4572,10 +4584,10 @@
 				SUPABASE_URL.startsWith('YOUR_') ||
 				SUPABASE_ANON_KEY.startsWith('YOUR_');
 
-			if (missingConfig) {
+			if (!IS_ELECTRON && missingConfig) {
 				showLogin('Missing Supabase config (edit index.html).');
 				setButtonsDisabled(true);
-			} else if (!globalThis.supabase?.createClient) {
+			} else if (!IS_ELECTRON && !globalThis.supabase?.createClient) {
 				showLogin('Failed to load Supabase client.');
 				setButtonsDisabled(true);
 			} else {
@@ -4591,7 +4603,7 @@
 				}
 
 				const canPersist = storageAvailable();
-				const supabase = globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+				const supabase = IS_ELECTRON ? null : globalThis.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 					auth: {
 						persistSession: canPersist,
 						autoRefreshToken: canPersist,
@@ -8999,6 +9011,29 @@ body {
 					const firstAuthTab = authTabs.find(t => t.tab?.getAttribute('aria-selected') === 'true')?.tab;
 					if (firstAuthTab) updateTabIndicator('auth-tab-indicator', firstAuthTab);
 				});
+
+				// ── Desktop App download button: OS detection ──────────
+				(function() {
+					const ua = navigator.userAgent || '';
+					const isWin = /Win/i.test(navigator.platform || '') || /Windows/i.test(ua);
+					const primary   = document.getElementById('btn-download-primary');
+					const secondary = document.getElementById('btn-download-secondary');
+					const hint      = document.getElementById('download-hint');
+					if (!primary || !secondary) return;
+					if (isWin) {
+						primary.href        = '/download/win';
+						primary.textContent = '⤓ Download for Windows';
+						secondary.href        = '/download/mac';
+						secondary.textContent = 'macOS';
+						if (hint) hint.textContent = 'Windows 10+ · x64';
+					} else {
+						primary.href        = '/download/mac';
+						primary.textContent = '⤓ Download for Mac';
+						secondary.href        = '/download/win';
+						secondary.textContent = 'Windows';
+						if (hint) hint.textContent = 'macOS 12+ · Universal';
+					}
+				})();
 			}
 		</script>
 	</body>
