@@ -4544,42 +4544,6 @@
 					<div class="snip-list" id="snip-list"></div>
 				</section>
 
-				<!-- Snippet editor overlay -->
-				<div class="snip-editor-overlay" id="snip-editor-overlay" hidden role="dialog" aria-modal="true" aria-label="Edit snippet">
-					<div class="snip-editor-modal">
-						<h3 id="snip-editor-title">New Snippet</h3>
-						<div class="snip-editor-field">
-							<label for="snip-edit-name">Title</label>
-							<input class="input" id="snip-edit-name" type="text" placeholder="e.g. Email sign-off" autocomplete="off" />
-						</div>
-						<div class="snip-editor-field">
-							<label for="snip-edit-tag">Tag <span style="font-weight:400;color:var(--muted)">(optional, single word)</span></label>
-							<input class="input" id="snip-edit-tag" type="text" placeholder="e.g. code, email, prompt" autocomplete="off" />
-						</div>
-						<div class="snip-editor-field">
-							<label for="snip-edit-body">Content</label>
-							<div class="snip-fmt-bar">
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="bold" title="Bold"><b>B</b></button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="italic" title="Italic"><i>I</i></button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="code" title="Inline code"><code>`</code></button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="strike" title="Strikethrough"><s>S</s></button>
-								<span class="fmt-divider" aria-hidden="true"></span>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h1" title="Heading 1">H1</button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h2" title="Heading 2">H2</button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h3" title="Heading 3">H3</button>
-								<span class="fmt-divider" aria-hidden="true"></span>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="ul" title="Bullet list">• List</button>
-								<button type="button" class="btn btn-small fmt-btn" data-sfmt="ol" title="Numbered list">1. List</button>
-							</div>
-							<textarea class="input snip-editor-ta" id="snip-edit-body" placeholder="Paste or type your snippet…"></textarea>
-						</div>
-						<div class="tool-row" style="justify-content:flex-end;gap:8px;margin-top:4px">
-							<button class="btn btn-small" id="btn-snip-cancel" type="button">Cancel</button>
-							<button class="btn btn-accent btn-small" id="btn-snip-save" type="button">Save</button>
-						</div>
-					</div>
-				</div>
-
 				<!-- Canvas / Whiteboard panel -->
 				<section class="panel" id="panel-canvas" role="tabpanel" aria-labelledby="tab-canvas" hidden>
 					<div class="canvas-toolbar">
@@ -4640,6 +4604,42 @@
 		</main>
 		</div>
 
+
+	<!-- Snippet editor overlay -->
+	<div class="snip-editor-overlay" id="snip-editor-overlay" hidden role="dialog" aria-modal="true" aria-label="Edit snippet">
+		<div class="snip-editor-modal">
+			<h3 id="snip-editor-title">New Snippet</h3>
+			<div class="snip-editor-field">
+				<label for="snip-edit-name">Title</label>
+				<input class="input" id="snip-edit-name" type="text" placeholder="e.g. Email sign-off" autocomplete="off" />
+			</div>
+			<div class="snip-editor-field">
+				<label for="snip-edit-tag">Tag <span style="font-weight:400;color:var(--muted)">(optional, single word)</span></label>
+				<input class="input" id="snip-edit-tag" type="text" placeholder="e.g. code, email, prompt" autocomplete="off" />
+			</div>
+			<div class="snip-editor-field">
+				<label for="snip-edit-body">Content</label>
+				<div class="snip-fmt-bar">
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="bold" title="Bold"><b>B</b></button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="italic" title="Italic"><i>I</i></button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="code" title="Inline code"><code>`</code></button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="strike" title="Strikethrough"><s>S</s></button>
+					<span class="fmt-divider" aria-hidden="true"></span>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="h1" title="Heading 1">H1</button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="h2" title="Heading 2">H2</button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="h3" title="Heading 3">H3</button>
+					<span class="fmt-divider" aria-hidden="true"></span>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="ul" title="Bullet list">• List</button>
+					<button type="button" class="btn btn-small fmt-btn" data-sfmt="ol" title="Numbered list">1. List</button>
+				</div>
+				<textarea class="input snip-editor-ta" id="snip-edit-body" placeholder="Paste or type your snippet…"></textarea>
+			</div>
+			<div class="tool-row" style="justify-content:flex-end;gap:8px;margin-top:4px">
+				<button class="btn btn-small" id="btn-snip-cancel" type="button">Cancel</button>
+				<button class="btn btn-accent btn-small" id="btn-snip-save" type="button">Save</button>
+			</div>
+		</div>
+	</div>
 
 	<!-- Keyboard shortcuts modal -->
 	<div class="kb-modal-overlay" id="kb-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
