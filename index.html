@@ -3015,16 +3015,8 @@
 			.snip-item-body { padding:10px 14px; }
 			.snip-item-preview {
 				font-family:ui-monospace,monospace; font-size:0.8rem; color:var(--text);
-				white-space:pre-wrap; word-break:break-all; max-height:120px; overflow:hidden;
-				position:relative; cursor:pointer;
+				white-space:pre-wrap; word-break:break-all;
 			}
-			.snip-item-preview.expanded { max-height:none; }
-			.snip-item-preview::after {
-				content:''; position:absolute; bottom:0; left:0; right:0; height:36px;
-				background:linear-gradient(transparent, var(--btn-bg));
-				pointer-events:none;
-			}
-			.snip-item-preview.expanded::after { display:none; }
 			.snip-empty { color:var(--muted); font-size:0.88rem; text-align:center; padding:40px 0; }
 			/* Snippet editor overlay */
 			.snip-editor-overlay {
@@ -3043,7 +3035,8 @@
 			.snip-editor-modal h3 { font-size:1rem; font-weight:700; margin:0 0 16px; }
 			.snip-editor-field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
 			.snip-editor-field label { font-size:0.78rem; font-weight:700; color:var(--muted); }
-			.snip-editor-ta { width:100%; min-height:160px; resize:vertical; font-family:ui-monospace,monospace; font-size:0.82rem; }
+			.snip-fmt-bar { display:flex; gap:4px; flex-wrap:wrap; align-items:center; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--btn-border); }
+			.snip-editor-ta { width:100%; min-height:80px; resize:none; overflow:hidden; font-family:ui-monospace,monospace; font-size:0.82rem; }
 
 			/* ── Canvas / Whiteboard panel ────────────────────────────────── */
 			#canvas-board {
@@ -4565,6 +4558,19 @@
 						</div>
 						<div class="snip-editor-field">
 							<label for="snip-edit-body">Content</label>
+							<div class="snip-fmt-bar">
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="bold" title="Bold"><b>B</b></button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="italic" title="Italic"><i>I</i></button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="code" title="Inline code"><code>`</code></button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="strike" title="Strikethrough"><s>S</s></button>
+								<span class="fmt-divider" aria-hidden="true"></span>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h1" title="Heading 1">H1</button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h2" title="Heading 2">H2</button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="h3" title="Heading 3">H3</button>
+								<span class="fmt-divider" aria-hidden="true"></span>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="ul" title="Bullet list">• List</button>
+								<button type="button" class="btn btn-small fmt-btn" data-sfmt="ol" title="Numbered list">1. List</button>
+							</div>
 							<textarea class="input snip-editor-ta" id="snip-edit-body" placeholder="Paste or type your snippet…"></textarea>
 						</div>
 						<div class="tool-row" style="justify-content:flex-end;gap:8px;margin-top:4px">
@@ -10881,7 +10887,10 @@ body {
 					document.getElementById('snip-editor-title').textContent = s ? 'Edit Snippet' : 'New Snippet';
 					document.getElementById('snip-edit-name').value = s?.title || '';
 					document.getElementById('snip-edit-tag').value = s?.tag || '';
-					document.getElementById('snip-edit-body').value = s?.body || '';
+					const _snipTa = document.getElementById('snip-edit-body');
+					_snipTa.style.height = 'auto';
+					_snipTa.value = s?.body || '';
+					requestAnimationFrame(() => autoGrowSnip(_snipTa));
 					document.getElementById('snip-editor-overlay').hidden = false;
 					document.getElementById('snip-edit-name').focus();
 				}
@@ -10905,12 +10914,33 @@ body {
 					renderSnippets();
 				}
 
-				document.getElementById('btn-snip-new')?.addEventListener('click', () => openSnipEditor(null));
+				function autoGrowSnip(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+			function snipInsertFmt(fmt) {
+				const ta = document.getElementById('snip-edit-body');
+				const start = ta.selectionStart, end = ta.selectionEnd;
+				const sel = ta.value.slice(start, end);
+				if (['bold','italic','code','strike'].includes(fmt)) {
+					const b = fmt === 'bold' ? '**' : fmt === 'italic' ? '_' : fmt === 'code' ? '`' : '~~';
+					const repl = sel ? `${b}${sel}${b}` : `${b}${b}`;
+					ta.setRangeText(repl, start, end, 'end');
+					if (!sel) ta.selectionStart = ta.selectionEnd = start + b.length;
+				} else {
+					const prefix = fmt === 'h1' ? '# ' : fmt === 'h2' ? '## ' : fmt === 'h3' ? '### ' : fmt === 'ul' ? '- ' : '1. ';
+					const lineStart = ta.value.lastIndexOf('\n', start - 1) + 1;
+					ta.setRangeText(prefix, lineStart, lineStart, 'end');
+				}
+				ta.dispatchEvent(new Event('input'));
+				ta.focus();
+			}
+			document.getElementById('btn-snip-new')?.addEventListener('click', () => openSnipEditor(null));
 				document.getElementById('btn-snip-save')?.addEventListener('click', saveSnipEditor);
 				document.getElementById('btn-snip-cancel')?.addEventListener('click', closeSnipEditor);
 				document.getElementById('snip-editor-overlay')?.addEventListener('click', e => {
-					if (e.target === document.getElementById('snip-editor-overlay')) closeSnipEditor();
+					if (e.target === document.getElementById('snip-editor-overlay')) { closeSnipEditor(); return; }
+					const sfmt = e.target.closest('[data-sfmt]');
+					if (sfmt) snipInsertFmt(sfmt.dataset.sfmt);
 				});
+				document.getElementById('snip-edit-body')?.addEventListener('input', e => autoGrowSnip(e.target));
 				document.getElementById('snip-search')?.addEventListener('input', renderSnippets);
 				document.getElementById('snip-tag-bar')?.addEventListener('click', e => {
 					const chip = e.target.closest('.snip-tag-chip');
@@ -10936,11 +10966,6 @@ body {
 						saveSnippets(snips.filter(x => x.id !== sid));
 						renderSnippets();
 					}
-				});
-				// Expand collapsed preview on click
-				document.getElementById('snip-list')?.addEventListener('click', e => {
-					const prev = e.target.closest('.snip-item-preview');
-					if (prev) prev.classList.toggle('expanded');
 				});
 				// Re-render on tab switch
 				document.getElementById('tab-snippets')?.addEventListener('click', () => setTimeout(renderSnippets, 0));
