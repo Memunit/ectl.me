@@ -3320,16 +3320,6 @@
 						<div class="capture-list" id="capture-list"></div>
 					</div>
 
-					<!-- Quick Capture -->
-					<div id="quick-capture-area">
-						<p class="settings-section-title" style="margin-top:0;margin-bottom:6px">⚡ Quick Capture</p>
-						<div style="display:flex;gap:6px;align-items:flex-end">
-							<textarea class="input" id="quick-capture-input" placeholder="Jot something down… (⌘+Enter to save)" rows="2"></textarea>
-							<button class="btn btn-small btn-accent" id="btn-capture-add" type="button">Add</button>
-						</div>
-						<div class="capture-list" id="capture-list"></div>
-					</div>
-
 					<!-- Quick actions -->
 					<div id="home-quick-actions" class="home-quick-actions" hidden>
 						<button class="home-qa-btn primary" id="btn-home-new-note" type="button">✦ New note</button>
@@ -3582,21 +3572,30 @@
 									<button class="chip" data-val="wide"    type="button">L</button>
 									<button class="chip" data-val="xl"      type="button">XL</button>
 									<button class="chip" data-val="full"    type="button">Full</button>
-						<div class="field">
-							<label style="margin-bottom:10px">Background</label>
-							<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
-								<button class="chip" data-val="aurora"  type="button">Aurora</button>
-								<button class="chip" data-val="subtle"  type="button">Subtle</button>
+								</div>
+							</div>
+
+							<!-- Background -->
+							<div class="field" style="margin-bottom:18px">
+								<label style="margin-bottom:10px">Background</label>
+								<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
+									<button class="chip" data-val="aurora"  type="button">Aurora</button>
+									<button class="chip" data-val="subtle"  type="button">Subtle</button>
 									<button class="chip" data-val="mesh"    type="button">Mesh</button>
 									<button class="chip" data-val="glass"   type="button">Glass</button>
-							<label style="margin-bottom:10px">Note density</label>
-							<div class="chip-row" id="chips-density" role="radiogroup" aria-label="Note density">
-								<button class="chip" data-val="compact"     type="button">Compact</button>
-								<button class="chip" data-val="normal"      type="button">Normal</button>
-								<button class="chip" data-val="comfortable" type="button">Comfortable</button>
+									<button class="chip" data-val="minimal" type="button">Minimal</button>
+								</div>
 							</div>
-						</div>
 
+							<!-- Note density -->
+							<div class="field" style="margin-bottom:18px">
+								<label style="margin-bottom:10px">Note density</label>
+								<div class="chip-row" id="chips-density" role="radiogroup" aria-label="Note density">
+									<button class="chip" data-val="compact"     type="button">Compact</button>
+									<button class="chip" data-val="normal"      type="button">Normal</button>
+									<button class="chip" data-val="comfortable" type="button">Comfortable</button>
+								</div>
+							</div>
 						<!-- Layout -->
 						<div class="field" style="margin-top:18px">
 							<label style="margin-bottom:10px">Layout</label>
