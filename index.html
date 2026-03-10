@@ -3076,6 +3076,113 @@
 		}
 		/* ════════════════ BACKUP ROW ═══════════════════════════════ */
 		.backup-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+		/* ════════════════ FIND & REPLACE BAR ═══════════════════════════ */
+		#find-replace-bar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:6px 10px 6px; background:var(--panel-bg); border-bottom:1px solid var(--panel-border); position:relative; z-index:2; }
+		#find-replace-bar[hidden] { display:none; }
+		#find-input, #replace-input { min-width:80px; max-width:170px; font-size:0.82rem; padding:4px 8px; }
+		.fnr-count { font-size:0.76rem; color:var(--muted); min-width:44px; }
+		.fnr-divider { width:1px; height:16px; background:var(--panel-border); flex-shrink:0; margin:0 2px; }
+		.fnr-match-highlight { background:rgba(251,191,36,0.45); border-radius:2px; }
+		.fnr-active-highlight { background:rgba(251,191,36,0.85); border-radius:2px; }
+
+		/* ════════════════ NOTE STATS POPUP ═════════════════════════════ */
+		#note-stats-wrap { position:relative; }
+		#note-stats-pop { position:absolute; top:calc(100% + 6px); right:0; z-index:300; min-width:270px; max-width:340px; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--r); padding:14px 16px; box-shadow:0 8px 32px rgba(0,0,0,0.22); }
+		#note-stats-pop[hidden] { display:none; }
+		.note-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+		.note-stat-cell { background:var(--bg); border:1px solid var(--panel-border); border-radius:8px; padding:9px 12px; text-align:center; }
+		.note-stat-cell-val { font-size:1.25rem; font-weight:700; color:var(--accent); }
+		.note-stat-cell-lbl { font-size:0.70rem; color:var(--muted); margin-top:2px; }
+		.flesch-label { font-size:0.78rem; color:var(--muted); margin-top:10px; }
+		.flesch-bar-wrap { height:5px; background:var(--panel-border); border-radius:99px; margin-top:4px; }
+		.flesch-bar-fill { height:100%; border-radius:99px; background:var(--accent); transition:width .3s; }
+		.top-words-list { margin-top:10px; display:flex; flex-direction:column; gap:3px; }
+		.top-word-row { display:flex; align-items:center; gap:6px; font-size:0.78rem; }
+		.top-word-str { min-width:70px; font-family:ui-monospace,monospace; }
+		.top-word-bar { flex:1; height:6px; background:var(--panel-border); border-radius:99px; overflow:hidden; }
+		.top-word-fill { height:100%; background:var(--accent); border-radius:99px; opacity:.7; }
+		.top-word-cnt { min-width:22px; text-align:right; color:var(--muted); }
+
+		/* ════════════════ LINE HEIGHT PREFS ════════════════════════════ */
+		body.lh-tight   #notes { line-height:1.4; }
+		body.lh-relaxed #notes { line-height:1.9; }
+		body.lh-loose   #notes { line-height:2.3; }
+
+		/* ════════════════ EDITOR FONT PREFS ════════════════════════════ */
+		body.efont-sans  #notes { font-family:system-ui,-apple-system,sans-serif; }
+		body.efont-serif #notes { font-family:Georgia,'Times New Roman',serif; }
+
+		/* ════════════════ NOTE LIST VIEW PREFS ═════════════════════════ */
+		body.notelist-compact .doc-item { padding:4px 8px; min-height:0; }
+		body.notelist-compact .doc-item-title { font-size:0.82rem; }
+		body.notelist-compact .doc-item-date  { display:none; }
+		body.notelist-cards  #doc-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+		body.notelist-cards  .doc-item { border-radius:10px; min-height:64px; }
+
+		/* ════════════════ DIFF CHECKER ═════════════════════════════════ */
+		.diff-output { font-family:ui-monospace,monospace; font-size:0.78rem; line-height:1.7; white-space:pre-wrap; word-break:break-all; }
+		.diff-add  { display:block; background:rgba(52,211,153,0.18); padding:0 4px; border-radius:2px; }
+		.diff-rem  { display:block; background:rgba(248,113,113,0.18); padding:0 4px; border-radius:2px; }
+		.diff-same { display:block; color:var(--muted); padding:0 4px; }
+
+		/* ════════════════ WORD FREQUENCY BARS ══════════════════════════ */
+		.wfreq-bars { margin-top:8px; display:flex; flex-direction:column; gap:4px; }
+		.wfreq-row  { display:flex; align-items:center; gap:8px; font-size:0.8rem; }
+		.wfreq-word { min-width:78px; font-family:ui-monospace,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+		.wfreq-bar-track { flex:1; height:8px; background:var(--panel-border); border-radius:99px; overflow:hidden; }
+		.wfreq-bar-fill  { height:100%; background:var(--accent); border-radius:99px; }
+		.wfreq-count { min-width:24px; text-align:right; color:var(--muted); }
+
+		/* ════════════════ COLOR CONVERTER ══════════════════════════════ */
+		.color-picker-preview { width:44px; height:44px; border-radius:10px; border:1px solid var(--panel-border); flex-shrink:0; }
+		.color-history-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+		.color-hist-swatch { width:22px; height:22px; border-radius:5px; cursor:pointer; border:1px solid rgba(0,0,0,0.12); transition:transform .12s; flex-shrink:0; }
+		.color-hist-swatch:hover { transform:scale(1.18); }
+
+		/* ════════════════ CSS BOX SHADOW GENERATOR ═════════════════════ */
+		.bsg-preview { width:80px; height:80px; background:var(--accent); border-radius:var(--r); margin:10px auto; transition:box-shadow .2s; }
+		.bsg-code { font-family:ui-monospace,monospace; font-size:0.78rem; padding:7px 10px; background:var(--bg); border:1px solid var(--panel-border); border-radius:6px; word-break:break-all; margin-top:10px; }
+
+		/* ════════════════ MORSE CODE ════════════════════════════════════ */
+		.morse-output { font-family:ui-monospace,monospace; font-size:0.85rem; letter-spacing:1px; }
+
+		/* ════════════════ QUICK CAPTURE (HOME) ═════════════════════════ */
+		#quick-capture-area { margin-bottom:20px; }
+		#quick-capture-input { width:100%; min-height:62px; resize:vertical; }
+		.capture-list { display:flex; flex-direction:column; gap:4px; margin-top:8px; }
+		.capture-item { display:flex; gap:8px; align-items:flex-start; background:var(--bg); border:1px solid var(--panel-border); border-radius:8px; padding:9px 12px; font-size:0.84rem; }
+		.capture-item-text { flex:1; line-height:1.45; white-space:pre-wrap; word-break:break-word; }
+		.capture-item-del { opacity:.35; cursor:pointer; padding:0 4px; line-height:1; font-size:0.88rem; background:none; border:none; color:var(--text); }
+		.capture-item-del:hover { opacity:1; }
+		.capture-to-note-btn { font-size:0.73rem; }
+
+		/* ════════════════ HABIT TRACKER ════════════════════════════════ */
+		.habit-row { display:flex; gap:8px; align-items:center; padding:7px 0; border-bottom:1px solid var(--panel-border); }
+		.habit-row:last-child { border-bottom:none; }
+		.habit-name { flex:1; font-size:0.85rem; }
+		.habit-days { display:flex; gap:3px; }
+		.habit-day-btn { width:26px; height:26px; border-radius:6px; border:1px solid var(--panel-border); background:var(--bg); cursor:pointer; transition:background .15s,border-color .15s; font-size:0.63rem; color:var(--muted); display:flex; align-items:center; justify-content:center; padding:0; }
+		.habit-day-btn.done { background:var(--accent); border-color:var(--accent); color:#fff; }
+		.habit-streak { font-size:0.70rem; color:var(--muted); min-width:36px; text-align:right; }
+		.habit-del { opacity:.3; cursor:pointer; padding:0 4px; background:none; border:none; color:var(--text); font-size:0.82rem; }
+		.habit-del:hover { opacity:1; }
+		.habit-new-row { display:flex; gap:6px; margin-top:8px; }
+		.habit-new-row input { flex:1; }
+
+		/* ════════════════ MARKDOWN TABLE BUILDER ════════════════════════ */
+		.mdtbl-edit-table { border-collapse:collapse; font-size:0.8rem; margin-top:4px; }
+		.mdtbl-edit-table th, .mdtbl-edit-table td { border:1px solid var(--panel-border); padding:0; }
+		.mdtbl-edit-table input { border:none; background:transparent; color:var(--text); padding:5px 7px; width:90px; outline:none; font-size:0.8rem; }
+		.mdtbl-edit-table th input { font-weight:600; }
+
+		/* ════════════════ CRON / REGEX STATUS ══════════════════════════ */
+		.cron-desc { color:var(--accent); font-weight:500; font-size:0.82rem; margin-bottom:4px; }
+		.cron-next { color:var(--muted); font-size:0.78rem; }
+		.regex-match-badge { display:inline-block; background:rgba(var(--accent-rgb,.5b6ef5),0.15); color:var(--accent); border-radius:4px; padding:1px 6px; margin:2px; font-family:ui-monospace,monospace; font-size:0.78rem; }
+
+		/* ════════════════ CUSTOM CSS SECTION ═══════════════════════════ */
+		#pref-custom-css { font-family:ui-monospace,monospace; font-size:0.78rem; width:100%; tab-size:2; }
+
 		</style>
 	</head>
 
@@ -3203,6 +3310,26 @@
 						</div>
 					</div>
 
+					<!-- Quick Capture -->
+					<div id="quick-capture-area">
+						<p class="settings-section-title" style="margin-top:0;margin-bottom:6px">⚡ Quick Capture</p>
+						<div style="display:flex;gap:6px;align-items:flex-end">
+							<textarea class="input" id="quick-capture-input" placeholder="Jot something down… (⌘+Enter to save)" rows="2"></textarea>
+							<button class="btn btn-small btn-accent" id="btn-capture-add" type="button">Add</button>
+						</div>
+						<div class="capture-list" id="capture-list"></div>
+					</div>
+
+					<!-- Quick Capture -->
+					<div id="quick-capture-area">
+						<p class="settings-section-title" style="margin-top:0;margin-bottom:6px">⚡ Quick Capture</p>
+						<div style="display:flex;gap:6px;align-items:flex-end">
+							<textarea class="input" id="quick-capture-input" placeholder="Jot something down… (⌘+Enter to save)" rows="2"></textarea>
+							<button class="btn btn-small btn-accent" id="btn-capture-add" type="button">Add</button>
+						</div>
+						<div class="capture-list" id="capture-list"></div>
+					</div>
+
 					<!-- Quick actions -->
 					<div id="home-quick-actions" class="home-quick-actions" hidden>
 						<button class="home-qa-btn primary" id="btn-home-new-note" type="button">✦ New note</button>
@@ -3307,6 +3434,20 @@
 								<button class="btn btn-small" id="btn-paste-create" type="button" title="Paste clipboard as new note">📋</button>
 								<button class="btn btn-small" id="btn-focus-mode" type="button" title="Focus mode (⌘.)">⛶</button>
 								<button class="btn btn-small" id="btn-typewriter" type="button" title="Typewriter mode">⌨</button>
+								<button class="btn btn-small" id="btn-find-replace" type="button" title="Find &amp; Replace (⌘F)">🔍</button>
+								<div id="note-stats-wrap" style="position:relative">
+									<button class="btn btn-small" id="btn-note-stats" type="button" title="Note statistics">📈</button>
+									<div id="note-stats-pop" hidden role="dialog" aria-label="Note statistics">
+										<div style="display:flex;justify-content:space-between;align-items:center">
+											<strong style="font-size:0.88rem">Note Statistics</strong>
+											<button class="btn btn-small" id="btn-note-stats-close" type="button" aria-label="Close">✕</button>
+										</div>
+										<div class="note-stats-grid" id="note-stats-grid"></div>
+										<div class="flesch-label" id="note-stats-flesch-label"></div>
+										<div class="flesch-bar-wrap" id="note-stats-flesch-bar" hidden><div class="flesch-bar-fill" id="note-stats-flesch-fill"></div></div>
+										<div class="top-words-list" id="note-stats-top-words"></div>
+									</div>
+								</div>
 								<span class="fmt-divider" aria-hidden="true"></span>
 								<button class="btn btn-small fmt-btn" id="btn-fmt-bold" type="button" title="Bold (⌘B)"><b>B</b></button>
 								<button class="btn btn-small fmt-btn" id="btn-fmt-italic" type="button" title="Italic (⌘I)"><i>I</i></button>
@@ -3318,6 +3459,19 @@
 									<div class="history-pop" id="history-pop" hidden role="menu" aria-label="Note history"></div>
 								</div>
 								<button class="btn btn-small" id="btn-delete-doc" type="button" title="Delete document">🗑</button>
+							</div>
+							<!-- Find & Replace bar -->
+							<div id="find-replace-bar" hidden role="search" aria-label="Find and replace">
+								<input class="input" id="find-input" type="search" placeholder="Find…" autocomplete="off" />
+								<span class="fnr-count" id="fnr-count"></span>
+								<button class="btn btn-small" id="fnr-prev" type="button" title="Previous (Shift+Enter)">↑</button>
+								<button class="btn btn-small" id="fnr-next" type="button" title="Next (Enter)">↓</button>
+								<span class="fnr-divider"></span>
+								<input class="input" id="replace-input" type="text" placeholder="Replace…" autocomplete="off" />
+								<button class="btn btn-small" id="fnr-replace" type="button">Replace</button>
+								<button class="btn btn-small" id="fnr-replace-all" type="button">All</button>
+								<span class="fnr-divider"></span>
+								<button class="btn btn-small" id="fnr-close" type="button" aria-label="Close">✕</button>
 							</div>
 							<textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea>
 							<!-- Markdown preview pane -->
@@ -3553,6 +3707,54 @@
 						</div>
 					</div>
 
+					<!-- Editor Appearance -->
+					<div class="settings-section">
+						<p class="settings-section-title">Editor line height</p>
+						<div class="chip-row" id="chips-lineheight" role="radiogroup" aria-label="Editor line height">
+							<button class="chip" data-val="tight"   type="button">Tight</button>
+							<button class="chip" data-val="normal"  type="button">Normal</button>
+							<button class="chip" data-val="relaxed" type="button">Relaxed</button>
+							<button class="chip" data-val="loose"   type="button">Loose</button>
+						</div>
+					</div>
+
+					<div class="settings-section">
+						<p class="settings-section-title">Editor font</p>
+						<div class="chip-row" id="chips-editorfont" role="radiogroup" aria-label="Editor font">
+							<button class="chip" data-val="mono"  type="button">Monospace</button>
+							<button class="chip" data-val="sans"  type="button">Sans-serif</button>
+							<button class="chip" data-val="serif" type="button">Serif</button>
+						</div>
+					</div>
+
+					<div class="settings-section">
+						<p class="settings-section-title">Note list style</p>
+						<div class="chip-row" id="chips-notelistview" role="radiogroup" aria-label="Note list style">
+							<button class="chip" data-val="list"    type="button">List</button>
+							<button class="chip" data-val="compact" type="button">Compact</button>
+							<button class="chip" data-val="cards"   type="button">Cards</button>
+						</div>
+					</div>
+
+					<div class="settings-section">
+						<p class="settings-section-title">Spell check in editor</p>
+						<div class="chip-row" id="chips-spellcheck" role="radiogroup" aria-label="Spell check">
+							<button class="chip" data-val="off" type="button">Off</button>
+							<button class="chip" data-val="on"  type="button">On</button>
+						</div>
+						<p class="hint" style="margin-top:6px;font-size:0.78rem">Browser spell-check underlines in the notes editor.</p>
+					</div>
+
+					<div class="settings-section">
+						<p class="settings-section-title">Custom CSS</p>
+						<textarea class="input" id="pref-custom-css" rows="5" placeholder="/* Your custom CSS here */" spellcheck="false"></textarea>
+						<div style="display:flex;gap:6px;margin-top:6px">
+							<button class="btn btn-small btn-accent" id="btn-apply-custom-css" type="button">Apply CSS</button>
+							<button class="btn btn-small" id="btn-clear-custom-css" type="button">Clear</button>
+						</div>
+						<p class="hint" style="margin-top:6px;font-size:0.78rem">Injected directly into the page. Tip: <code>body { --accent: #ff6b35; }</code></p>
+					</div>
+
 					<!-- Desktop App Download -->
 					<div class="settings-section">
 						<p class="settings-section-title">Desktop App</p>
@@ -3740,6 +3942,224 @@
 						</div>
 					</div>
 
+					<!-- Color Converter -->
+					<div class="tool-card">
+						<div class="tool-card-header">🎨 Color Converter</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:10px;align-items:center">
+								<input type="color" id="tool-color-picker" value="#5b6ef5" style="width:44px;height:44px;border:none;background:none;cursor:pointer;padding:0" aria-label="Color picker" />
+								<div class="color-picker-preview" id="tool-color-preview" style="background:#5b6ef5"></div>
+								<input class="input" id="tool-color-hex" type="text" value="#5b6ef5" placeholder="#hex" style="flex:1;font-family:monospace;font-size:0.82rem" />
+							</div>
+							<div class="tool-row" style="gap:6px;margin-top:6px">
+								<input class="input" id="tool-color-rgb" type="text" readonly placeholder="rgb(…)" style="flex:1;font-family:monospace;font-size:0.8rem" />
+								<input class="input" id="tool-color-hsl" type="text" readonly placeholder="hsl(…)" style="flex:1;font-family:monospace;font-size:0.8rem" />
+							</div>
+							<div class="color-history-row" id="tool-color-history"></div>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small" id="tool-color-copy-hex" type="button">Copy HEX</button>
+								<button class="btn btn-small" id="tool-color-copy-rgb" type="button">Copy RGB</button>
+								<button class="btn btn-small" id="tool-color-copy-hsl" type="button">Copy HSL</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Text Case Converter -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔤 Text Case Converter</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-case-input" placeholder="Type or paste text…" rows="3" aria-label="Text for case conversion"></textarea>
+							<div class="tool-row" style="flex-wrap:wrap;gap:5px;margin-top:6px">
+								<button class="btn btn-small" data-case="upper"    type="button">UPPER</button>
+								<button class="btn btn-small" data-case="lower"    type="button">lower</button>
+								<button class="btn btn-small" data-case="title"    type="button">Title Case</button>
+								<button class="btn btn-small" data-case="sentence" type="button">Sentence case</button>
+								<button class="btn btn-small" data-case="camel"    type="button">camelCase</button>
+								<button class="btn btn-small" data-case="pascal"   type="button">PascalCase</button>
+								<button class="btn btn-small" data-case="snake"    type="button">snake_case</button>
+								<button class="btn btn-small" data-case="kebab"    type="button">kebab-case</button>
+								<button class="btn btn-small" data-case="alt"      type="button">aLtErNaTiNg</button>
+							</div>
+							<div class="tool-row" style="margin-top:6px">
+								<input class="input tool-output" id="tool-case-output" type="text" readonly placeholder="Result…" style="flex:1" />
+								<button class="btn btn-small" id="tool-case-copy" type="button">Copy</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Regex Tester -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔍 Regex Tester</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:5px">
+								<span style="font-family:monospace;font-size:1.1rem;color:var(--muted)">/</span>
+								<input class="input" id="tool-regex-pattern" type="text" placeholder="pattern" style="flex:1;font-family:monospace" aria-label="Regex pattern" />
+								<span style="font-family:monospace;font-size:1.1rem;color:var(--muted)">/</span>
+								<input class="input" id="tool-regex-flags" type="text" value="gi" placeholder="flags" style="width:48px;font-family:monospace" aria-label="Regex flags" />
+							</div>
+							<textarea class="input tool-textarea" id="tool-regex-input" placeholder="Test string…" rows="4" style="margin-top:6px" aria-label="Test string"></textarea>
+							<div class="tool-row" style="margin-top:4px">
+								<span class="tool-json-status" id="tool-regex-status"></span>
+							</div>
+							<div id="tool-regex-output" style="font-size:0.8rem;padding:6px 0;color:var(--muted);word-break:break-all">Enter a pattern and test string above.</div>
+						</div>
+					</div>
+
+					<!-- Number Base Converter -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔢 Number Base Converter</div>
+						<div class="tool-card-body">
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+								<div class="field" style="margin:0"><label style="font-size:0.78rem">Decimal</label><input class="input" id="tool-base-dec" type="text" placeholder="255" style="font-family:monospace" /></div>
+								<div class="field" style="margin:0"><label style="font-size:0.78rem">Binary</label><input class="input" id="tool-base-bin" type="text" placeholder="11111111" style="font-family:monospace" /></div>
+								<div class="field" style="margin:0"><label style="font-size:0.78rem">Octal</label><input class="input" id="tool-base-oct" type="text" placeholder="377" style="font-family:monospace" /></div>
+								<div class="field" style="margin:0"><label style="font-size:0.78rem">Hexadecimal</label><input class="input" id="tool-base-hex" type="text" placeholder="0xff" style="font-family:monospace" /></div>
+							</div>
+							<p class="hint" style="margin-top:6px;font-size:0.75rem">Type in any field to convert to all bases.</p>
+						</div>
+					</div>
+
+					<!-- Word Frequency Analyser -->
+					<div class="tool-card">
+						<div class="tool-card-header">📊 Word Frequency</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-wfreq-input" placeholder="Paste text to analyse…" rows="4" aria-label="Word frequency input"></textarea>
+							<div class="tool-row" style="margin-top:6px;flex-wrap:wrap;gap:8px">
+								<button class="btn btn-small btn-accent" id="tool-wfreq-run" type="button">Analyse</button>
+								<label class="tool-label">Top <input type="number" id="tool-wfreq-n" value="10" min="5" max="50" class="tool-num-input" /> words</label>
+								<label class="tool-check"><input type="checkbox" id="tool-wfreq-stop" checked /> Skip stopwords</label>
+							</div>
+							<div id="tool-wfreq-output" class="wfreq-bars"></div>
+						</div>
+					</div>
+
+					<!-- URL Encoder / Decoder -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔗 URL Encoder / Decoder</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-url-input" placeholder="URL or text to encode / decode…" rows="3" spellcheck="false"></textarea>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small btn-accent" id="tool-url-enc" type="button">Encode →</button>
+								<button class="btn btn-small" id="tool-url-dec" type="button">← Decode</button>
+								<button class="btn btn-small" id="tool-url-copy" type="button">Copy</button>
+							</div>
+							<textarea class="input tool-textarea" id="tool-url-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
+						</div>
+					</div>
+
+					<!-- Diff Checker -->
+					<div class="tool-card">
+						<div class="tool-card-header">🆚 Diff Checker</div>
+						<div class="tool-card-body">
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+								<textarea class="input tool-textarea" id="tool-diff-a" placeholder="Original text…" rows="5" aria-label="Original text"></textarea>
+								<textarea class="input tool-textarea" id="tool-diff-b" placeholder="Modified text…" rows="5" aria-label="Modified text"></textarea>
+							</div>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small btn-accent" id="tool-diff-run" type="button">Compare →</button>
+								<button class="btn btn-small" id="tool-diff-clear" type="button">Clear</button>
+								<span class="tool-json-status" id="tool-diff-status"></span>
+							</div>
+							<div id="tool-diff-output" class="diff-output" style="margin-top:8px;max-height:200px;overflow-y:auto"></div>
+						</div>
+					</div>
+
+					<!-- Morse Code -->
+					<div class="tool-card">
+						<div class="tool-card-header">📡 Morse Code</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-morse-input" placeholder="Text or Morse code (dots &amp; dashes)…" rows="3"></textarea>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small btn-accent" id="tool-morse-enc" type="button">Text → Morse</button>
+								<button class="btn btn-small" id="tool-morse-dec" type="button">Morse → Text</button>
+								<button class="btn btn-small" id="tool-morse-copy" type="button">Copy</button>
+							</div>
+							<textarea class="input tool-textarea morse-output" id="tool-morse-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
+						</div>
+					</div>
+
+					<!-- Lorem Ipsum Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">💬 Lorem Ipsum Generator</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:12px;flex-wrap:wrap;align-items:center">
+								<label class="tool-label">Paragraphs: <input type="number" id="lorem-paras" value="3" min="1" max="20" class="tool-num-input" /></label>
+								<label class="tool-check"><input type="checkbox" id="lorem-start-lorem" checked /> Start with &ldquo;Lorem ipsum&hellip;&rdquo;</label>
+							</div>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-accent" id="tool-lorem-gen" type="button">Generate</button>
+								<button class="btn btn-small" id="tool-lorem-copy" type="button">Copy</button>
+								<button class="btn btn-small" id="tool-lorem-note" type="button">&rarr; New note</button>
+							</div>
+							<textarea class="input tool-textarea" id="tool-lorem-output" rows="5" readonly placeholder="Lorem ipsum will appear here…" spellcheck="false" style="margin-top:6px"></textarea>
+						</div>
+					</div>
+
+					<!-- CSS Box Shadow Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🌑 CSS Box Shadow</div>
+						<div class="tool-card-body">
+							<div class="bsg-preview" id="bsg-preview"></div>
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+								<label class="tool-label">X offset <input type="range" id="bsg-x" min="-40" max="40" value="0" class="tool-range" /> <span id="bsg-x-val">0</span>px</label>
+								<label class="tool-label">Y offset <input type="range" id="bsg-y" min="-40" max="40" value="8" class="tool-range" /> <span id="bsg-y-val">8</span>px</label>
+								<label class="tool-label">Blur <input type="range" id="bsg-blur" min="0" max="80" value="24" class="tool-range" /> <span id="bsg-blur-val">24</span>px</label>
+								<label class="tool-label">Spread <input type="range" id="bsg-spread" min="-20" max="20" value="0" class="tool-range" /> <span id="bsg-spread-val">0</span>px</label>
+							</div>
+							<div class="tool-row" style="margin-top:8px;gap:8px;align-items:center">
+								<input type="color" id="bsg-color" value="#000000" style="width:36px;height:36px;border:none;padding:0;cursor:pointer" />
+								<label class="tool-label" style="margin:0">Opacity <input type="range" id="bsg-opacity" min="0" max="100" value="25" class="tool-range" style="width:80px" /> <span id="bsg-opacity-val">25</span>%</label>
+								<label class="tool-check"><input type="checkbox" id="bsg-inset" /> Inset</label>
+							</div>
+							<div class="bsg-code" id="bsg-code">box-shadow: 0 8px 24px 0 rgba(0,0,0,0.25);</div>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small" id="bsg-copy" type="button">Copy CSS</button>
+								<button class="btn btn-small" id="bsg-reset" type="button">Reset</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Cron Expression Helper -->
+					<div class="tool-card">
+						<div class="tool-card-header">⏰ Cron Expression Helper</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:6px">
+								<input class="input" id="tool-cron-input" type="text" value="0 9 * * 1-5" placeholder="Cron expression…" style="flex:1;font-family:monospace" />
+								<button class="btn btn-small btn-accent" id="tool-cron-parse" type="button">Parse</button>
+							</div>
+							<div id="tool-cron-result" style="margin-top:8px;font-size:0.82rem"></div>
+							<div style="margin-top:10px">
+								<p class="hint" style="font-size:0.75rem;margin-bottom:6px">Quick presets:</p>
+								<div style="display:flex;gap:6px;flex-wrap:wrap">
+									<button class="btn btn-small" data-cron="* * * * *"   type="button">Every min</button>
+									<button class="btn btn-small" data-cron="0 * * * *"   type="button">Hourly</button>
+									<button class="btn btn-small" data-cron="0 0 * * *"   type="button">Daily midnight</button>
+									<button class="btn btn-small" data-cron="0 9 * * 1-5" type="button">Weekdays 9am</button>
+									<button class="btn btn-small" data-cron="0 0 * * 0"   type="button">Weekly (Sun)</button>
+									<button class="btn btn-small" data-cron="0 0 1 * *"   type="button">Monthly</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Markdown Table Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">📋 Markdown Table Generator</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:10px;align-items:center">
+								<label class="tool-label">Cols: <input type="number" id="mdtbl-cols" value="3" min="2" max="10" class="tool-num-input" /></label>
+								<label class="tool-label">Rows: <input type="number" id="mdtbl-rows" value="3" min="1" max="20" class="tool-num-input" /></label>
+								<button class="btn btn-small btn-accent" id="mdtbl-build" type="button">Build table</button>
+							</div>
+							<div id="mdtbl-edit" style="margin-top:8px;overflow-x:auto"></div>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small" id="mdtbl-copy" type="button">Copy Markdown</button>
+								<button class="btn btn-small" id="mdtbl-insert" type="button">&rarr; Insert in note</button>
+							</div>
+							<textarea class="input tool-textarea" id="mdtbl-output" rows="4" readonly placeholder="Markdown table output…" spellcheck="false" style="margin-top:6px;font-family:ui-monospace,monospace;font-size:0.78rem"></textarea>
+						</div>
+					</div>
+
 				</section>
 
 				<!-- ── Work panel ── -->
@@ -3862,6 +4282,19 @@
 					</div>
 
 					<!-- Client-ready Report Generator moved to panel-reports -->
+
+					<!-- Habit Tracker -->
+					<div class="tool-card">
+						<div class="tool-card-header">✅ Habit Tracker</div>
+						<div class="tool-card-body">
+							<div id="habit-list"></div>
+							<div class="habit-new-row">
+								<input class="input" id="habit-new-input" type="text" placeholder="New habit (e.g. Read 20 min)" maxlength="60" />
+								<button class="btn btn-small btn-accent" id="habit-add-btn" type="button">Add</button>
+							</div>
+							<p class="hint" style="margin-top:6px;font-size:0.75rem">Track the last 7 days. Click a day to mark done. Saved locally.</p>
+						</div>
+					</div>
 
 				</section>
 
@@ -7627,6 +8060,11 @@ body {
 						e.preventDefault();
 						openCmdK();
 					}
+					// ⌘F: find & replace (notes tab)
+					if (mod && (e.key === 'f' || e.key === 'F') && activeTab === 'tab-notes') {
+						e.preventDefault();
+						openFindReplace();
+					}
 					// ⌘.: toggle focus mode
 					if (mod && e.key === '.') {
 						e.preventDefault();
@@ -7964,6 +8402,400 @@ body {
 				document.getElementById('btn-export-backup')?.addEventListener('click', exportBackupJSON);
 				document.getElementById('btn-import-backup')?.addEventListener('click', () => document.getElementById('backup-file-input')?.click());
 				document.getElementById('backup-file-input')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (f) importBackupJSON(f); e.target.value = ''; });
+
+				// ══════════════════════════════════════════════════════════════
+				// NEW FEATURES BLOCK
+				// ══════════════════════════════════════════════════════════════
+
+				// ── Helper: HTML escape ───────────────────────────────────────
+				function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+				// ── FIND & REPLACE ────────────────────────────────────────────
+				let _fnrMatches = [], _fnrIdx = 0;
+				function openFindReplace() {
+					const bar = document.getElementById('find-replace-bar');
+					if (!bar) return;
+					bar.hidden = false;
+					setTimeout(() => document.getElementById('find-input')?.focus(), 50);
+				}
+				function closeFindReplace() {
+					const bar = document.getElementById('find-replace-bar');
+					if (bar) bar.hidden = true;
+					_fnrMatches = []; _fnrIdx = 0;
+					const countEl = document.getElementById('fnr-count');
+					if (countEl) countEl.textContent = '';
+				}
+				function fnrSearch(q) {
+					const notesTA = document.getElementById('notes');
+					if (!notesTA || !q) { _fnrMatches = []; const c = document.getElementById('fnr-count'); if(c) c.textContent=''; return; }
+					const text = notesTA.value, ql = q.toLowerCase();
+					_fnrMatches = []; let i = 0;
+					while ((i = text.toLowerCase().indexOf(ql, i)) !== -1) { _fnrMatches.push(i); i += q.length; }
+					const c = document.getElementById('fnr-count');
+					if (c) c.textContent = _fnrMatches.length ? `1/${_fnrMatches.length}` : '0 results';
+				}
+				function fnrGo(dir) {
+					if (!_fnrMatches.length) return;
+					_fnrIdx = (_fnrIdx + dir + _fnrMatches.length) % _fnrMatches.length;
+					const q = document.getElementById('find-input')?.value ?? '';
+					const notesTA = document.getElementById('notes');
+					if (notesTA) { notesTA.focus(); notesTA.setSelectionRange(_fnrMatches[_fnrIdx], _fnrMatches[_fnrIdx] + q.length); }
+					const c = document.getElementById('fnr-count');
+					if (c) c.textContent = `${_fnrIdx+1}/${_fnrMatches.length}`;
+				}
+				function fnrReplaceOne() {
+					if (!_fnrMatches.length) return;
+					const q = document.getElementById('find-input')?.value ?? '';
+					const r = document.getElementById('replace-input')?.value ?? '';
+					const notesTA = document.getElementById('notes');
+					if (!notesTA) return;
+					const pos = _fnrMatches[_fnrIdx];
+					const before = notesTA.value.slice(0, pos);
+					const after  = notesTA.value.slice(pos + q.length);
+					notesTA.value = before + r + after;
+					scheduleDocSave?.();
+					fnrSearch(q);
+				}
+				function fnrReplaceAll() {
+					const q = document.getElementById('find-input')?.value ?? '';
+					const r = document.getElementById('replace-input')?.value ?? '';
+					const notesTA = document.getElementById('notes');
+					if (!q || !notesTA) return;
+					const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'g');
+					const count = (notesTA.value.match(re) || []).length;
+					notesTA.value = notesTA.value.replaceAll(q, r);
+					scheduleDocSave?.();
+					fnrSearch(q);
+					showToast?.(`Replaced ${count} occurrence${count!==1?'s':''}`, count ? 'success' : 'info');
+				}
+				document.getElementById('find-input')?.addEventListener('input', e => { fnrSearch(e.target.value); if (_fnrMatches.length) fnrGo(0); });
+				document.getElementById('find-input')?.addEventListener('keydown', e => { if (e.key==='Enter'){e.preventDefault();fnrGo(e.shiftKey?-1:1);} if (e.key==='Escape') closeFindReplace(); });
+				document.getElementById('fnr-prev')?.addEventListener('click', () => fnrGo(-1));
+				document.getElementById('fnr-next')?.addEventListener('click', () => fnrGo(1));
+				document.getElementById('fnr-replace')?.addEventListener('click', fnrReplaceOne);
+				document.getElementById('fnr-replace-all')?.addEventListener('click', fnrReplaceAll);
+				document.getElementById('fnr-close')?.addEventListener('click', closeFindReplace);
+				document.getElementById('btn-find-replace')?.addEventListener('click', () => {
+					const b = document.getElementById('find-replace-bar');
+					if (!b) return;
+					b.hidden ? openFindReplace() : closeFindReplace();
+				});
+
+				// ── NOTE STATISTICS ───────────────────────────────────────────
+				function calcFlesch(text) {
+					const words = text.trim().split(/\s+/).filter(Boolean);
+					const sentences = Math.max(1, (text.match(/[.!?]+/g)||[]).length);
+					const syllables = words.reduce((s,w)=>s+Math.max(1, w.toLowerCase().replace(/[^aeiouy]/g,'').replace(/e\b/g,'').length), 0);
+					const wc = words.length || 1;
+					return Math.max(0, Math.min(100, 206.835 - 1.015*(wc/sentences) - 84.6*(syllables/wc)));
+				}
+				function showNoteStats() {
+					const pop = document.getElementById('note-stats-pop');
+					if (!pop) return;
+					if (!pop.hidden) { pop.hidden = true; return; }
+					const notesTA = document.getElementById('notes');
+					const text = notesTA?.value ?? '';
+					const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+					const chars = text.length;
+					const sentences = (text.match(/[.!?]+/g)||[]).length;
+					const paras = text.split(/\n\s*\n/).filter(p=>p.trim()).length;
+					const readMins = Math.ceil(words/225);
+					const avgWp = paras > 0 ? Math.round(words/paras) : 0;
+					const grid = document.getElementById('note-stats-grid');
+					if (grid) grid.innerHTML = [
+						[words,'Words'], [chars,'Chars'], [sentences||0,'Sentences'],
+						[paras||0,'Paragraphs'], [readMins,'Min read'], [avgWp,'Avg wds/para']
+					].map(([v,l])=>`<div class="note-stat-cell"><div class="note-stat-val">${v}</div><div class="note-stat-lbl">${l}</div></div>`).join('');
+					const fk = calcFlesch(text);
+					const fkLabel = fk>=80?'Very Easy':fk>=60?'Easy':fk>=50?'Fairly Easy':fk>=30?'Standard':'Difficult';
+					const flEl = document.getElementById('note-stats-flesch-label');
+					const fbWrap = document.getElementById('note-stats-flesch-bar');
+					const fbFill = document.getElementById('note-stats-flesch-fill');
+					if (flEl) flEl.textContent = `Readability: ${fkLabel} (${Math.round(fk)}/100)`;
+					if (fbWrap) fbWrap.hidden = false;
+					if (fbFill) fbFill.style.width = fk + '%';
+					const STOP = new Set(['the','and','a','an','to','of','in','is','it','i','for','on','that','this','with','was','are','as','at','be','by','or','do','had','not','from','but','have','we','they','you','he','she','his','her','its','our','all','will','can','if','so','up','my','your']);
+					const freq = {};
+					text.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w)).forEach(w=>freq[w]=(freq[w]||0)+1);
+					const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+					const maxF = top[0]?.[1]||1;
+					const twEl = document.getElementById('note-stats-top-words');
+					if (twEl) twEl.innerHTML = top.length ? '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">Top words</div>'+top.map(([w,c])=>`<div class="top-word-row"><span class="top-word-str">${escHtml(w)}</span><div class="top-word-bar"><div class="top-word-fill" style="width:${c/maxF*100}%"></div></div><span class="top-word-cnt">${c}</span></div>`).join('') : '';
+					pop.hidden = false;
+				}
+				document.getElementById('btn-note-stats')?.addEventListener('click', showNoteStats);
+				document.getElementById('btn-note-stats-close')?.addEventListener('click', () => { document.getElementById('note-stats-pop').hidden = true; });
+				document.addEventListener('click', e => { if (!e.target.closest('#note-stats-wrap')) { const p = document.getElementById('note-stats-pop'); if (p && !p.hidden) p.hidden = true; } });
+
+				// ── COLOR CONVERTER ───────────────────────────────────────────
+				let _colorHistory = [];
+				function hexToRgb(hex) { return [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)]; }
+				function rgbToHsl(r,g,b) { r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}h/=6;}return[Math.round(h*360),Math.round(s*100),Math.round(l*100)]; }
+				function updateColorDisplay(hex) {
+					try { const [r,g,b]=hexToRgb(hex);const [h,s,l]=rgbToHsl(r,g,b);
+					const prev=document.getElementById('tool-color-preview');if(prev)prev.style.background=hex;
+					const hexI=document.getElementById('tool-color-hex');if(hexI)hexI.value=hex;
+					const rgbI=document.getElementById('tool-color-rgb');if(rgbI)rgbI.value=`rgb(${r}, ${g}, ${b})`;
+					const hslI=document.getElementById('tool-color-hsl');if(hslI)hslI.value=`hsl(${h}, ${s}%, ${l}%)`;
+					} catch(e){}
+				}
+				document.getElementById('tool-color-picker')?.addEventListener('input', e=>updateColorDisplay(e.target.value));
+				document.getElementById('tool-color-hex')?.addEventListener('input', e=>{ const v=e.target.value; if(/^#[0-9a-f]{6}$/i.test(v)){const pk=document.getElementById('tool-color-picker');if(pk)pk.value=v;updateColorDisplay(v);} });
+				document.getElementById('tool-color-copy-hex')?.addEventListener('click', ()=>{ const v=document.getElementById('tool-color-hex')?.value; if(v){navigator.clipboard.writeText(v);if(!_colorHistory.includes(v)){_colorHistory.unshift(v);_colorHistory=_colorHistory.slice(0,8);renderColorHistory();}showToast?.('HEX copied','success');} });
+				document.getElementById('tool-color-copy-rgb')?.addEventListener('click', ()=>{ const v=document.getElementById('tool-color-rgb')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('RGB copied','success');} });
+				document.getElementById('tool-color-copy-hsl')?.addEventListener('click', ()=>{ const v=document.getElementById('tool-color-hsl')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('HSL copied','success');} });
+				function renderColorHistory() { const row=document.getElementById('tool-color-history');if(!row)return;row.innerHTML=_colorHistory.map(c=>`<div class="color-hist-swatch" style="background:${c}" title="${c}" data-color="${c}" tabindex="0" role="button"></div>`).join('');row.querySelectorAll('.color-hist-swatch').forEach(s=>s.addEventListener('click',()=>{const pk=document.getElementById('tool-color-picker');if(pk)pk.value=s.dataset.color;updateColorDisplay(s.dataset.color);})); }
+				(function initColor(){ const pk=document.getElementById('tool-color-picker'); if(pk) updateColorDisplay(pk.value); })();
+
+				// ── TEXT CASE CONVERTER ───────────────────────────────────────
+				function applyCase(type) {
+					const inp = document.getElementById('tool-case-input')?.value ?? '';
+					let out = '';
+					if (type==='upper')    out = inp.toUpperCase();
+					else if (type==='lower')    out = inp.toLowerCase();
+					else if (type==='title')    out = inp.replace(/\w\S*/g, w=>w[0].toUpperCase()+w.slice(1).toLowerCase());
+					else if (type==='sentence') out = inp.toLowerCase().replace(/(^\w|[.!?]\s+\w)/g, c=>c.toUpperCase());
+					else if (type==='camel')    out = inp.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g,(m,i)=>i===0?m.toLowerCase():m.toUpperCase()).replace(/\s+/g,'');
+					else if (type==='pascal')   out = inp.replace(/(?:^\w|[A-Z]|\b\w)/g,m=>m.toUpperCase()).replace(/\s+/g,'');
+					else if (type==='snake')    out = inp.toLowerCase().replace(/\s+/g,'_');
+					else if (type==='kebab')    out = inp.toLowerCase().replace(/\s+/g,'-');
+					else if (type==='alt')      out = inp.split('').map((c,i)=>i%2===0?c.toLowerCase():c.toUpperCase()).join('');
+					const outEl = document.getElementById('tool-case-output');
+					if (outEl) outEl.value = out;
+				}
+				document.querySelector('#panel-tools')?.addEventListener('click', e => { const btn=e.target.closest('[data-case]'); if(btn) applyCase(btn.dataset.case); });
+				document.getElementById('tool-case-copy')?.addEventListener('click', ()=>{ const v=document.getElementById('tool-case-output')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('Copied','success');} });
+
+				// ── REGEX TESTER ──────────────────────────────────────────────
+				function runRegex() {
+					const pat    = document.getElementById('tool-regex-pattern')?.value;
+					const flags  = (document.getElementById('tool-regex-flags')?.value??'gi').replace(/[^gimsuy]/g,'');
+					const input  = document.getElementById('tool-regex-input')?.value??'';
+					const status = document.getElementById('tool-regex-status');
+					const output = document.getElementById('tool-regex-output');
+					if (!pat) { if(output)output.innerHTML=''; return; }
+					try {
+						const re = new RegExp(pat, flags + (flags.includes('g')?'':'g'));
+						const matches = [...input.matchAll(re)];
+						if (status){status.textContent=`${matches.length} match${matches.length!==1?'es':''}`;status.style.color='var(--accent)';}
+						if (output) output.innerHTML = matches.length ? matches.map(m=>`<span class="regex-match-badge" title="index ${m.index}">${escHtml(m[0])}</span>`).join(' ') : '<span style="color:var(--muted)">No matches</span>';
+					} catch(e) {
+						if (status){status.textContent='Invalid regex';status.style.color='red';}
+						if (output) output.innerHTML='';
+					}
+				}
+				document.getElementById('tool-regex-pattern')?.addEventListener('input', runRegex);
+				document.getElementById('tool-regex-flags')?.addEventListener('input', runRegex);
+				document.getElementById('tool-regex-input')?.addEventListener('input', runRegex);
+
+				// ── NUMBER BASE CONVERTER ─────────────────────────────────────
+				(function(){
+					const ids=['tool-base-dec','tool-base-bin','tool-base-oct','tool-base-hex'];
+					const bases=[10,2,8,16];
+					ids.forEach((id,i)=>{
+						document.getElementById(id)?.addEventListener('input', e=>{
+							const raw=e.target.value.trim().replace(/^0x/i,'');
+							if(!raw){ids.forEach(x=>{if(x!==id){const el=document.getElementById(x);if(el)el.value='';}});return;}
+							const n=parseInt(raw,bases[i]);
+							if(isNaN(n))return;
+							ids.forEach((x,j)=>{if(x!==id){const el=document.getElementById(x);if(el)el.value=j===3?'0x'+n.toString(16).toUpperCase():n.toString(bases[j]);}});
+						});
+					});
+				})();
+
+				// ── WORD FREQUENCY ────────────────────────────────────────────
+				document.getElementById('tool-wfreq-run')?.addEventListener('click', ()=>{
+					const text  = document.getElementById('tool-wfreq-input')?.value??'';
+					const n     = parseInt(document.getElementById('tool-wfreq-n')?.value??'10');
+					const useStop = document.getElementById('tool-wfreq-stop')?.checked;
+					const STOP  = new Set(['the','and','a','an','to','of','in','is','it','i','for','on','that','this','with','was','are','as','at','be','by','or','do','had','not','from','but','have','we','they','you','he','she','his','her','its']);
+					const freq  = {};
+					text.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>1&&(!useStop||!STOP.has(w))).forEach(w=>freq[w]=(freq[w]||0)+1);
+					const top   = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,n);
+					const maxF  = top[0]?.[1]||1;
+					const out   = document.getElementById('tool-wfreq-output');
+					if (out) out.innerHTML = top.map(([w,c])=>`<div class="wfreq-row"><span class="wfreq-word">${escHtml(w)}</span><div class="wfreq-bar-track"><div class="wfreq-bar-fill" style="width:${c/maxF*100}%"></div></div><span class="wfreq-count">${c}</span></div>`).join('')||'<span style="color:var(--muted)">No words found</span>';
+				});
+
+				// ── URL ENCODER / DECODER ─────────────────────────────────────
+				document.getElementById('tool-url-enc')?.addEventListener('click',()=>{ const v=document.getElementById('tool-url-input')?.value??''; const o=document.getElementById('tool-url-output'); if(o)o.value=encodeURIComponent(v); });
+				document.getElementById('tool-url-dec')?.addEventListener('click',()=>{ try{ const v=document.getElementById('tool-url-input')?.value??''; const o=document.getElementById('tool-url-output'); if(o)o.value=decodeURIComponent(v); }catch{showToast?.('Invalid URL encoding','error');} });
+				document.getElementById('tool-url-copy')?.addEventListener('click',()=>{ const v=document.getElementById('tool-url-output')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('Copied','success');} });
+
+				// ── DIFF CHECKER ──────────────────────────────────────────────
+				function simpleDiff(a,b){
+					const al=a.split('\n'),bl=b.split('\n');let out='';
+					const maxL=Math.max(al.length,bl.length);
+					for(let i=0;i<maxL;i++){
+						if(i>=al.length)      out+=`<div class="diff-add">+ ${escHtml(bl[i])}</div>`;
+						else if(i>=bl.length) out+=`<div class="diff-rem">- ${escHtml(al[i])}</div>`;
+						else if(al[i]===bl[i])out+=`<div class="diff-same">  ${escHtml(al[i])}</div>`;
+						else{ out+=`<div class="diff-rem">- ${escHtml(al[i])}</div><div class="diff-add">+ ${escHtml(bl[i])}</div>`; }
+					}
+					return out;
+				}
+				document.getElementById('tool-diff-run')?.addEventListener('click',()=>{
+					const a=document.getElementById('tool-diff-a')?.value??'',b=document.getElementById('tool-diff-b')?.value??'';
+					const out=document.getElementById('tool-diff-output');const st=document.getElementById('tool-diff-status');
+					if(out)out.innerHTML=simpleDiff(a,b);
+					if(st){const d=a===b;st.textContent=d?'Files identical':`${Math.abs(b.split('\n').length-a.split('\n').length)} line(s) difference`;st.style.color=d?'var(--accent)':'var(--muted)';}
+				});
+				document.getElementById('tool-diff-clear')?.addEventListener('click',()=>{
+					['tool-diff-a','tool-diff-b'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+					const out=document.getElementById('tool-diff-output');if(out)out.innerHTML='';
+					const st=document.getElementById('tool-diff-status');if(st)st.textContent='';
+				});
+
+				// ── MORSE CODE ────────────────────────────────────────────────
+				const MORSE_MAP={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.',' ':'/'};
+				const MORSE_REV=Object.fromEntries(Object.entries(MORSE_MAP).map(([k,v])=>[v,k]));
+				document.getElementById('tool-morse-enc')?.addEventListener('click',()=>{ const inp=(document.getElementById('tool-morse-input')?.value??'').toUpperCase(); const o=document.getElementById('tool-morse-output'); if(o)o.value=inp.split('').map(c=>MORSE_MAP[c]??'?').join(' '); });
+				document.getElementById('tool-morse-dec')?.addEventListener('click',()=>{ const inp=document.getElementById('tool-morse-input')?.value??''; const o=document.getElementById('tool-morse-output'); if(o)o.value=inp.trim().split(' ').map(c=>MORSE_REV[c]??'?').join(''); });
+				document.getElementById('tool-morse-copy')?.addEventListener('click',()=>{ const v=document.getElementById('tool-morse-output')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('Copied','success');} });
+
+				// ── LOREM IPSUM ───────────────────────────────────────────────
+				const LOREM_W='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa deserunt mollit anim id est laborum'.split(' ');
+				function loremPara(first){ const len=8+Math.floor(Math.random()*12);const words=[];for(let i=0;i<len;i++)words.push(LOREM_W[Math.floor(Math.random()*LOREM_W.length)]);if(first)words.splice(0,6,'Lorem','ipsum','dolor','sit','amet','consectetur');return words.join(' ').replace(/^\w/,c=>c.toUpperCase())+'.'; }
+				document.getElementById('tool-lorem-gen')?.addEventListener('click',()=>{
+					const n=Math.min(20,Math.max(1,parseInt(document.getElementById('lorem-paras')?.value??'3')));
+					const start=document.getElementById('lorem-start-lorem')?.checked;
+					const text=Array.from({length:n},(_,i)=>loremPara(i===0&&start)).join('\n\n');
+					const o=document.getElementById('tool-lorem-output');if(o)o.value=text;
+				});
+				document.getElementById('tool-lorem-copy')?.addEventListener('click',()=>{ const v=document.getElementById('tool-lorem-output')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('Copied','success');} });
+				document.getElementById('tool-lorem-note')?.addEventListener('click',()=>{ const v=document.getElementById('tool-lorem-output')?.value; const notesTA=document.getElementById('notes'); if(!v||!notesTA)return; notesTA.value+=(notesTA.value?'\n\n':'')+v; scheduleDocSave?.(); showToast?.('Inserted into note','success'); selectTab?.('tab-notes'); });
+
+				// ── CSS BOX SHADOW GENERATOR ──────────────────────────────────
+				function updateBSG(){
+					const x=document.getElementById('bsg-x')?.value??0,y=document.getElementById('bsg-y')?.value??8,blur=document.getElementById('bsg-blur')?.value??24,spread=document.getElementById('bsg-spread')?.value??0;
+					const color=document.getElementById('bsg-color')?.value??'#000000';
+					const opacity=parseInt(document.getElementById('bsg-opacity')?.value??25)/100;
+					const inset=document.getElementById('bsg-inset')?.checked?'inset ':'';
+					['bsg-x-val','bsg-y-val','bsg-blur-val','bsg-spread-val'].forEach((id,i)=>{ const el=document.getElementById(id); if(el)el.textContent=[x,y,blur,spread][i]; });
+					const opEl=document.getElementById('bsg-opacity-val'); if(opEl)opEl.textContent=document.getElementById('bsg-opacity')?.value??25;
+					const r=parseInt(color.slice(1,3),16),g=parseInt(color.slice(3,5),16),b=parseInt(color.slice(5,7),16);
+					const css=`${inset}${x}px ${y}px ${blur}px ${spread}px rgba(${r},${g},${b},${opacity.toFixed(2)})`;
+					const prev=document.getElementById('bsg-preview'); if(prev)prev.style.boxShadow=css;
+					const code=document.getElementById('bsg-code'); if(code)code.textContent=`box-shadow: ${css};`;
+				}
+				['bsg-x','bsg-y','bsg-blur','bsg-spread','bsg-color','bsg-opacity','bsg-inset'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateBSG));
+				document.getElementById('bsg-copy')?.addEventListener('click',()=>{ navigator.clipboard.writeText(document.getElementById('bsg-code')?.textContent??''); showToast?.('CSS copied','success'); });
+				document.getElementById('bsg-reset')?.addEventListener('click',()=>{ [['bsg-x',0],['bsg-y',8],['bsg-blur',24],['bsg-spread',0],['bsg-opacity',25]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});const inset=document.getElementById('bsg-inset');if(inset)inset.checked=false;updateBSG(); });
+				(function(){ updateBSG(); })();
+
+				// ── CRON EXPRESSION HELPER ────────────────────────────────────
+				function parseCron(expr){
+					const parts=expr.trim().split(/\s+/);
+					if(parts.length!==5)return'Invalid: needs 5 fields (min hour dom mon dow)';
+					const[min,hr,dom,mon,dow]=parts;
+					const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+					const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+					function desc(val,labels,name){if(val==='*')return`every ${name}`;if(val.startsWith('*/'))return`every ${val.slice(2)} ${name}s`;if(val.includes('-')){const[a,b]=val.split('-');return`${labels?labels[a]||a:a} – ${labels?labels[b]||b:b}`;}if(val.includes(',')){return val.split(',').map(v=>labels?labels[v]||v:v).join(', ');}return labels?labels[val]||val:val;}
+					return`At ${min==='*'?'every minute':'minute '+min}, ${hr==='*'?'every hour':'hour '+hr}, ${desc(dom,null,'day-of-month')}, month: ${desc(mon,MONTHS,'month')}, weekday: ${desc(dow,DAYS,'weekday')}`;
+				}
+				document.getElementById('tool-cron-parse')?.addEventListener('click',()=>{
+					const expr=document.getElementById('tool-cron-input')?.value??'';
+					const res=document.getElementById('tool-cron-result');
+					if(res)res.innerHTML=`<div class="cron-desc">${escHtml(parseCron(expr))}</div><div class="cron-next" style="margin-top:4px;color:var(--muted);font-size:0.78rem">Fields: <code>min hour dom mon dow</code> — supports *, */n, ranges, lists</div>`;
+				});
+				document.querySelectorAll('[data-cron]').forEach(btn=>btn.addEventListener('click',()=>{ const el=document.getElementById('tool-cron-input'); if(el){el.value=btn.dataset.cron;document.getElementById('tool-cron-parse')?.click();} }));
+
+				// ── MARKDOWN TABLE GENERATOR ──────────────────────────────────
+				function buildMdTableEditor(){
+					const cols=Math.min(10,Math.max(2,parseInt(document.getElementById('mdtbl-cols')?.value??3)));
+					const rows=Math.min(20,Math.max(1,parseInt(document.getElementById('mdtbl-rows')?.value??3)));
+					const container=document.getElementById('mdtbl-edit'); if(!container)return;
+					const table=document.createElement('table'); table.className='mdtbl-edit-table';
+					const thead=table.createTHead(); const hr=thead.insertRow();
+					for(let c=0;c<cols;c++){const th=document.createElement('th');const inp=document.createElement('input');inp.placeholder=`Header ${c+1}`;inp.style.cssText='width:100%;box-sizing:border-box';th.appendChild(inp);hr.appendChild(th);}
+					const tbody=table.createTBody();
+					for(let r=0;r<rows;r++){const tr=tbody.insertRow();for(let c=0;c<cols;c++){const td=tr.insertCell();const inp=document.createElement('input');inp.placeholder=`R${r+1}C${c+1}`;inp.style.cssText='width:100%;box-sizing:border-box';td.appendChild(inp);}}
+					container.innerHTML=''; container.appendChild(table);
+					table.addEventListener('input',renderMdTable);
+					renderMdTable();
+				}
+				function renderMdTable(){
+					const table=document.querySelector('.mdtbl-edit-table');
+					const out=document.getElementById('mdtbl-output');
+					if(!table||!out)return;
+					const headers=[...table.querySelectorAll('thead input')].map(i=>i.value||'Header');
+					const rows=[...table.querySelectorAll('tbody tr')].map(tr=>[...tr.querySelectorAll('input')].map(i=>i.value||' '));
+					let md='| '+headers.join(' | ')+' |\n| '+headers.map(()=>'---').join(' | ')+' |';
+					rows.forEach(r=>{ md+='\n| '+r.join(' | ')+' |'; });
+					out.value=md;
+				}
+				document.getElementById('mdtbl-build')?.addEventListener('click',buildMdTableEditor);
+				document.getElementById('mdtbl-copy')?.addEventListener('click',()=>{ const v=document.getElementById('mdtbl-output')?.value; if(v){navigator.clipboard.writeText(v);showToast?.('Markdown copied','success');} });
+				document.getElementById('mdtbl-insert')?.addEventListener('click',()=>{ const v=document.getElementById('mdtbl-output')?.value; const notesTA=document.getElementById('notes'); if(!v||!notesTA)return; notesTA.value+=(notesTA.value?'\n\n':'')+v; scheduleDocSave?.(); showToast?.('Table inserted','success'); selectTab?.('tab-notes'); });
+				(function(){ buildMdTableEditor(); })();
+
+				// ── QUICK CAPTURE ─────────────────────────────────────────────
+				let _captures = [];
+				try { _captures = JSON.parse(localStorage.getItem('ectl-captures')||'[]'); } catch(e){}
+				function saveCaptures(){ localStorage.setItem('ectl-captures',JSON.stringify(_captures)); }
+				function renderCaptures(){
+					const list=document.getElementById('capture-list'); if(!list)return;
+					list.innerHTML=_captures.map((c,i)=>`<div class="capture-item"><div class="capture-item-text">${escHtml(c.text)}</div><div class="capture-item-actions"><button class="btn btn-small capture-to-note-btn" data-ci="${i}" type="button" title="Send to notes">→ Note</button><button class="capture-item-del" data-ci="${i}" type="button" title="Delete">✕</button></div></div>`).join('');
+				}
+				document.getElementById('btn-capture-add')?.addEventListener('click',()=>{
+					const inp=document.getElementById('quick-capture-input'); if(!inp?.value.trim())return;
+					_captures.unshift({text:inp.value.trim(),ts:Date.now()}); _captures=_captures.slice(0,30);
+					saveCaptures(); renderCaptures(); inp.value='';
+				});
+				document.getElementById('quick-capture-input')?.addEventListener('keydown',e=>{ if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();document.getElementById('btn-capture-add')?.click();} });
+				document.getElementById('capture-list')?.addEventListener('click',e=>{
+					const del=e.target.closest('.capture-item-del');
+					const note=e.target.closest('.capture-to-note-btn');
+					if(del){_captures.splice(parseInt(del.dataset.ci),1);saveCaptures();renderCaptures();}
+					if(note){const c=_captures[parseInt(note.dataset.ci)];const notesTA=document.getElementById('notes');if(c&&notesTA){notesTA.value+=(notesTA.value?'\n\n':'')+c.text;scheduleDocSave?.();showToast?.('Added to note','success');selectTab?.('tab-notes');}}
+				});
+				renderCaptures();
+
+				// ── HABIT TRACKER ─────────────────────────────────────────────
+				let _habits = [];
+				try { _habits = JSON.parse(localStorage.getItem('ectl-habits')||'[]'); } catch(e){}
+				function saveHabits(){ localStorage.setItem('ectl-habits',JSON.stringify(_habits)); }
+				function getWeekDays(){ const days=[]; const now=new Date(); for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0]);}return days; }
+				function getHabitStreak(h){ let s=0;const now=new Date();for(let i=0;;i++){const d=new Date(now);d.setDate(d.getDate()-i);const k=d.toISOString().split('T')[0];if(h.done?.includes(k))s++;else break;}return s; }
+				function renderHabits(){
+					const list=document.getElementById('habit-list'); if(!list)return;
+					const days=getWeekDays();
+					const dayLabels=['Su','Mo','Tu','We','Th','Fr','Sa'];
+					list.innerHTML=_habits.map((h,hi)=>{
+						const streak=getHabitStreak(h);
+						return`<div class="habit-row"><span class="habit-name">${escHtml(h.name)}</span><div class="habit-days">${days.map(d=>`<button class="habit-day-btn${(h.done||[]).includes(d)?' done':''}" data-hi="${hi}" data-day="${d}" title="${d}">${dayLabels[new Date(d+'T12:00').getDay()]}</button>`).join('')}</div><span class="habit-streak">${streak>0?streak+'🔥':''}</span><button class="habit-del" data-hi="${hi}" title="Remove habit" type="button">✕</button></div>`;
+					}).join('');
+				}
+				document.getElementById('habit-list')?.addEventListener('click',e=>{
+					const btn=e.target.closest('.habit-day-btn'),del=e.target.closest('.habit-del');
+					if(btn){const hi=parseInt(btn.dataset.hi),day=btn.dataset.day;if(!_habits[hi].done)_habits[hi].done=[];const idx=_habits[hi].done.indexOf(day);if(idx>=0)_habits[hi].done.splice(idx,1);else _habits[hi].done.push(day);saveHabits();renderHabits();}
+					if(del){_habits.splice(parseInt(del.dataset.hi),1);saveHabits();renderHabits();}
+				});
+				document.getElementById('habit-add-btn')?.addEventListener('click',()=>{
+					const inp=document.getElementById('habit-new-input'); if(!inp?.value.trim())return;
+					_habits.push({name:inp.value.trim(),done:[]});saveHabits();renderHabits();inp.value='';
+				});
+				document.getElementById('habit-new-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('habit-add-btn')?.click();});
+				renderHabits();
+
+				// ── CUSTOM CSS SETTINGS ───────────────────────────────────────
+				document.getElementById('btn-apply-custom-css')?.addEventListener('click',()=>{
+					const css=document.getElementById('pref-custom-css')?.value??'';
+					currentPrefs.customCss=css;
+					savePref?.('customCss',css);
+					let el=document.getElementById('user-custom-css');
+					if(!el){el=document.createElement('style');el.id='user-custom-css';document.head.appendChild(el);}
+					el.textContent=css;
+					showToast?.('Custom CSS applied','success');
+				});
+				document.getElementById('btn-clear-custom-css')?.addEventListener('click',()=>{
+					const ta=document.getElementById('pref-custom-css');if(ta)ta.value='';
+					currentPrefs.customCss='';
+					savePref?.('customCss','');
+					const el=document.getElementById('user-custom-css');if(el)el.textContent='';
+					showToast?.('Custom CSS cleared','info');
+				});
+
 
 				// ── File preview lightbox ────────────────────────────────────
 				function openLightbox(content, filename) {
@@ -9070,6 +9902,11 @@ body {
 					appSubtitle: '',
 					autoLock:    'off',
 					wordGoal:    0,
+					lineHeight:   'normal',
+					editorFont:   'mono',
+					spellCheck:   'off',
+					noteListView: 'list',
+					customCss:    '',
 				};
 
 				const FONT_SCALE   = { xs: 0.76, small: 0.88, medium: 1, large: 1.15, xl: 1.30 };
@@ -9149,6 +9986,19 @@ body {
 					// Sidebar position
 					document.body.classList.toggle('sidebar-right', currentPrefs.sidebar === 'right');
 
+					// Line height
+					document.body.classList.remove('lh-tight','lh-relaxed','lh-loose');
+					if(currentPrefs.lineHeight&&currentPrefs.lineHeight!=='normal')document.body.classList.add('lh-'+currentPrefs.lineHeight);
+					// Editor font
+					document.body.classList.remove('efont-sans','efont-serif');
+					if(currentPrefs.editorFont&&currentPrefs.editorFont!=='mono')document.body.classList.add('efont-'+currentPrefs.editorFont);
+					// Spell check
+					(function(){const ntA=document.getElementById('notes');if(ntA)ntA.spellcheck=currentPrefs.spellCheck==='on';})();
+					// Note list view
+					document.body.classList.remove('notelist-compact','notelist-cards');
+					if(currentPrefs.noteListView&&currentPrefs.noteListView!=='list')document.body.classList.add('notelist-'+currentPrefs.noteListView);
+					// Custom CSS
+					(function(){let cEl=document.getElementById('user-custom-css');if(!cEl){cEl=document.createElement('style');cEl.id='user-custom-css';document.head.appendChild(cEl);}cEl.textContent=currentPrefs.customCss||'';const ta=document.getElementById('pref-custom-css');if(ta)ta.value=currentPrefs.customCss||'';})();
 					// Custom app title / subtitle
 					const h1El = document.querySelector('#app h1');
 					const subtitleEl = document.querySelector('#app .subtitle');
@@ -9296,7 +10146,11 @@ body {
 						{ id: 'chips-animspeed', key: 'animSpeed' },
 						{ id: 'chips-cpad',      key: 'cardPad'   },
 						{ id: 'chips-sidebar',   key: 'sidebar'   },
-						{ id: 'chips-autolock',  key: 'autoLock'  },
+						{ id: 'chips-autolock',     key: 'autoLock'     },
+						{ id: 'chips-lineheight',   key: 'lineHeight'   },
+						{ id: 'chips-editorfont',   key: 'editorFont'   },
+						{ id: 'chips-spellcheck',   key: 'spellCheck'   },
+						{ id: 'chips-notelistview', key: 'noteListView' },
 					].forEach(({ id, key }) => {
 						document.querySelectorAll(`#${id} .chip`).forEach(c => {
 							c.classList.toggle('active', c.dataset.val === String(currentPrefs[key]));
@@ -9310,7 +10164,7 @@ body {
 				}
 
 				// Wire chip clicks
-				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock'].forEach(id => {
+				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock','chips-lineheight','chips-editorfont','chips-spellcheck','chips-notelistview'].forEach(id => {
 					const container = document.getElementById(id);
 					if (!container) return;
 					const key = id === 'chips-fontsize'  ? 'fontSize'
@@ -9323,7 +10177,11 @@ body {
 					          : id === 'chips-animspeed' ? 'animSpeed'
 					          : id === 'chips-cpad'      ? 'cardPad'
 					          : id === 'chips-sidebar'   ? 'sidebar'
-					          : id === 'chips-autolock'  ? 'autoLock'
+					          : id === 'chips-autolock'     ? 'autoLock'
+					          : id === 'chips-lineheight'   ? 'lineHeight'
+					          : id === 'chips-editorfont'   ? 'editorFont'
+					          : id === 'chips-spellcheck'   ? 'spellCheck'
+					          : id === 'chips-notelistview' ? 'noteListView'
 					          : 'bgStyle';
 					container.addEventListener('click', e => {
 						const chip = e.target.closest('.chip');
