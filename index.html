@@ -2980,6 +2980,102 @@
 			@media print {
 				body > * { display: none !important; }
 			}
+
+		/* ══════════════ ⌘K GLOBAL SEARCH PALETTE ══════════════════ */
+		#cmdk-overlay {
+			position: fixed; inset: 0; z-index: 9900;
+			background: rgba(0,0,0,0.42);
+			backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+			display: flex; align-items: flex-start; justify-content: center;
+			padding-top: 13vh;
+			animation: cmdk-bg-in 0.15s var(--ease) both;
+		}
+		#cmdk-overlay[hidden] { display: none !important; }
+		@keyframes cmdk-bg-in { from { opacity:0; } to { opacity:1; } }
+		#cmdk-panel {
+			width: min(620px, 94vw);
+			background: var(--card-bg);
+			border: 1.5px solid var(--panel-border);
+			border-radius: 16px;
+			box-shadow: 0 28px 90px rgba(0,0,0,0.28);
+			overflow: hidden;
+			animation: cmdk-panel-in 0.18s var(--ease-spring) both;
+		}
+		@keyframes cmdk-panel-in { from { opacity:0; transform: scale(0.97) translateY(-6px); } to { opacity:1; transform: none; } }
+		#cmdk-input {
+			width: 100%; border: none; background: transparent; outline: none;
+			padding: 16px 18px; font-size: 1.05rem; color: var(--text);
+			border-bottom: 1.5px solid var(--panel-border);
+			box-sizing: border-box; font-family: inherit;
+		}
+		#cmdk-input::placeholder { color: var(--muted); }
+		#cmdk-input::-webkit-search-cancel-button { display: none; }
+		.cmdk-results { max-height: 400px; overflow-y: auto; padding: 6px 0 10px; }
+		.cmdk-section-label {
+			font-size: 0.7rem; font-weight: 700; color: var(--muted);
+			padding: 10px 16px 3px; text-transform: uppercase; letter-spacing: 0.07em;
+		}
+		.cmdk-item {
+			display: flex; align-items: center; gap: 12px;
+			padding: 9px 16px; cursor: pointer;
+			transition: background var(--t-fast) var(--ease);
+		}
+		.cmdk-item:hover, .cmdk-item.cmdk-active {
+			background: color-mix(in srgb, var(--accent) 11%, transparent);
+		}
+		.cmdk-item-icon { font-size: 1.05em; flex-shrink: 0; width: 22px; text-align: center; }
+		.cmdk-item-text { flex: 1; overflow: hidden; }
+		.cmdk-item-title { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+		.cmdk-item-sub { font-size: 0.76rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+		.cmdk-item-kbd {
+			font-size: 0.7rem; color: var(--muted);
+			background: color-mix(in srgb, CanvasText 7%, Canvas);
+			border: 1px solid var(--panel-border);
+			padding: 2px 7px; border-radius: 5px; font-family: inherit; flex-shrink: 0;
+		}
+		.cmdk-empty { text-align: center; color: var(--muted); font-size: 0.88rem; padding: 28px 18px; }
+		.cmdk-footer {
+			display: flex; gap: 14px; padding: 8px 16px;
+			border-top: 1.5px solid var(--panel-border);
+			font-size: 0.72rem; color: var(--muted); flex-wrap: wrap;
+		}
+		.cmdk-footer-hint { display: flex; align-items: center; gap: 5px; }
+		.cmdk-footer-hint kbd {
+			font-family: inherit; font-size: 0.68rem; padding: 1px 5px;
+			background: color-mix(in srgb, CanvasText 7%, Canvas);
+			border: 1px solid var(--panel-border); border-radius: 4px;
+		}
+		/* ════════════════ TYPEWRITER MODE ══════════════════════════ */
+		body.typewriter-mode #notes { scroll-behavior: smooth; padding-bottom: 50vh; }
+		#btn-typewriter.active { color: var(--accent); border-color: var(--accent); }
+		/* ════════════════ LIVE SAVE TIMESTAMP + WPM ════════════════ */
+		#save-timestamp { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+		#writing-wpm {
+			font-size: 0.75rem; color: var(--accent); font-weight: 700;
+			background: color-mix(in srgb, var(--accent) 10%, transparent);
+			padding: 1px 7px; border-radius: 999px;
+			border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+		}
+		/* ════════════════ THEME PRESETS ════════════════════════════ */
+		.theme-presets-grid {
+			display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+			gap: 8px; margin-top: 8px;
+		}
+		.theme-preset-btn {
+			display: flex; flex-direction: column; align-items: center; gap: 6px;
+			padding: 10px 8px; border-radius: var(--radius-md);
+			border: 1.5px solid var(--panel-border); background: var(--btn-bg);
+			cursor: pointer; transition: border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+			font-size: 0.78rem; font-weight: 600; color: var(--text); font-family: inherit;
+		}
+		.theme-preset-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+		.theme-preset-swatch {
+			width: 34px; height: 34px; border-radius: 50%;
+			background: conic-gradient(var(--ps-c1, #5b6ef5) 0% 50%, var(--ps-c2, #818cf8) 50% 100%);
+			border: 2px solid var(--panel-border);
+		}
+		/* ════════════════ BACKUP ROW ═══════════════════════════════ */
+		.backup-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
 		</style>
 	</head>
 
@@ -3078,7 +3174,8 @@
 						</div>
 					</div>
 						<div class="header-actions" style="display:flex;gap:8px;align-items:center;">
-							<button class="btn btn-small" id="btn-shortcuts-help" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts" style="font-weight:700">?</button>
+							<button class="btn btn-small" id="btn-cmdk-open" type="button" aria-label="Search (⌘K)" title="Search & commands (⌘K)" style="font-size:0.82rem">⌘K</button>
+					<button class="btn btn-small" id="btn-shortcuts-help" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts" style="font-weight:700">?</button>
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
 							<button class="btn" id="btn-signout" type="button" hidden>Sign out</button>
 						</div>
@@ -3154,6 +3251,7 @@
 						<div class="auth">
 							<span id="auth-status">Checking sign-in…</span>
 							<span id="save-status" hidden>Saved</span>
+							<span id="save-timestamp" hidden></span>
 						</div>
 						<div style="display:flex;gap:8px;align-items:center">
 							<div id="btn-new-doc-wrap" style="position:relative">
@@ -3208,6 +3306,7 @@
 								<button class="btn btn-small" id="btn-md-preview" type="button" title="Toggle Markdown preview" aria-pressed="false">👁 MD</button>
 								<button class="btn btn-small" id="btn-paste-create" type="button" title="Paste clipboard as new note">📋</button>
 								<button class="btn btn-small" id="btn-focus-mode" type="button" title="Focus mode (⌘.)">⛶</button>
+								<button class="btn btn-small" id="btn-typewriter" type="button" title="Typewriter mode">⌨</button>
 								<span class="fmt-divider" aria-hidden="true"></span>
 								<button class="btn btn-small fmt-btn" id="btn-fmt-bold" type="button" title="Bold (⌘B)"><b>B</b></button>
 								<button class="btn btn-small fmt-btn" id="btn-fmt-italic" type="button" title="Italic (⌘I)"><i>I</i></button>
@@ -3227,6 +3326,7 @@
 							<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
 								<p class="hint" id="notes-hint" style="margin:0">Your notes sync to the cloud. <kbd style="font-size:0.78rem;opacity:0.6">⌘S</kbd> save &nbsp;<kbd style="font-size:0.78rem;opacity:0.6">⌘T</kbd> new</p>
 								<span class="notes-word-count" id="notes-word-count"></span>
+								<span id="writing-wpm" hidden></span>
 							</div>
 							<!-- Word goal -->
 							<div class="word-goal-row" id="word-goal-row" hidden>
@@ -3242,6 +3342,7 @@
 								<span class="kb-pill"><kbd>⌘T</kbd> new</span>
 								<span class="kb-pill"><kbd>⌘.</kbd> focus</span>
 								<span class="kb-pill"><kbd>?</kbd> shortcuts</span>
+								<span class="kb-pill"><kbd>⌘K</kbd> search</span>
 							</div>
 						</div>
 					</div>
@@ -3291,6 +3392,13 @@
 					<!-- Customization -->
 					<div class="settings-section">
 						<p class="settings-section-title">Customization</p>
+
+						<!-- Theme presets -->
+						<div class="field" style="margin-bottom:22px">
+							<label style="margin-bottom:8px">Theme presets</label>
+							<div class="theme-presets-grid" id="theme-presets-grid"></div>
+							<p class="hint" style="margin-top:6px;font-size:0.78rem">One-click theme combos.</p>
+						</div>
 
 						<!-- Accent colour -->
 						<div class="field" style="margin-bottom:18px">
@@ -3407,6 +3515,18 @@
 						<div class="prefs-save-row">
 							<button class="btn btn-accent" id="btn-save-prefs" type="button">Save preferences</button>
 							<span id="prefs-status"></span>
+						</div>
+
+						<!-- Backup & Restore -->
+						<div class="settings-section">
+							<p class="settings-section-title">Backup &amp; Restore</p>
+							<p class="hint" style="margin:0 0 4px">Export all your notes as a JSON file you can restore later. Essential for the desktop app.</p>
+							<div class="backup-row">
+								<button class="btn btn-small" id="btn-export-backup" type="button" title="Download all notes as JSON">&#10599; Export JSON</button>
+								<button class="btn btn-small" id="btn-import-backup" type="button" title="Restore notes from JSON backup">&#10514; Import JSON</button>
+								<input type="file" id="backup-file-input" accept=".json" hidden />
+							</div>
+							<p class="hint" id="backup-status" style="margin-top:6px;font-size:0.78rem"></p>
 						</div>
 
 						<!-- Custom app title -->
@@ -3950,7 +4070,20 @@
 						</div>
 						<div class="kb-modal-close-row"><button class="btn btn-small" id="btn-kb-modal-close" type="button">Close</button></div>
 					</div>
+						<!-- ⌘K Global Search Palette -->
+			<div id="cmdk-overlay" hidden role="dialog" aria-modal="true" aria-label="Search and commands" tabindex="-1">
+				<div id="cmdk-panel">
+					<input id="cmdk-input" type="search" placeholder="Search notes, or type a command…" autocomplete="off" spellcheck="false" />
+					<div class="cmdk-results" id="cmdk-results"></div>
+					<div class="cmdk-footer">
+						<span class="cmdk-footer-hint"><kbd>↵</kbd> open</span>
+						<span class="cmdk-footer-hint"><kbd>↑↓</kbd> navigate</span>
+						<span class="cmdk-footer-hint"><kbd>esc</kbd> close</span>
+					</div>
 				</div>
+			</div>
+
+	</div>
 		</main>
 		</div>
 
@@ -7376,6 +7509,7 @@ body {
 						setSaveStatus('Saved locally');
 					}
 					window.setTimeout(() => setSaveStatus(''), 1400);
+					_lastSavedAt = Date.now(); updateSaveTimestamp();
 				}
 
 				function scheduleDocSave() {
@@ -7388,6 +7522,10 @@ body {
 					updateWordCount();
 					updateCharWarning();
 					updateWordGoal();
+					updateWPM();
+					if (_wpmHideTimer) clearTimeout(_wpmHideTimer);
+					_wpmHideTimer = setTimeout(() => { const el = document.getElementById('writing-wpm'); if (el) el.hidden = true; }, 5000);
+					applyTypewriterScroll();
 					if (mdPreviewOn) {
 						const pane = document.getElementById('md-preview-pane');
 						if (pane) pane.innerHTML = renderMarkdown(notesEl.value);
@@ -7484,6 +7622,11 @@ body {
 							showToast(doc.pinned ? 'Note pinned' : 'Note unpinned', 'info');
 						}
 					}
+					// ⌘K: command palette
+					if (mod && (e.key === 'k' || e.key === 'K')) {
+						e.preventDefault();
+						openCmdK();
+					}
 					// ⌘.: toggle focus mode
 					if (mod && e.key === '.') {
 						e.preventDefault();
@@ -7502,8 +7645,10 @@ body {
 					}
 					// Escape: close modals, clear search
 					if (e.key === 'Escape') {
+						const ck = document.getElementById('cmdk-overlay');
 						const lb = document.getElementById('lightbox-overlay');
 						const km = document.getElementById('kb-modal-overlay');
+						if (ck && !ck.hidden) { closeCmdK(); return; }
 						if (lb && !lb.hidden) { closeLightbox(); return; }
 						if (km && !km.hidden) { closeKbModal(); return; }
 						if (document.activeElement === notesSearchEl) {
@@ -7514,6 +7659,9 @@ body {
 						}
 					}
 				});
+
+				if (notesEl) notesEl.addEventListener('keyup', applyTypewriterScroll);
+				if (notesEl) notesEl.addEventListener('click', applyTypewriterScroll);
 
 				// ── Color filter row wiring ──────────────────────────────────
 				document.getElementById('color-filter-row')?.addEventListener('click', (e) => {
@@ -7580,6 +7728,242 @@ body {
 				document.getElementById('kb-modal-overlay')?.addEventListener('click', (e) => {
 					if (e.target === document.getElementById('kb-modal-overlay')) closeKbModal();
 				});
+
+				// ══════════════════════════════════════════════════════════════
+				// ⌘K GLOBAL SEARCH PALETTE
+				// ══════════════════════════════════════════════════════════════
+				let cmdkActiveIdx = 0;
+				let _cmdkActions = [];
+
+				function openCmdK() {
+					if (!activeUserId) { showToast('Sign in to use search', 'info'); return; }
+					const overlay = document.getElementById('cmdk-overlay');
+					if (!overlay) return;
+					overlay.hidden = false;
+					const inp = document.getElementById('cmdk-input');
+					if (inp) inp.value = '';
+					renderCmdK('');
+					requestAnimationFrame(() => inp?.focus());
+				}
+				function closeCmdK() {
+					const overlay = document.getElementById('cmdk-overlay');
+					if (overlay) overlay.hidden = true;
+				}
+
+				function _cmdkSnippet(content, q) {
+					if (!q || !content) return '';
+					const idx = content.toLowerCase().indexOf(q.toLowerCase());
+					if (idx < 0) return '';
+					const s = Math.max(0, idx - 28);
+					const e = Math.min(content.length, idx + q.length + 60);
+					return (s > 0 ? '\u2026' : '') + content.slice(s, e).replace(/\n/g, ' ') + (e < content.length ? '\u2026' : '');
+				}
+
+				function renderCmdK(query) {
+					const resultsEl = document.getElementById('cmdk-results');
+					if (!resultsEl) return;
+					const q = query.trim().toLowerCase();
+
+					const ACTIONS = [
+						{ icon: '\ud83d\udcdd', title: 'New note',             kbd: '\u2318T',  action: () => { closeCmdK(); document.getElementById('btn-new-doc')?.click(); } },
+						{ icon: '\ud83c\udfe0', title: 'Go to Home',            kbd: '\u2318\u21e7H', action: () => { closeCmdK(); selectTab('tab-home'); } },
+						{ icon: '\ud83d\udcd2', title: 'Go to Notes',           kbd: '\u2318\u21e7N', action: () => { closeCmdK(); selectTab('tab-notes'); } },
+						{ icon: '\ud83d\uddc2',  title: 'Go to Files',           kbd: '\u2318\u21e7F', action: () => { closeCmdK(); selectTab('tab-files'); } },
+						{ icon: '\u2699\ufe0f', title: 'Go to Settings',        kbd: '\u2318\u21e7,', action: () => { closeCmdK(); selectTab('tab-settings'); } },
+						{ icon: '\ud83d\udd27', title: 'Go to Tools',           kbd: '\u2318\u21e7X', action: () => { closeCmdK(); selectTab('tab-tools'); } },
+						{ icon: '\u26f6',  title: 'Toggle focus mode',     kbd: '\u2318.',  action: () => { closeCmdK(); toggleFocusMode(); } },
+						{ icon: '\u2328',  title: 'Toggle typewriter mode', kbd: '',     action: () => { closeCmdK(); document.getElementById('btn-typewriter')?.click(); } },
+						{ icon: '\ud83d\udc41',  title: 'Toggle markdown preview',kbd: '\u2318\u21e7P', action: () => { closeCmdK(); document.getElementById('btn-md-preview')?.click(); } },
+						{ icon: '\ud83c\udfaf', title: 'Set word goal',          kbd: '',     action: () => { closeCmdK(); document.getElementById('btn-word-goal')?.click(); } },
+						{ icon: '\u2913',  title: 'Download note as .md',   kbd: '',     action: () => { closeCmdK(); document.getElementById('btn-dl-doc-md')?.click(); } },
+						{ icon: '\u2913',  title: 'Export all notes (.zip)', kbd: '',    action: () => { closeCmdK(); document.getElementById('btn-dl-all')?.click(); } },
+						{ icon: '\ud83d\udcbe', title: 'Export JSON backup',     kbd: '',     action: () => { closeCmdK(); exportBackupJSON(); } },
+						{ icon: '\ud83c\udf19', title: 'Toggle dark / light',    kbd: '',     action: () => { closeCmdK(); document.getElementById('btn-theme-toggle')?.click(); } },
+						{ icon: '\u2328',  title: 'Keyboard shortcuts',     kbd: '?',    action: () => { closeCmdK(); openKbModal(); } },
+					];
+
+					const filteredActions = q ? ACTIONS.filter(a => a.title.toLowerCase().includes(q)) : ACTIONS;
+					const noteResults = q
+						? noteDocs.filter(d => d.title?.toLowerCase().includes(q) || d.content?.toLowerCase().includes(q)).slice(0, 8)
+						: noteDocs.slice(0, 6);
+
+					_cmdkActions = filteredActions;
+
+					let html = '';
+					if (filteredActions.length) {
+						html += '<div class="cmdk-section-label">Actions</div>';
+						html += filteredActions.map((a, i) =>
+							`<div class="cmdk-item" data-type="action" data-idx="${i}" tabindex="-1">`+
+								`<span class="cmdk-item-icon">${a.icon}</span>`+
+								`<div class="cmdk-item-text"><div class="cmdk-item-title">${escHtml(a.title)}</div></div>`+
+								(a.kbd ? `<span class="cmdk-item-kbd">${a.kbd}</span>` : '')+
+							'</div>'
+						).join('');
+					}
+					if (noteResults.length) {
+						html += '<div class="cmdk-section-label">Notes</div>';
+						html += noteResults.map(d => {
+							const snippet = _cmdkSnippet(d.content ?? '', q);
+							return `<div class="cmdk-item" data-type="note" data-id="${escHtml(d.id)}" tabindex="-1">`+
+								`<span class="cmdk-item-icon">${d.pinned ? '\ud83d\udccc' : '\ud83d\udcc4'}</span>`+
+								'<div class="cmdk-item-text">'+
+									`<div class="cmdk-item-title">${escHtml(d.title || 'Untitled')}</div>`+
+									(snippet ? `<div class="cmdk-item-sub">${escHtml(snippet)}</div>` : '')+
+								'</div>'+
+								'</div>';
+						}).join('');
+					}
+					if (!filteredActions.length && !noteResults.length) {
+						html = `<div class="cmdk-empty">No results for \u201c${escHtml(q)}\u201d</div>`;
+					}
+					resultsEl.innerHTML = html;
+					cmdkActiveIdx = 0;
+					updateCmdkActive();
+				}
+
+				function updateCmdkActive() {
+					const items = document.querySelectorAll('#cmdk-results .cmdk-item');
+					items.forEach((el, i) => el.classList.toggle('cmdk-active', i === cmdkActiveIdx));
+					items[cmdkActiveIdx]?.scrollIntoView({ block: 'nearest' });
+				}
+
+				function executeCmdkItem(el) {
+					if (!el) return;
+					if (el.dataset.type === 'action') {
+						_cmdkActions[parseInt(el.dataset.idx, 10)]?.action();
+					} else if (el.dataset.type === 'note') {
+						closeCmdK();
+						selectTab('tab-notes');
+						switchDoc(el.dataset.id);
+					}
+				}
+
+				document.getElementById('cmdk-input')?.addEventListener('input', e => {
+					renderCmdK(e.target.value);
+				});
+				document.getElementById('cmdk-input')?.addEventListener('keydown', e => {
+					const items = document.querySelectorAll('#cmdk-results .cmdk-item');
+					if (e.key === 'ArrowDown') { e.preventDefault(); cmdkActiveIdx = Math.min(cmdkActiveIdx + 1, items.length - 1); updateCmdkActive(); }
+					else if (e.key === 'ArrowUp') { e.preventDefault(); cmdkActiveIdx = Math.max(cmdkActiveIdx - 1, 0); updateCmdkActive(); }
+					else if (e.key === 'Enter') { e.preventDefault(); executeCmdkItem(items[cmdkActiveIdx]); }
+				});
+				document.getElementById('cmdk-results')?.addEventListener('click', e => {
+					const item = e.target.closest('.cmdk-item');
+					if (item) executeCmdkItem(item);
+				});
+				document.getElementById('cmdk-overlay')?.addEventListener('click', e => {
+					if (e.target === document.getElementById('cmdk-overlay')) closeCmdK();
+				});
+				document.getElementById('btn-cmdk-open')?.addEventListener('click', openCmdK);
+
+				// ══════════════════════════════════════════════════════════════
+				// TYPEWRITER SCROLL MODE
+				// ══════════════════════════════════════════════════════════════
+				function applyTypewriterScroll() {
+					if (!notesEl || !document.body.classList.contains('typewriter-mode')) return;
+					const val = notesEl.value.substring(0, notesEl.selectionEnd ?? notesEl.value.length);
+					const lineH = parseFloat(getComputedStyle(notesEl).lineHeight) || 22;
+					const linesAbove = val.split('\n').length - 1;
+					notesEl.scrollTop = Math.max(0, lineH * linesAbove - notesEl.clientHeight * 0.38);
+				}
+
+				document.getElementById('btn-typewriter')?.addEventListener('click', function() {
+					const on = document.body.classList.toggle('typewriter-mode');
+					this.classList.toggle('active', on);
+					this.title = on ? 'Typewriter mode ON (click to disable)' : 'Typewriter mode';
+					showToast(on ? 'Typewriter mode on' : 'Typewriter mode off', 'info');
+					if (on) requestAnimationFrame(applyTypewriterScroll);
+				});
+
+				// ══════════════════════════════════════════════════════════════
+				// LIVE AUTO-SAVE TIMESTAMP
+				// ══════════════════════════════════════════════════════════════
+				let _lastSavedAt = null;
+
+				function updateSaveTimestamp() {
+					const el = document.getElementById('save-timestamp');
+					if (!el || !_lastSavedAt) { if (el) el.hidden = true; return; }
+					const secs = Math.round((Date.now() - _lastSavedAt) / 1000);
+					let txt;
+					if (secs < 6)         txt = 'Saved just now';
+					else if (secs < 60)   txt = `Saved ${secs}s ago`;
+					else if (secs < 3600) txt = `Saved ${Math.round(secs / 60)}m ago`;
+					else                  txt = `Saved ${Math.round(secs / 3600)}h ago`;
+					el.textContent = txt;
+					el.hidden = false;
+				}
+				setInterval(updateSaveTimestamp, 10000);
+
+				// ══════════════════════════════════════════════════════════════
+				// WPM INDICATOR
+				// ══════════════════════════════════════════════════════════════
+				let _wpmBaseline = { words: 0, time: Date.now() };
+				let _wpmHideTimer = null;
+
+				function updateWPM() {
+					const el = document.getElementById('writing-wpm');
+					if (!el || !notesEl) return;
+					const now = Date.now();
+					const words = notesEl.value.trim() ? notesEl.value.trim().split(/\s+/).length : 0;
+					const elapsedMin = (now - _wpmBaseline.time) / 60000;
+					const wordsAdded = words - _wpmBaseline.words;
+					if (elapsedMin > 0.25 && wordsAdded > 2) {
+						const wpm = Math.round(wordsAdded / elapsedMin);
+						if (wpm > 0 && wpm < 600) { el.textContent = `${wpm} wpm`; el.hidden = false; return; }
+					}
+					el.hidden = true;
+				}
+				setInterval(() => {
+					if (!notesEl) return;
+					_wpmBaseline = { words: notesEl.value.trim() ? notesEl.value.trim().split(/\s+/).length : 0, time: Date.now() };
+					const el = document.getElementById('writing-wpm'); if (el) el.hidden = true;
+				}, 90000);
+
+				// ══════════════════════════════════════════════════════════════
+				// JSON BACKUP + RESTORE
+				// ══════════════════════════════════════════════════════════════
+				function exportBackupJSON() {
+					if (!noteDocs.length) { showToast('No notes to export', 'info'); return; }
+					if (activeDocId && notesEl) { const cur = noteDocs.find(d => d.id === activeDocId); if (cur) cur.content = notesEl.value; }
+					const backup = { version: 1, app: 'ectl.me', exported_at: new Date().toISOString(), notes_count: noteDocs.length, notes: noteDocs };
+					const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+					const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+					a.download = `ectl-backup-${new Date().toISOString().split('T')[0]}.json`;
+					a.click(); URL.revokeObjectURL(a.href);
+					const s = document.getElementById('backup-status'); if (s) s.textContent = `Exported ${noteDocs.length} notes.`;
+					showToast(`Backup downloaded (${noteDocs.length} notes)`, 'success');
+				}
+
+				async function importBackupJSON(file) {
+					const statusEl = document.getElementById('backup-status');
+					try {
+						const text = await file.text();
+						const data = JSON.parse(text);
+						if (!data.notes || !Array.isArray(data.notes)) throw new Error('Invalid backup — missing notes array');
+						const count = data.notes.length;
+						if (!confirm(`Import ${count} note${count !== 1 ? 's' : ''} from backup?\n\nThis will REPLACE all current notes.`)) return;
+						noteDocs = data.notes.map(d => ({
+							id: d.id || genId(), title: d.title || 'Untitled', content: d.content || '',
+							created_at: d.created_at || new Date().toISOString(),
+							updated_at: d.updated_at || new Date().toISOString(),
+							color: d.color ?? null, pinned: d.pinned ?? false,
+						}));
+						if (activeUserId) saveDocsLocally(activeUserId);
+						renderDocList();
+						if (noteDocs.length) switchDoc(noteDocs[0].id);
+						if (statusEl) statusEl.textContent = `Imported ${count} notes successfully.`;
+						showToast(`Imported ${count} notes`, 'success');
+						if (activeUserId && activeAccessToken)
+							Promise.all(noteDocs.map(d => restUpsertDoc(activeUserId, d, activeAccessToken).catch(() => {})));
+					} catch (err) {
+						if (statusEl) statusEl.textContent = 'Import failed: ' + (err?.message ?? 'unknown error');
+						showToast('Import failed: ' + (err?.message ?? 'invalid file'), 'error');
+					}
+				}
+
+				document.getElementById('btn-export-backup')?.addEventListener('click', exportBackupJSON);
+				document.getElementById('btn-import-backup')?.addEventListener('click', () => document.getElementById('backup-file-input')?.click());
+				document.getElementById('backup-file-input')?.addEventListener('change', e => { const f = e.target.files?.[0]; if (f) importBackupJSON(f); e.target.value = ''; });
 
 				// ── File preview lightbox ────────────────────────────────────
 				function openLightbox(content, filename) {
@@ -8853,6 +9237,44 @@ body {
 							applyPrefs(currentPrefs);
 						});
 						row.appendChild(btn);
+					});
+				})();
+
+				// ══════════════════════════════════════════════════════════════
+				// THEME PRESETS
+				// ══════════════════════════════════════════════════════════════
+				const THEME_PRESETS = [
+					{ name: 'Indigo Aurora',   accentIndex: 0, bgStyle: 'aurora',  corners: 'round', tabStyle: 'pill',      hblur: 'on',  c1: '#5b6ef5', c2: '#818cf8' },
+					{ name: 'Violet Subtle',   accentIndex: 1, bgStyle: 'subtle',  corners: 'round', tabStyle: 'pill',      hblur: 'on',  c1: '#7c3aed', c2: '#a78bfa' },
+					{ name: 'Pink Glass',      accentIndex: 2, bgStyle: 'glass',   corners: 'soft',  tabStyle: 'underline', hblur: 'off', c1: '#db2777', c2: '#f472b6' },
+					{ name: 'Amber Mesh',      accentIndex: 4, bgStyle: 'mesh',    corners: 'sharp', tabStyle: 'boxed',     hblur: 'off', c1: '#d97706', c2: '#fbbf24' },
+					{ name: 'Emerald Minimal', accentIndex: 5, bgStyle: 'minimal', corners: 'soft',  tabStyle: 'pill',      hblur: 'on',  c1: '#059669', c2: '#34d399' },
+					{ name: 'Cyan Aurora',     accentIndex: 6, bgStyle: 'aurora',  corners: 'round', tabStyle: 'pill',      hblur: 'on',  c1: '#0891b2', c2: '#22d3ee' },
+				];
+
+				(function buildThemePresets() {
+					const grid = document.getElementById('theme-presets-grid');
+					if (!grid) return;
+					THEME_PRESETS.forEach(preset => {
+						const btn = document.createElement('button');
+						btn.type = 'button'; btn.className = 'theme-preset-btn'; btn.title = preset.name;
+						const swatch = document.createElement('div');
+						swatch.className = 'theme-preset-swatch';
+						swatch.style.setProperty('--ps-c1', preset.c1);
+						swatch.style.setProperty('--ps-c2', preset.c2);
+						const label = document.createElement('span'); label.textContent = preset.name;
+						btn.appendChild(swatch); btn.appendChild(label);
+						btn.addEventListener('click', () => {
+							currentPrefs.accentIndex = preset.accentIndex;
+							currentPrefs.bgStyle     = preset.bgStyle;
+							currentPrefs.corners     = preset.corners;
+							currentPrefs.tabStyle    = preset.tabStyle;
+							currentPrefs.hblur       = preset.hblur;
+							applyPrefs(currentPrefs);
+							syncPrefsUI();
+							showToast('Theme: ' + preset.name, 'success');
+						});
+						grid.appendChild(btn);
 					});
 				})();
 
