@@ -3026,6 +3026,18 @@
 			.snip-md-h2 { font-size:0.88rem; font-weight:700; margin:4px 0 2px; }
 			.snip-md-h3 { font-size:0.82rem; font-weight:700; margin:3px 0 2px; color:var(--muted); }
 			.snip-empty { color:var(--muted); font-size:0.88rem; text-align:center; padding:40px 0; }
+			.snip-group {
+				background:var(--btn-bg); border:1px solid var(--panel-border);
+				border-radius:var(--radius-md); overflow:hidden;
+				animation:file-row-in var(--t-slow) var(--ease) both;
+			}
+			.snip-group-entry { border-bottom:1px solid var(--panel-border); }
+			.snip-group-entry:last-child { border-bottom:none; }
+			.snip-group-head {
+				display:flex; align-items:center; gap:10px; padding:8px 14px;
+				background:var(--accent-glow); border-bottom:1px solid var(--panel-border);
+			}
+			.snip-group-head .snip-item-title { font-size:0.82rem; }
 			/* Snippet editor overlay */
 			.snip-editor-overlay {
 				position:fixed; inset:0; z-index:9700;
@@ -10889,6 +10901,46 @@ body {
 
 					if (!filtered.length) {
 						list.innerHTML = `<div class="snip-empty">${snips.length ? 'No snippets match your search.' : 'No snippets yet. Click <strong>＋ New Snippet</strong> to create one.'}</div>`;
+						return;
+					}
+
+					// Grouped view: single card when a tag is active
+					if (_snipActiveTag) {
+						list.innerHTML = `<div class="snip-group">${filtered.map(s => `
+							<div class="snip-group-entry">
+								<div class="snip-group-head">
+									<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
+									<div class="snip-item-actions">
+										<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
+										<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
+										<button class="btn btn-small" data-action="edit" data-sid="${escHtml(s.id)}" title="Edit">✏</button>
+										<button class="btn btn-small" data-action="del" data-sid="${escHtml(s.id)}" title="Delete">🗑</button>
+									</div>
+								</div>
+								<div class="snip-item-body">
+									<div class="snip-item-preview" data-sid="${escHtml(s.id)}">${snipMd(s.body)}</div>
+								</div>
+							</div>`).join('')}</div>`;
+						return;
+					}
+
+					list.innerHTML = filtered.map(s => `
+						<div class="snip-item" data-sid="${escHtml(s.id)}">
+							<div class="snip-item-head">
+								<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
+								${s.tag ? `<span class="snip-item-tag">${escHtml(s.tag)}</span>` : ''}
+								<div class="snip-item-actions">
+									<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
+									<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
+									<button class="btn btn-small" data-action="edit" data-sid="${escHtml(s.id)}" title="Edit">✏</button>
+									<button class="btn btn-small" data-action="del" data-sid="${escHtml(s.id)}" title="Delete">🗑</button>
+								</div>
+							</div>
+							<div class="snip-item-body">
+								<div class="snip-item-preview" data-sid="${escHtml(s.id)}">${snipMd(s.body)}</div>
+							</div>
+						</div>
+					`).join('');
 						return;
 					}
 
