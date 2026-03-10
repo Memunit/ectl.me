@@ -4471,6 +4471,55 @@
 		</main>
 		</div>
 
+
+	<!-- Keyboard shortcuts modal -->
+	<div class="kb-modal-overlay" id="kb-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+		<div class="kb-modal" id="kb-modal">
+						<h2>⌨ Keyboard Shortcuts</h2>
+						<div class="kb-modal-section">
+							<h3>Navigation</h3>
+							<div class="kb-modal-row"><span>Switch to Home</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>H</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Notes</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>N</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Settings</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>,</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Files</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>F</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Tools</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>X</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Work</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>W</kbd></span></div>
+							<div class="kb-modal-row"><span>Switch to Reports</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>R</kbd></span></div>
+						</div>
+						<div class="kb-modal-section">
+							<h3>Notes</h3>
+							<div class="kb-modal-row"><span>Save current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>S</kbd></span></div>
+							<div class="kb-modal-row"><span>New note (template picker)</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>T</kbd></span></div>
+							<div class="kb-modal-row"><span>Duplicate current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>D</kbd></span></div>
+							<div class="kb-modal-row"><span>Pin / unpin current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>P</kbd></span></div>
+							<div class="kb-modal-row"><span>Bold selected text</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>B</kbd></span></div>
+							<div class="kb-modal-row"><span>Italic selected text</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>I</kbd></span></div>
+							<div class="kb-modal-row"><span>Toggle Markdown preview</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>P</kbd></span></div>
+							<div class="kb-modal-row"><span>Quick-insert macro</span><span class="kb-modal-keys"><kbd>:</kbd> then <kbd>date</kbd> / <kbd>time</kbd> / <kbd>hr</kbd> / <kbd>todo</kbd></span></div>
+							<div class="kb-modal-row"><span>Focus search bar</span><span class="kb-modal-keys"><kbd>/</kbd></span></div>
+							<div class="kb-modal-row"><span>Clear search</span><span class="kb-modal-keys"><kbd>Esc</kbd></span></div>
+							<div class="kb-modal-row"><span>Focus / writing mode</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>.</kbd></span></div>
+						</div>
+						<div class="kb-modal-section">
+							<h3>General</h3>
+							<div class="kb-modal-row"><span>Show this cheatsheet</span><span class="kb-modal-keys"><kbd>?</kbd></span></div>
+							<div class="kb-modal-row"><span>Close modal / overlay</span><span class="kb-modal-keys"><kbd>Esc</kbd></span></div>
+						</div>
+						<div class="kb-modal-close-row"><button class="btn btn-small" id="btn-kb-modal-close" type="button">Close</button></div>
+					</div>
+	</div>
+
+	<div id="cmdk-overlay" hidden role="dialog" aria-modal="true" aria-label="Search and commands" tabindex="-1">
+				<div id="cmdk-panel">
+					<input id="cmdk-input" type="search" placeholder="Search notes, or type a command…" autocomplete="off" spellcheck="false" />
+					<div class="cmdk-results" id="cmdk-results"></div>
+					<div class="cmdk-footer">
+						<span class="cmdk-footer-hint"><kbd>↵</kbd> open</span>
+						<span class="cmdk-footer-hint"><kbd>↑↓</kbd> navigate</span>
+						<span class="cmdk-footer-hint"><kbd>esc</kbd> close</span>
+					</div>
+				</div>
+			</div>
 		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 		<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
 		<script>
@@ -10510,54 +10559,5 @@ body {
 			}
 		</script>
 	
-	<!-- Keyboard shortcuts modal -->
-	<div class="kb-modal-overlay" id="kb-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
-		<div class="kb-modal" id="kb-modal">
-						<h2>⌨ Keyboard Shortcuts</h2>
-						<div class="kb-modal-section">
-							<h3>Navigation</h3>
-							<div class="kb-modal-row"><span>Switch to Home</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>H</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Notes</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>N</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Settings</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>,</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Files</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>F</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Tools</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>X</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Work</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>W</kbd></span></div>
-							<div class="kb-modal-row"><span>Switch to Reports</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>R</kbd></span></div>
-						</div>
-						<div class="kb-modal-section">
-							<h3>Notes</h3>
-							<div class="kb-modal-row"><span>Save current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>S</kbd></span></div>
-							<div class="kb-modal-row"><span>New note (template picker)</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>T</kbd></span></div>
-							<div class="kb-modal-row"><span>Duplicate current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>D</kbd></span></div>
-							<div class="kb-modal-row"><span>Pin / unpin current note</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>P</kbd></span></div>
-							<div class="kb-modal-row"><span>Bold selected text</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>B</kbd></span></div>
-							<div class="kb-modal-row"><span>Italic selected text</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>I</kbd></span></div>
-							<div class="kb-modal-row"><span>Toggle Markdown preview</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>P</kbd></span></div>
-							<div class="kb-modal-row"><span>Quick-insert macro</span><span class="kb-modal-keys"><kbd>:</kbd> then <kbd>date</kbd> / <kbd>time</kbd> / <kbd>hr</kbd> / <kbd>todo</kbd></span></div>
-							<div class="kb-modal-row"><span>Focus search bar</span><span class="kb-modal-keys"><kbd>/</kbd></span></div>
-							<div class="kb-modal-row"><span>Clear search</span><span class="kb-modal-keys"><kbd>Esc</kbd></span></div>
-							<div class="kb-modal-row"><span>Focus / writing mode</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>.</kbd></span></div>
-						</div>
-						<div class="kb-modal-section">
-							<h3>General</h3>
-							<div class="kb-modal-row"><span>Show this cheatsheet</span><span class="kb-modal-keys"><kbd>?</kbd></span></div>
-							<div class="kb-modal-row"><span>Close modal / overlay</span><span class="kb-modal-keys"><kbd>Esc</kbd></span></div>
-						</div>
-						<div class="kb-modal-close-row"><button class="btn btn-small" id="btn-kb-modal-close" type="button">Close</button></div>
-					</div>
-	</div>
-
-	<div id="cmdk-overlay" hidden role="dialog" aria-modal="true" aria-label="Search and commands" tabindex="-1">
-				<div id="cmdk-panel">
-					<input id="cmdk-input" type="search" placeholder="Search notes, or type a command…" autocomplete="off" spellcheck="false" />
-					<div class="cmdk-results" id="cmdk-results"></div>
-					<div class="cmdk-footer">
-						<span class="cmdk-footer-hint"><kbd>↵</kbd> open</span>
-						<span class="cmdk-footer-hint"><kbd>↑↓</kbd> navigate</span>
-						<span class="cmdk-footer-hint"><kbd>esc</kbd> close</span>
-					</div>
-				</div>
-			</div>
-
 </body>
 </html>
