@@ -11009,7 +11009,7 @@ body {
 				});
 				document.getElementById('snip-list')?.addEventListener('click', e => {
 					const lineCopy = e.target.closest('.snip-line-copy');
-					if (lineCopy) { e.stopPropagation(); navigator.clipboard.writeText(lineCopy.dataset.text || '').then(() => showToast('Copied!', 'success')); return; }
+					if (lineCopy) { e.stopPropagation(); let lt = lineCopy.dataset.text || ''; lt = lt.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/~~([^~]+)~~/g,'$1').replace(/_([^_]+)_/g,'$1').replace(/`([^`]+)`/g,'$1'); navigator.clipboard.writeText(lt).then(() => showToast('Copied!', 'success')); return; }
 					const btn = e.target.closest('[data-action]');
 					if (!btn) return;
 					const { action, sid } = btn.dataset;
