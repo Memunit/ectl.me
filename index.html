@@ -10941,26 +10941,6 @@ body {
 							</div>
 						</div>
 					`).join('');
-						return;
-					}
-
-					list.innerHTML = filtered.map(s => `
-						<div class="snip-item" data-sid="${escHtml(s.id)}">
-							<div class="snip-item-head">
-								<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
-								${s.tag ? `<span class="snip-item-tag">${escHtml(s.tag)}</span>` : ''}
-								<div class="snip-item-actions">
-									<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
-									<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
-									<button class="btn btn-small" data-action="edit" data-sid="${escHtml(s.id)}" title="Edit">✏</button>
-									<button class="btn btn-small" data-action="del" data-sid="${escHtml(s.id)}" title="Delete">🗑</button>
-								</div>
-							</div>
-							<div class="snip-item-body">
-								<div class="snip-item-preview" data-sid="${escHtml(s.id)}">${snipMd(s.body)}</div>
-							</div>
-						</div>
-					`).join('');
 				}
 
 				function openSnipEditor(id) {
