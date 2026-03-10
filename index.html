@@ -3057,6 +3057,17 @@
 			.snip-editor-field label { font-size:0.78rem; font-weight:700; color:var(--muted); }
 			.snip-fmt-bar { display:flex; gap:4px; flex-wrap:wrap; align-items:center; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--btn-border); }
 			.snip-editor-ta { width:100%; min-height:80px; resize:none; overflow:hidden; font-family:ui-monospace,monospace; font-size:0.82rem; }
+			.snip-use-count { font-size:0.7rem; color:var(--muted); font-weight:600; white-space:nowrap; }
+			.snip-pin-btn { background:none; border:none; cursor:pointer; padding:1px 3px; font-size:0.8rem; opacity:0.28; transition:opacity var(--t-fast); line-height:1; flex-shrink:0; }
+			.snip-pin-btn:hover, .snip-pin-btn.pinned { opacity:1; }
+			/* Wikilinks */
+			.wiki-link { color:var(--accent); text-decoration:none; border-bottom:1px dashed var(--accent); cursor:pointer; font-weight:600; }
+			.wiki-link:hover { opacity:0.75; }
+			.wiki-link.broken { color:var(--muted); border-color:var(--muted); }
+			.wikilink-ac { position:fixed; z-index:9900; background:var(--card-bg); border:1.5px solid var(--input-border); border-radius:var(--radius-md); box-shadow:0 8px 32px rgba(0,0,0,0.18); max-height:220px; overflow-y:auto; min-width:220px; }
+			.wikilink-ac[hidden] { display:none !important; }
+			.wikilink-ac-item { padding:7px 14px; cursor:pointer; font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+			.wikilink-ac-item:hover, .wikilink-ac-item.wl-active { background:var(--accent-glow); color:var(--accent); }
 
 			/* ── Canvas / Whiteboard panel ────────────────────────────────── */
 			#canvas-board {
@@ -4558,6 +4569,15 @@
 				<section class="panel" id="panel-snippets" role="tabpanel" aria-labelledby="tab-snippets" hidden>
 					<div class="snip-toolbar">
 						<input class="input snip-search" id="snip-search" type="search" placeholder="Search snippets…" autocomplete="off" />
+						<select class="input" id="snip-sort" style="width:auto;padding:4px 8px;font-size:0.82rem" title="Sort snippets" aria-label="Sort snippets">
+							<option value="recent">Recent</option>
+							<option value="az">A–Z</option>
+							<option value="used">Most used</option>
+							<option value="newest">Newest</option>
+						</select>
+						<button class="btn btn-small" id="btn-snip-export" type="button" title="Export snippets as JSON">⤓ Export</button>
+						<button class="btn btn-small" id="btn-snip-import" type="button" title="Import snippets from JSON">⤑ Import</button>
+						<input type="file" id="snip-import-file" accept=".json" style="display:none" />
 						<button class="btn btn-accent btn-small" id="btn-snip-new" type="button">＋ New Snippet</button>
 					</div>
 					<div class="snip-tag-bar" id="snip-tag-bar"></div>
@@ -5868,6 +5888,11 @@
 					s = s.replace(/_(.+?)_/g, '<em>$1</em>');
 					// Strikethrough
 					s = s.replace(/~~(.+?)~~/g, '<del>$1</del>');
+					// Wikilinks [[Note Title]]
+					s = s.replace(/\[\[([^\]]+)\]\]/g, (_, title) => {
+						const exists = noteDocs.some(d => (d.title || '').toLowerCase() === title.toLowerCase());
+						return `<span class="wiki-link${exists ? '' : ' broken'}" data-wiki-title="${esc(title)}" tabindex="0">${esc(title)}</span>`;
+					});
 					// Links
 					s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 					// Task lists
@@ -8247,6 +8272,72 @@ body {
 						const pane = document.getElementById('md-preview-pane');
 						if (pane) pane.innerHTML = renderMarkdown(notesEl.value);
 					}
+					updateWikilinkAC(notesEl);
+				});
+
+				// ── [[Wikilink]] autocomplete ──────────────────────────────────
+				const _wlAc = Object.assign(document.createElement('div'), { hidden: true });
+				_wlAc.className = 'wikilink-ac';
+				document.body.appendChild(_wlAc);
+				let _wlAcIdx = 0;
+
+				function updateWikilinkAC(ta) {
+					const pos = ta.selectionStart;
+					const before = ta.value.slice(0, pos);
+					const m = before.match(/\[\[([^\]]*)$/);
+					if (!m) { _wlAc.hidden = true; return; }
+					const q = m[1].toLowerCase();
+					const matches = noteDocs.filter(d => d.id !== activeDocId && (d.title || 'Untitled').toLowerCase().includes(q));
+					if (!matches.length) { _wlAc.hidden = true; return; }
+					_wlAcIdx = 0;
+					_wlAc.innerHTML = matches.map((d, i) =>
+						`<div class="wikilink-ac-item${i === 0 ? ' wl-active' : ''}" data-title="${escHtml(d.title || 'Untitled')}">${escHtml(d.title || 'Untitled')}</div>`
+					).join('');
+					const rect = ta.getBoundingClientRect();
+					_wlAc.style.left = rect.left + 'px';
+					_wlAc.style.top  = (rect.bottom + 4) + 'px';
+					_wlAc.hidden = false;
+				}
+
+				function insertWikilink(ta, title) {
+					const pos = ta.selectionStart;
+					const before = ta.value.slice(0, pos);
+					const after = ta.value.slice(pos);
+					const openIdx = before.lastIndexOf('[[');
+					if (openIdx < 0) return;
+					const newVal = before.slice(0, openIdx) + '[[' + title + ']]' + after;
+					ta.value = newVal;
+					const newPos = openIdx + title.length + 4;
+					ta.setSelectionRange(newPos, newPos);
+					ta.dispatchEvent(new Event('input'));
+					_wlAc.hidden = true;
+				}
+
+				_wlAc.addEventListener('mousedown', e => {
+					const item = e.target.closest('.wikilink-ac-item');
+					if (!item || !notesEl) return;
+					e.preventDefault();
+					insertWikilink(notesEl, item.dataset.title);
+				});
+
+				if (notesEl) notesEl.addEventListener('keydown', e => {
+					if (_wlAc.hidden) return;
+					const items = _wlAc.querySelectorAll('.wikilink-ac-item');
+					if (e.key === 'ArrowDown') { e.preventDefault(); _wlAcIdx = Math.min(_wlAcIdx + 1, items.length - 1); items.forEach((el, i) => el.classList.toggle('wl-active', i === _wlAcIdx)); }
+					else if (e.key === 'ArrowUp') { e.preventDefault(); _wlAcIdx = Math.max(_wlAcIdx - 1, 0); items.forEach((el, i) => el.classList.toggle('wl-active', i === _wlAcIdx)); }
+					else if (e.key === 'Enter' || e.key === 'Tab') { if (items[_wlAcIdx]) { e.preventDefault(); insertWikilink(notesEl, items[_wlAcIdx].dataset.title); } }
+					else if (e.key === 'Escape') { _wlAc.hidden = true; }
+				});
+
+				document.addEventListener('click', e => { if (!_wlAc.contains(e.target) && e.target !== notesEl) _wlAc.hidden = true; });
+
+				// Navigate to note when clicking [[wikilink]] in MD preview
+				document.getElementById('md-preview-pane')?.addEventListener('click', e => {
+					const link = e.target.closest('.wiki-link');
+					if (!link) return;
+					const title = link.dataset.wikiTitle;
+					const doc = noteDocs.find(d => (d.title || '').toLowerCase() === (title || '').toLowerCase());
+					if (doc) { switchDoc(doc.id); selectTab('tab-notes'); } else { showToast(`No note titled "${title}"`, 'error'); }
 				});
 
 				// ── Word-goal ──────────────────────────────────────────
@@ -10853,6 +10944,7 @@ body {
 
 				let _snipEditId = null;
 				let _snipActiveTag = '';
+				let _snipSort = 'recent';
 
 				function snipMd(raw) {
 					function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -10899,6 +10991,16 @@ body {
 						return true;
 					});
 
+					// Sort: pinned always first, then by selected order
+					filtered.sort((a, b) => {
+						if (a.pinned && !b.pinned) return -1;
+						if (!a.pinned && b.pinned) return 1;
+						if (_snipSort === 'az') return (a.title || '').localeCompare(b.title || '');
+						if (_snipSort === 'used') return (b.use_count || 0) - (a.use_count || 0);
+						if (_snipSort === 'newest') return (b.created || 0) - (a.created || 0);
+						return (b.last_used || b.created || 0) - (a.last_used || a.created || 0);
+					});
+
 					if (!filtered.length) {
 						list.innerHTML = `<div class="snip-empty">${snips.length ? 'No snippets match your search.' : 'No snippets yet. Click <strong>＋ New Snippet</strong> to create one.'}</div>`;
 						return;
@@ -10909,7 +11011,9 @@ body {
 						list.innerHTML = `<div class="snip-group">${filtered.map(s => `
 							<div class="snip-group-entry">
 								<div class="snip-group-head">
+									<button class="snip-pin-btn${s.pinned ? ' pinned' : ''}" data-action="pin" data-sid="${escHtml(s.id)}" title="Pin">📌</button>
 									<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
+									${s.use_count ? `<span class="snip-use-count" title="Used ${s.use_count} time${s.use_count !== 1 ? 's' : ''}">×${s.use_count}</span>` : ''}
 									<div class="snip-item-actions">
 										<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
 										<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
@@ -10925,10 +11029,12 @@ body {
 					}
 
 					list.innerHTML = filtered.map(s => `
-						<div class="snip-item" data-sid="${escHtml(s.id)}">
+						<div class="snip-item${s.pinned ? ' snip-pinned' : ''}" data-sid="${escHtml(s.id)}">
 							<div class="snip-item-head">
+								<button class="snip-pin-btn${s.pinned ? ' pinned' : ''}" data-action="pin" data-sid="${escHtml(s.id)}" title="Pin snippet">📌</button>
 								<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
 								${s.tag ? `<span class="snip-item-tag">${escHtml(s.tag)}</span>` : ''}
+								${s.use_count ? `<span class="snip-use-count" title="Used ${s.use_count} time${s.use_count !== 1 ? 's' : ''}">×${s.use_count}</span>` : ''}
 								<div class="snip-item-actions">
 									<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
 									<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
@@ -11057,9 +11163,16 @@ body {
 							return line;
 						}).join('\n');
 						navigator.clipboard.writeText(plain).then(() => showToast('Copied!', 'success'));
+						const ci = snips.findIndex(x => x.id === sid);
+						if (ci >= 0) { snips[ci].use_count = (snips[ci].use_count || 0) + 1; snips[ci].last_used = Date.now(); saveSnippets(snips); renderSnippets(); }
 					} else if (action === 'insert') {
 						const ta = document.getElementById('notes');
 						if (ta && s) { ta.value += (ta.value ? '\n\n' : '') + s.body; scheduleDocSave?.(); showToast('Inserted into note', 'success'); selectTab('tab-notes'); }
+						const ii = snips.findIndex(x => x.id === sid);
+						if (ii >= 0) { snips[ii].use_count = (snips[ii].use_count || 0) + 1; snips[ii].last_used = Date.now(); saveSnippets(snips); }
+					} else if (action === 'pin') {
+						const pi = snips.findIndex(x => x.id === sid);
+						if (pi >= 0) { snips[pi].pinned = !snips[pi].pinned; saveSnippets(snips); renderSnippets(); }
 					} else if (action === 'edit') {
 						openSnipEditor(sid);
 					} else if (action === 'del') {
@@ -11071,6 +11184,41 @@ body {
 				// Re-render on tab switch
 				document.getElementById('tab-snippets')?.addEventListener('click', () => setTimeout(renderSnippets, 0));
 				renderSnippets();
+
+				// Snippet sort
+				document.getElementById('snip-sort')?.addEventListener('change', e => { _snipSort = e.target.value; renderSnippets(); });
+
+				// Snippet export
+				document.getElementById('btn-snip-export')?.addEventListener('click', () => {
+					const data = JSON.stringify(loadSnippets(), null, 2);
+					const a = document.createElement('a');
+					a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+					a.download = 'ectl-snippets-' + new Date().toISOString().slice(0,10) + '.json';
+					a.click();
+					setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+				});
+
+				// Snippet import
+				document.getElementById('btn-snip-import')?.addEventListener('click', () => { document.getElementById('snip-import-file').click(); });
+				document.getElementById('snip-import-file')?.addEventListener('change', e => {
+					const file = e.target.files?.[0];
+					if (!file) return;
+					const reader = new FileReader();
+					reader.onload = ev => {
+						try {
+							const arr = JSON.parse(ev.target.result);
+							if (!Array.isArray(arr)) throw new Error();
+							if (!confirm(`Import ${arr.length} snippet(s)? New ones will be merged with existing.`)) return;
+							const existing = loadSnippets();
+							const ids = new Set(existing.map(s => s.id));
+							saveSnippets([...existing, ...arr.filter(s => s.id && !ids.has(s.id))]);
+							renderSnippets();
+							showToast('Snippets imported!', 'success');
+						} catch { showToast('Invalid snippet JSON', 'error'); }
+					};
+					reader.readAsText(file);
+					e.target.value = '';
+				});
 
 				// ══════════════════════════════════════════════════════════════
 				// CANVAS / WHITEBOARD
