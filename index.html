@@ -1065,6 +1065,100 @@
 			.verified-badge.ok  { background: rgba(5,150,105,0.10); border-color: rgba(5,150,105,0.35); color: #059669; }
 			.verified-badge.warn{ background: rgba(217,119,6,0.10);  border-color: rgba(217,119,6,0.35);  color: #d97706; }
 
+			/* ── Layout: edge-to-edge (fullscreen) mode ───────────── */
+			body.layout-edge .wrap {
+				padding: 0;
+				place-items: start;
+			}
+			body.layout-edge #app.wrap {
+				padding: 0;
+			}
+			body.layout-edge .card {
+				width: 100%;
+				max-width: 100%;
+				border-radius: 0;
+				border-left: none;
+				border-right: none;
+				border-top: none;
+				box-shadow: none;
+				animation: none;
+			}
+			body.layout-edge .card::before {
+				border-radius: 0;
+			}
+
+			/* ── Corners ───────────────────────────────────────────── */
+			body.corners-soft {
+				--radius-lg: 14px;
+				--radius-md: 8px;
+			}
+			body.corners-sharp {
+				--radius-lg: 4px;
+				--radius-md: 3px;
+			}
+
+			/* ── Header blur: off ───────────────────────────────────── */
+			body.hblur-off .tabs {
+				backdrop-filter: none;
+				-webkit-backdrop-filter: none;
+			}
+			body.hblur-off .card {
+				backdrop-filter: none;
+				-webkit-backdrop-filter: none;
+			}
+
+			/* ── Tab style: underline ───────────────────────────────── */
+			body.tabstyle-underline .tabs {
+				background: transparent;
+				border: none;
+				box-shadow: none;
+				backdrop-filter: none;
+				-webkit-backdrop-filter: none;
+				border-radius: 0;
+				padding: 0;
+				gap: 0;
+				border-bottom: 2px solid var(--card-border);
+			}
+			body.tabstyle-underline .tab {
+				border-radius: 0;
+				border: none;
+				background: transparent;
+				padding: 8px 16px;
+				position: relative;
+				top: 2px;
+			}
+			body.tabstyle-underline .tab[aria-selected='true'] {
+				background: transparent;
+				border: none;
+				box-shadow: none;
+				border-bottom: 2px solid var(--accent);
+				color: var(--accent);
+			}
+			body.tabstyle-underline .tab-indicator { display: none; }
+
+			/* ── Tab style: boxed ───────────────────────────────────── */
+			body.tabstyle-boxed .tabs {
+				background: transparent;
+				border-radius: var(--radius-md);
+				padding: 0;
+				gap: 0;
+				overflow: hidden;
+			}
+			body.tabstyle-boxed .tab {
+				border-radius: 0;
+				border: none;
+				border-right: 1px solid var(--card-border);
+				padding: 8px 16px;
+			}
+			body.tabstyle-boxed .tab:last-child { border-right: none; }
+			body.tabstyle-boxed .tab[aria-selected='true'] {
+				background: var(--accent);
+				color: #fff;
+				border-color: var(--accent);
+				box-shadow: none;
+			}
+			body.tabstyle-boxed .tab-indicator { display: none; }
+
 			/* ── Sliding tab indicator ──────────────────────────────── */
 			.tabs {
 				position: relative;
@@ -3225,6 +3319,45 @@
 								<button class="chip" data-val="compact"     type="button">Compact</button>
 								<button class="chip" data-val="normal"      type="button">Normal</button>
 								<button class="chip" data-val="comfortable" type="button">Comfortable</button>
+							</div>
+						</div>
+
+						<!-- Layout -->
+						<div class="field" style="margin-top:18px">
+							<label style="margin-bottom:10px">Layout</label>
+							<div class="chip-row" id="chips-layout" role="radiogroup" aria-label="Layout">
+								<button class="chip" data-val="windowed" type="button">Windowed</button>
+								<button class="chip" data-val="edge"     type="button">Edge-to-edge</button>
+							</div>
+							<p class="hint" style="margin-top:6px;font-size:0.78rem">Edge-to-edge stretches the app to fill the full window width.</p>
+						</div>
+
+						<!-- Tab style -->
+						<div class="field" style="margin-top:18px">
+							<label style="margin-bottom:10px">Tab style</label>
+							<div class="chip-row" id="chips-tabstyle" role="radiogroup" aria-label="Tab style">
+								<button class="chip" data-val="pill"      type="button">Pill</button>
+								<button class="chip" data-val="underline" type="button">Underline</button>
+								<button class="chip" data-val="boxed"     type="button">Boxed</button>
+							</div>
+						</div>
+
+						<!-- Corners -->
+						<div class="field" style="margin-top:18px">
+							<label style="margin-bottom:10px">Corners</label>
+							<div class="chip-row" id="chips-corners" role="radiogroup" aria-label="Corners">
+								<button class="chip" data-val="round" type="button">Round</button>
+								<button class="chip" data-val="soft"  type="button">Soft</button>
+								<button class="chip" data-val="sharp" type="button">Sharp</button>
+							</div>
+						</div>
+
+						<!-- Header blur -->
+						<div class="field" style="margin-top:18px">
+							<label style="margin-bottom:10px">Glass blur</label>
+							<div class="chip-row" id="chips-hblur" role="radiogroup" aria-label="Glass blur">
+								<button class="chip" data-val="on"  type="button">On</button>
+								<button class="chip" data-val="off" type="button">Off</button>
 							</div>
 						</div>
 
@@ -7923,7 +8056,7 @@ body {
 							if (signedOut) signedOut.hidden = false;
 							_cachedFiles = [];
 							// Reset preferences to defaults
-							applyPrefs({ accentIndex: 0, fontSize: 'medium', cardWidth: 'regular', bgStyle: 'aurora', density: 'normal' });
+							applyPrefs({ accentIndex: 0, fontSize: 'medium', cardWidth: 'regular', bgStyle: 'aurora', density: 'normal', layout: 'windowed', tabStyle: 'pill', corners: 'round', hblur: 'on' });
 							showLogin('Signed out.');
 						}
 					});
@@ -8499,6 +8632,10 @@ body {
 					cardWidth:   'regular',
 					bgStyle:     'aurora',
 					density:     'normal',   // compact | normal | comfortable
+					layout:      'windowed', // windowed | edge
+					tabStyle:    'pill',     // pill | underline | boxed
+					corners:     'round',    // round | soft | sharp
+					hblur:       'on',       // on | off
 					// NEW fields
 					appTitle:    '',
 					appSubtitle: '',
@@ -8549,6 +8686,24 @@ body {
 					if (currentPrefs.density && currentPrefs.density !== 'normal') {
 						document.body.classList.add(`density-${currentPrefs.density}`);
 					}
+
+					// Layout
+					document.body.classList.toggle('layout-edge', currentPrefs.layout === 'edge');
+
+					// Tab style
+					document.body.classList.remove('tabstyle-pill', 'tabstyle-underline', 'tabstyle-boxed');
+					if (currentPrefs.tabStyle && currentPrefs.tabStyle !== 'pill') {
+						document.body.classList.add(`tabstyle-${currentPrefs.tabStyle}`);
+					}
+
+					// Corners
+					document.body.classList.remove('corners-round', 'corners-soft', 'corners-sharp');
+					if (currentPrefs.corners && currentPrefs.corners !== 'round') {
+						document.body.classList.add(`corners-${currentPrefs.corners}`);
+					}
+
+					// Glass blur
+					document.body.classList.toggle('hblur-off', currentPrefs.hblur === 'off');
 
 					// Custom app title / subtitle
 					const h1El = document.querySelector('#app h1');
@@ -8640,6 +8795,10 @@ body {
 						{ id: 'chips-cardwidth', key: 'cardWidth' },
 						{ id: 'chips-bgstyle',   key: 'bgStyle'   },
 						{ id: 'chips-density',   key: 'density'   },
+						{ id: 'chips-layout',    key: 'layout'    },
+						{ id: 'chips-tabstyle',  key: 'tabStyle'  },
+						{ id: 'chips-corners',   key: 'corners'   },
+						{ id: 'chips-hblur',     key: 'hblur'     },
 						{ id: 'chips-autolock',  key: 'autoLock'  },
 					].forEach(({ id, key }) => {
 						document.querySelectorAll(`#${id} .chip`).forEach(c => {
@@ -8654,12 +8813,16 @@ body {
 				}
 
 				// Wire chip clicks
-				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-autolock'].forEach(id => {
+				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-autolock'].forEach(id => {
 					const container = document.getElementById(id);
 					if (!container) return;
 					const key = id === 'chips-fontsize'  ? 'fontSize'
 					          : id === 'chips-cardwidth' ? 'cardWidth'
 					          : id === 'chips-density'   ? 'density'
+					          : id === 'chips-layout'    ? 'layout'
+					          : id === 'chips-tabstyle'  ? 'tabStyle'
+					          : id === 'chips-corners'   ? 'corners'
+					          : id === 'chips-hblur'     ? 'hblur'
 					          : id === 'chips-autolock'  ? 'autoLock'
 					          : 'bgStyle';
 					container.addEventListener('click', e => {
