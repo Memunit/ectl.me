@@ -3015,8 +3015,16 @@
 			.snip-item-body { padding:10px 14px; }
 			.snip-item-preview {
 				font-family:ui-monospace,monospace; font-size:0.8rem; color:var(--text);
-				white-space:pre-wrap; word-break:break-all;
+				word-break:break-word;
 			}
+			.snip-item-preview div { line-height:1.5; }
+			.snip-list-line { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
+			.snip-list-line > span { flex:1; min-width:0; }
+			.snip-line-copy { flex-shrink:0; opacity:0; font-size:0.7rem; padding:1px 6px; transition:opacity 0.15s; }
+			.snip-list-line:hover .snip-line-copy { opacity:1; }
+			.snip-md-h1 { font-size:0.95rem; font-weight:700; margin:6px 0 2px; }
+			.snip-md-h2 { font-size:0.88rem; font-weight:700; margin:4px 0 2px; }
+			.snip-md-h3 { font-size:0.82rem; font-weight:700; margin:3px 0 2px; color:var(--muted); }
 			.snip-empty { color:var(--muted); font-size:0.88rem; text-align:center; padding:40px 0; }
 			/* Snippet editor overlay */
 			.snip-editor-overlay {
@@ -10834,6 +10842,29 @@ body {
 				let _snipEditId = null;
 				let _snipActiveTag = '';
 
+				function snipMd(raw) {
+					function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+					function inlineFmt(s) {
+						return esc(s)
+							.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+							.replace(/~~([^~\n]+)~~/g, '<s>$1</s>')
+							.replace(/_([^_\n]+)_/g, '<em>$1</em>')
+							.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+					}
+					return raw.split('\n').map(line => {
+						const h3 = line.match(/^### (.*)/);
+						if (h3) return `<div class="snip-md-h3">${inlineFmt(h3[1])}</div>`;
+						const h2 = line.match(/^## (.*)/);
+						if (h2) return `<div class="snip-md-h2">${inlineFmt(h2[1])}</div>`;
+						const h1 = line.match(/^# (.*)/);
+						if (h1) return `<div class="snip-md-h1">${inlineFmt(h1[1])}</div>`;
+						const ul = line.match(/^(\s*)- (.*)/);
+						if (ul) return `<div class="snip-list-line"><span>\u2022 ${inlineFmt(ul[2])}</span><button class="snip-line-copy btn btn-small" data-text="${esc(ul[2])}" title="Copy line">&#x29C9;</button></div>`;
+						const ol = line.match(/^(\s*)(\d+)\. (.*)/);
+						if (ol) return `<div class="snip-list-line"><span>${esc(ol[2])}. ${inlineFmt(ol[3])}</span><button class="snip-line-copy btn btn-small" data-text="${esc(ol[3])}" title="Copy line">&#x29C9;</button></div>`;
+						return line ? `<div>${inlineFmt(line)}</div>` : '<div style="height:0.4em"></div>';
+					}).join('');
+				}
 				function renderSnippets() {
 					const snips = loadSnippets();
 					const q = (document.getElementById('snip-search')?.value || '').toLowerCase().trim();
@@ -10874,7 +10905,7 @@ body {
 								</div>
 							</div>
 							<div class="snip-item-body">
-								<div class="snip-item-preview" data-sid="${escHtml(s.id)}">${escHtml(s.body)}</div>
+								<div class="snip-item-preview" data-sid="${escHtml(s.id)}">${snipMd(s.body)}</div>
 							</div>
 						</div>
 					`).join('');
@@ -10977,6 +11008,8 @@ body {
 					renderSnippets();
 				});
 				document.getElementById('snip-list')?.addEventListener('click', e => {
+					const lineCopy = e.target.closest('.snip-line-copy');
+					if (lineCopy) { e.stopPropagation(); navigator.clipboard.writeText(lineCopy.dataset.text || '').then(() => showToast('Copied!', 'success')); return; }
 					const btn = e.target.closest('[data-action]');
 					if (!btn) return;
 					const { action, sid } = btn.dataset;
