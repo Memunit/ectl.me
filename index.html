@@ -416,6 +416,15 @@
 			.tab:active {
 				transform: scale(0.93);
 			}
+			.tab[draggable='true'] { cursor: grab; }
+			.tab[draggable='true']:active { cursor: grabbing; }
+			.tab.tab-drag-src { opacity: 0.35; transform: scale(0.93); }
+			.tab.tab-drag-over {
+				background: var(--accent-glow) !important;
+				color: var(--accent) !important;
+				outline: 2px dashed var(--accent);
+				outline-offset: -2px;
+			}
 
 			.tab[aria-selected='true'] {
 				color: var(--accent);
@@ -5208,6 +5217,99 @@
 					selectTab(tabs[next].tab?.id);
 				});
 			}
+
+			// ── Tab drag-to-reorder ─────────────────────────────────────
+			(function initTabDrag() {
+				const TAB_ORDER_KEY = 'ectl_tab_order';
+				const ADMIN_ID = 'tab-admin';
+				const indicator = document.getElementById('app-tab-indicator');
+				if (!indicator) return;
+				const tabsEl = indicator.closest('.tabs');
+				if (!tabsEl) return;
+
+				function applyOrder(order) {
+					const adminBtn = document.getElementById(ADMIN_ID);
+					order.forEach(id => {
+						const btn = document.getElementById(id);
+						if (btn && btn.id !== ADMIN_ID) tabsEl.insertBefore(btn, adminBtn || indicator);
+					});
+					if (adminBtn) tabsEl.insertBefore(adminBtn, indicator);
+					// Re-sort the tabs array so ArrowLeft/Right keyboard nav stays correct
+					tabs.sort((a, b) => {
+						if (!a.tab || !b.tab) return 0;
+						return Array.from(tabsEl.children).indexOf(a.tab) - Array.from(tabsEl.children).indexOf(b.tab);
+					});
+				}
+
+				// Restore saved order on load
+				try {
+					const saved = JSON.parse(localStorage.getItem(TAB_ORDER_KEY));
+					if (Array.isArray(saved) && saved.length) applyOrder(saved);
+				} catch {}
+
+				// Mark non-admin tabs as draggable
+				Array.from(tabsEl.querySelectorAll('.tab')).forEach(btn => {
+					if (btn.id !== ADMIN_ID) btn.draggable = true;
+				});
+
+				let dragSrcId = null;
+
+				tabsEl.addEventListener('dragstart', e => {
+					const btn = e.target.closest('.tab');
+					if (!btn || btn.id === ADMIN_ID) { e.preventDefault(); return; }
+					dragSrcId = btn.id;
+					btn.classList.add('tab-drag-src');
+					e.dataTransfer.effectAllowed = 'move';
+					e.dataTransfer.setData('text/plain', btn.id);
+				});
+
+				tabsEl.addEventListener('dragover', e => {
+					e.preventDefault();
+					e.dataTransfer.dropEffect = 'move';
+					const btn = e.target.closest('.tab');
+					tabsEl.querySelectorAll('.tab-drag-over').forEach(el => el.classList.remove('tab-drag-over'));
+					if (btn && btn.id !== ADMIN_ID && btn.id !== dragSrcId) btn.classList.add('tab-drag-over');
+				});
+
+				tabsEl.addEventListener('dragleave', e => {
+					if (!tabsEl.contains(e.relatedTarget))
+						tabsEl.querySelectorAll('.tab-drag-over').forEach(el => el.classList.remove('tab-drag-over'));
+				});
+
+				tabsEl.addEventListener('drop', e => {
+					e.preventDefault();
+					const targetBtn = e.target.closest('.tab');
+					tabsEl.querySelectorAll('.tab-drag-over, .tab-drag-src').forEach(el => el.classList.remove('tab-drag-over', 'tab-drag-src'));
+					if (!targetBtn || !dragSrcId || targetBtn.id === dragSrcId || targetBtn.id === ADMIN_ID) { dragSrcId = null; return; }
+					const srcBtn = document.getElementById(dragSrcId);
+					if (!srcBtn) { dragSrcId = null; return; }
+					// Determine drop position: insert before or after target based on mouse X
+					const targetRect = targetBtn.getBoundingClientRect();
+					const insertAfter = e.clientX > targetRect.left + targetRect.width / 2;
+					if (insertAfter && targetBtn.nextSibling) {
+						tabsEl.insertBefore(srcBtn, targetBtn.nextSibling);
+					} else {
+						tabsEl.insertBefore(srcBtn, targetBtn);
+					}
+					// Always ensure admin stays last (before indicator)
+					const adminBtn = document.getElementById(ADMIN_ID);
+					if (adminBtn) tabsEl.insertBefore(adminBtn, indicator);
+					// Save new order and re-sort tabs array
+					const newOrder = Array.from(tabsEl.querySelectorAll('.tab'))
+						.filter(b => b.id !== ADMIN_ID).map(b => b.id);
+					localStorage.setItem(TAB_ORDER_KEY, JSON.stringify(newOrder));
+					applyOrder(newOrder);
+					// Refresh indicator position
+					const activeTab = tabs.find(t => t.tab?.getAttribute('aria-selected') === 'true')?.tab;
+					if (activeTab) requestAnimationFrame(() => updateTabIndicator('app-tab-indicator', activeTab));
+					dragSrcId = null;
+				});
+
+				tabsEl.addEventListener('dragend', e => {
+					tabsEl.querySelectorAll('.tab-drag-over, .tab-drag-src').forEach(el => el.classList.remove('tab-drag-over', 'tab-drag-src'));
+					dragSrcId = null;
+				});
+			})();
 
 			for (const { tab } of authTabs) {
 				if (!tab) continue;
