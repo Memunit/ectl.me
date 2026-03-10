@@ -1097,7 +1097,7 @@
 				--radius-md: 3px;
 			}
 
-			/* ── Header blur: off ───────────────────────────────────── */
+			/* ── Glass blur: off ─────────────────────────────────────────────── */
 			body.hblur-off .tabs {
 				backdrop-filter: none;
 				-webkit-backdrop-filter: none;
@@ -1106,6 +1106,22 @@
 				backdrop-filter: none;
 				-webkit-backdrop-filter: none;
 			}
+
+			/* ── Animation speed ─────────────────────────────────────────────── */
+			body.anim-off   * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+			body.anim-slow  { --t-fast: 280ms; --t-mid: 520ms; --t-slow: 840ms; }
+			body.anim-fast  { --t-fast:  60ms; --t-mid: 100ms; --t-slow: 160ms; }
+
+			/* ── Card padding ────────────────────────────────────────────────── */
+			body.cpad-tight   .card { padding: calc(var(--card-pad) * 0.55); }
+			body.cpad-spacious .card { padding: calc(var(--card-pad) * 1.55); }
+
+			/* ── Sidebar position: right ─────────────────────────────────────── */
+			body.sidebar-right .notes-layout {
+				grid-template-columns: 1fr 220px;
+			}
+			body.sidebar-right .notes-layout > :first-child { order: 2; }
+			body.sidebar-right .notes-layout > :last-child  { order: 1; }
 
 			/* ── Tab style: underline ───────────────────────────────── */
 			body.tabstyle-underline .tabs {
@@ -3286,34 +3302,31 @@
 						<div class="field" style="margin-bottom:18px">
 							<label style="margin-bottom:10px">Font size</label>
 							<div class="chip-row" id="chips-fontsize" role="radiogroup" aria-label="Font size">
-								<button class="chip" data-val="small"  type="button">Small</button>
-								<button class="chip" data-val="medium" type="button">Medium</button>
-								<button class="chip" data-val="large"  type="button">Large</button>
+									<button class="chip" data-val="xs"     type="button">XS</button>
+									<button class="chip" data-val="small"  type="button">S</button>
+									<button class="chip" data-val="medium" type="button">M</button>
+									<button class="chip" data-val="large"  type="button">L</button>
+									<button class="chip" data-val="xl"     type="button">XL</button>
+								</div>
 							</div>
-						</div>
 
-						<!-- Card width -->
-						<div class="field" style="margin-bottom:18px">
-							<label style="margin-bottom:10px">Card width</label>
-							<div class="chip-row" id="chips-cardwidth" role="radiogroup" aria-label="Card width">
-								<button class="chip" data-val="compact" type="button">Compact</button>
-								<button class="chip" data-val="regular" type="button">Regular</button>
-								<button class="chip" data-val="wide"    type="button">Wide</button>
-							</div>
-						</div>
-
-						<!-- Background style -->
+							<!-- Card width -->
+							<div class="field" style="margin-bottom:18px">
+								<label style="margin-bottom:10px">Card width</label>
+								<div class="chip-row" id="chips-cardwidth" role="radiogroup" aria-label="Card width">
+									<button class="chip" data-val="xs"      type="button">XS</button>
+									<button class="chip" data-val="compact" type="button">S</button>
+									<button class="chip" data-val="regular" type="button">M</button>
+									<button class="chip" data-val="wide"    type="button">L</button>
+									<button class="chip" data-val="xl"      type="button">XL</button>
+									<button class="chip" data-val="full"    type="button">Full</button>
 						<div class="field">
 							<label style="margin-bottom:10px">Background</label>
 							<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
 								<button class="chip" data-val="aurora"  type="button">Aurora</button>
 								<button class="chip" data-val="subtle"  type="button">Subtle</button>
-								<button class="chip" data-val="minimal" type="button">Minimal</button>
-							</div>
-						</div>
-
-						<!-- Note density -->
-						<div class="field" style="margin-top:18px">
+									<button class="chip" data-val="mesh"    type="button">Mesh</button>
+									<button class="chip" data-val="glass"   type="button">Glass</button>
 							<label style="margin-bottom:10px">Note density</label>
 							<div class="chip-row" id="chips-density" role="radiogroup" aria-label="Note density">
 								<button class="chip" data-val="compact"     type="button">Compact</button>
@@ -3352,12 +3365,42 @@
 							</div>
 						</div>
 
-						<!-- Header blur -->
-						<div class="field" style="margin-top:18px">
-							<label style="margin-bottom:10px">Glass blur</label>
-							<div class="chip-row" id="chips-hblur" role="radiogroup" aria-label="Glass blur">
-								<button class="chip" data-val="on"  type="button">On</button>
-								<button class="chip" data-val="off" type="button">Off</button>
+<!-- Glass blur -->
+							<div class="field" style="margin-top:18px">
+								<label style="margin-bottom:10px">Glass blur</label>
+								<div class="chip-row" id="chips-hblur" role="radiogroup" aria-label="Glass blur">
+									<button class="chip" data-val="on"  type="button">On</button>
+									<button class="chip" data-val="off" type="button">Off</button>
+								</div>
+							</div>
+
+							<!-- Animation speed -->
+							<div class="field" style="margin-top:18px">
+								<label style="margin-bottom:10px">Animations</label>
+								<div class="chip-row" id="chips-animspeed" role="radiogroup" aria-label="Animation speed">
+									<button class="chip" data-val="off"    type="button">Off</button>
+									<button class="chip" data-val="slow"   type="button">Slow</button>
+									<button class="chip" data-val="normal" type="button">Normal</button>
+									<button class="chip" data-val="fast"   type="button">Fast</button>
+								</div>
+							</div>
+
+							<!-- Card padding -->
+							<div class="field" style="margin-top:18px">
+								<label style="margin-bottom:10px">Card padding</label>
+								<div class="chip-row" id="chips-cpad" role="radiogroup" aria-label="Card padding">
+									<button class="chip" data-val="tight"    type="button">Tight</button>
+									<button class="chip" data-val="normal"   type="button">Normal</button>
+									<button class="chip" data-val="spacious" type="button">Spacious</button>
+								</div>
+							</div>
+
+							<!-- Sidebar position -->
+							<div class="field" style="margin-top:18px">
+								<label style="margin-bottom:10px">Notes sidebar</label>
+								<div class="chip-row" id="chips-sidebar" role="radiogroup" aria-label="Notes sidebar position">
+									<button class="chip" data-val="left"  type="button">Left</button>
+									<button class="chip" data-val="right" type="button">Right</button>
 							</div>
 						</div>
 
@@ -8627,24 +8670,26 @@ body {
 
 				// Current pref state (defaults)
 				let currentPrefs = {
-					accentIndex: 0,   // index into ACCENT_PRESETS
+					accentIndex: 0,
 					fontSize:    'medium',
 					cardWidth:   'regular',
 					bgStyle:     'aurora',
-					density:     'normal',   // compact | normal | comfortable
-					layout:      'windowed', // windowed | edge
-					tabStyle:    'pill',     // pill | underline | boxed
-					corners:     'round',    // round | soft | sharp
-					hblur:       'on',       // on | off
-					// NEW fields
+					density:     'normal',
+					layout:      'windowed',
+					tabStyle:    'pill',
+					corners:     'round',
+					hblur:       'on',
+					animSpeed:   'normal',
+					cardPad:     'normal',
+					sidebar:     'left',
 					appTitle:    '',
 					appSubtitle: '',
 					autoLock:    'off',
 					wordGoal:    0,
 				};
 
-				const FONT_SCALE   = { small: 0.88, medium: 1, large: 1.15 };
-				const CARD_SCALE   = { compact: 0.72, regular: 1, wide: 1.22 };
+				const FONT_SCALE   = { xs: 0.76, small: 0.88, medium: 1, large: 1.15, xl: 1.30 };
+				const CARD_SCALE   = { xs: 0.50, compact: 0.72, regular: 1, wide: 1.22, xl: 1.50, full: 9.0 };
 
 				// Base card-max values (read from the stylesheet's --card-max at each bp).
 				// We store base values and multiply by CARD_SCALE.
@@ -8705,6 +8750,21 @@ body {
 					// Glass blur
 					document.body.classList.toggle('hblur-off', currentPrefs.hblur === 'off');
 
+					// Animation speed
+					document.body.classList.remove('anim-off', 'anim-slow', 'anim-normal', 'anim-fast');
+					if (currentPrefs.animSpeed && currentPrefs.animSpeed !== 'normal') {
+						document.body.classList.add(`anim-${currentPrefs.animSpeed}`);
+					}
+
+					// Card padding
+					document.body.classList.remove('cpad-tight', 'cpad-normal', 'cpad-spacious');
+					if (currentPrefs.cardPad && currentPrefs.cardPad !== 'normal') {
+						document.body.classList.add(`cpad-${currentPrefs.cardPad}`);
+					}
+
+					// Sidebar position
+					document.body.classList.toggle('sidebar-right', currentPrefs.sidebar === 'right');
+
 					// Custom app title / subtitle
 					const h1El = document.querySelector('#app h1');
 					const subtitleEl = document.querySelector('#app .subtitle');
@@ -8737,7 +8797,7 @@ body {
 				function applyBgStyle(style) {
 					const body = document.body;
 					// Remove any previously set custom bg class
-					body.classList.remove('bg-aurora', 'bg-subtle', 'bg-minimal');
+					body.classList.remove('bg-aurora', 'bg-subtle', 'bg-minimal', 'bg-mesh', 'bg-glass');
 					body.classList.add(`bg-${style}`);
 				}
 
@@ -8756,9 +8816,21 @@ body {
 					s.textContent = `
 						body.bg-subtle::after { opacity: 0.45 !important; }
 						body.bg-minimal::after { display: none !important; }
-						body.bg-minimal {
-							background: var(--bg) !important;
+						body.bg-minimal { background: var(--bg) !important; }
+						body.bg-mesh::after {
+							opacity: 1 !important;
+							background-image:
+								linear-gradient(var(--accent-glow) 1px, transparent 1px),
+								linear-gradient(90deg, var(--accent-glow) 1px, transparent 1px) !important;
+							background-size: 40px 40px !important;
+							background-color: var(--bg) !important;
 						}
+						body.bg-glass {
+							background: linear-gradient(135deg,
+								color-mix(in srgb, var(--accent) 12%, var(--bg)) 0%,
+								color-mix(in srgb, var(--accent-2) 8%, var(--bg)) 100%) !important;
+						}
+						body.bg-glass::after { display: none !important; }
 					`;
 					document.head.appendChild(s);
 				})();
@@ -8799,6 +8871,9 @@ body {
 						{ id: 'chips-tabstyle',  key: 'tabStyle'  },
 						{ id: 'chips-corners',   key: 'corners'   },
 						{ id: 'chips-hblur',     key: 'hblur'     },
+						{ id: 'chips-animspeed', key: 'animSpeed' },
+						{ id: 'chips-cpad',      key: 'cardPad'   },
+						{ id: 'chips-sidebar',   key: 'sidebar'   },
 						{ id: 'chips-autolock',  key: 'autoLock'  },
 					].forEach(({ id, key }) => {
 						document.querySelectorAll(`#${id} .chip`).forEach(c => {
@@ -8813,7 +8888,7 @@ body {
 				}
 
 				// Wire chip clicks
-				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-autolock'].forEach(id => {
+				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock'].forEach(id => {
 					const container = document.getElementById(id);
 					if (!container) return;
 					const key = id === 'chips-fontsize'  ? 'fontSize'
@@ -8823,6 +8898,9 @@ body {
 					          : id === 'chips-tabstyle'  ? 'tabStyle'
 					          : id === 'chips-corners'   ? 'corners'
 					          : id === 'chips-hblur'     ? 'hblur'
+					          : id === 'chips-animspeed' ? 'animSpeed'
+					          : id === 'chips-cpad'      ? 'cardPad'
+					          : id === 'chips-sidebar'   ? 'sidebar'
 					          : id === 'chips-autolock'  ? 'autoLock'
 					          : 'bgStyle';
 					container.addEventListener('click', e => {
