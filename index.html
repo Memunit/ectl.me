@@ -10941,6 +10941,34 @@ body {
 					if (sfmt) snipInsertFmt(sfmt.dataset.sfmt);
 				});
 				document.getElementById('snip-edit-body')?.addEventListener('input', e => autoGrowSnip(e.target));
+			document.getElementById('snip-edit-body')?.addEventListener('keydown', e => {
+				if (e.key !== 'Enter') return;
+				const ta = e.target;
+				const pos = ta.selectionStart;
+				const lineStart = ta.value.lastIndexOf('\n', pos - 1) + 1;
+				const line = ta.value.slice(lineStart, pos);
+				const ulMatch = line.match(/^(\s*)(- )(.*)/);
+				const olMatch = line.match(/^(\s*)(\d+)\. (.*)/);
+				if (ulMatch) {
+					e.preventDefault();
+					if (!ulMatch[3]) {
+						// empty bullet — remove it and exit list
+						ta.setRangeText('', lineStart, pos, 'end');
+					} else {
+						ta.setRangeText('\n' + ulMatch[1] + '- ', pos, pos, 'end');
+					}
+					ta.dispatchEvent(new Event('input'));
+				} else if (olMatch) {
+					e.preventDefault();
+					if (!olMatch[3]) {
+						// empty numbered item — remove it and exit list
+						ta.setRangeText('', lineStart, pos, 'end');
+					} else {
+						ta.setRangeText('\n' + olMatch[1] + (parseInt(olMatch[2]) + 1) + '. ', pos, pos, 'end');
+					}
+					ta.dispatchEvent(new Event('input'));
+				}
+			});
 				document.getElementById('snip-search')?.addEventListener('input', renderSnippets);
 				document.getElementById('snip-tag-bar')?.addEventListener('click', e => {
 					const chip = e.target.closest('.snip-tag-chip');
