@@ -11386,6 +11386,25 @@ body {
 				});
 
 				// ── QR Code Generator ─────────────────────────────────────────
+				async function _loadQrLib() {
+					const URLS = [
+						'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+						'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+					];
+					for (const src of URLS) {
+						try {
+							await new Promise((res, rej) => {
+								const sc = document.createElement('script');
+								sc.src = src;
+								sc.onload = res;
+								sc.onerror = () => rej(new Error('Script load failed: ' + src));
+								document.head.appendChild(sc);
+							});
+							if (window.QRCode) return; // success
+						} catch { /* try next */ }
+					}
+					throw new Error('Could not load QR library. Check your internet connection.');
+				}
 				document.getElementById('tool-qr-gen')?.addEventListener('click', async () => {
 					const text  = (document.getElementById('tool-qr-input')?.value || '').trim();
 					const out   = document.getElementById('tool-qr-out');
@@ -11394,19 +11413,12 @@ body {
 					if (!text) { showToast?.('Enter some text or a URL first', 'error'); return; }
 					out.innerHTML = '<span style="font-size:0.82rem;color:var(--muted)">Generating…</span>';
 					try {
-						if (!window.QRCode) {
-							await new Promise((res, rej) => {
-								const sc = document.createElement('script');
-								sc.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-								sc.onload = res; sc.onerror = rej;
-								document.head.appendChild(sc);
-							});
-						}
+						if (!window.QRCode) await _loadQrLib();
 						const canvas = document.createElement('canvas');
 						const isDark = document.body.classList.contains('dark');
 						await window.QRCode.toCanvas(canvas, text, {
 							width: 200, margin: 2,
-							color: { dark: isDark ? '#e0e7ff' : '#1e1b4b', light: '#00000000' }
+							color: { dark: isDark ? '#c7d2fe' : '#1e1b4b', light: isDark ? '#1e1b4b' : '#ffffff' }
 						});
 						out.innerHTML = '';
 						out.appendChild(canvas);
@@ -11420,7 +11432,7 @@ body {
 							};
 						}
 					} catch (err) {
-						out.innerHTML = `<span style="color:#dc2626;font-size:0.82rem">Error: ${escHtml(String(err?.message || err))}</span>`;
+						out.innerHTML = `<span style="color:#dc2626;font-size:0.82rem">${escHtml(err?.message || String(err))}</span>`;
 					}
 				});
 				document.getElementById('tool-qr-input')?.addEventListener('keydown', e => {
