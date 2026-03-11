@@ -11387,21 +11387,26 @@ body {
 
 				// ── QR Code Generator ─────────────────────────────────────────
 				async function _loadQrLib() {
+					if (window.QRCode) return;
 					const URLS = [
 						'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
 						'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
 					];
 					for (const src of URLS) {
 						try {
-							await new Promise((res, rej) => {
-								const sc = document.createElement('script');
-								sc.src = src;
-								sc.onload = res;
-								sc.onerror = () => rej(new Error('Script load failed: ' + src));
-								document.head.appendChild(sc);
+							// Use fetch + new Function so we can override the UMD module-system
+							// detection. In Electron, `module`/`exports`/`require` are defined as
+							// Node.js globals, which causes the UMD wrapper to use module.exports
+							// instead of setting window.QRCode. Passing undefined neutralises it.
+							const code = await fetch(src).then(r => {
+								if (!r.ok) throw new Error(`HTTP ${r.status}`);
+								return r.text();
 							});
+							// eslint-disable-next-line no-new-func
+							(new Function('define', 'exports', 'module', 'require', code))
+								.call(window, undefined, undefined, undefined, undefined);
 							if (window.QRCode) return; // success
-						} catch { /* try next */ }
+						} catch (e) { console.warn('QR lib attempt failed:', src, e?.message); }
 					}
 					throw new Error('Could not load QR library. Check your internet connection.');
 				}
