@@ -11386,43 +11386,116 @@ body {
 				});
 
 				// ── QR Code Generator ─────────────────────────────────────────
-				async function _loadQrLib() {
-					if (window.QRCode) return;
-					const URLS = [
-						'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
-						'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
-					];
-					for (const src of URLS) {
-						try {
-							// Use fetch + new Function so we can override the UMD module-system
-							// detection. In Electron, `module`/`exports`/`require` are defined as
-							// Node.js globals, which causes the UMD wrapper to use module.exports
-							// instead of setting window.QRCode. Passing undefined neutralises it.
-							const code = await fetch(src).then(r => {
-								if (!r.ok) throw new Error(`HTTP ${r.status}`);
-								return r.text();
-							});
-							// eslint-disable-next-line no-new-func
-							(new Function('define', 'exports', 'module', 'require', code))
-								.call(window, undefined, undefined, undefined, undefined);
-							if (window.QRCode) return; // success
-						} catch (e) { console.warn('QR lib attempt failed:', src, e?.message); }
+				// ── Pure-JS QR Code generator (byte mode, ECL-L, v1-20) ─────────────
+				// No external dependencies.
+				const _QR = (() => {
+					const E=new Uint8Array(512),L=new Uint8Array(256);
+					let _v=1;for(let i=0;i<255;i++){E[i]=_v;L[_v]=i;_v=_v&128?(_v<<1)^0x11d:_v<<1;}for(let i=255;i<512;i++)E[i]=E[i-255];
+					const xm=(a,b)=>a&&b?E[(L[a]+L[b])%255]:0;
+					function rsEcc(data,n){let g=[1];for(let i=0;i<n;i++){const t=new Uint8Array(g.length+1);for(let j=0;j<g.length;j++){t[j]^=g[j];t[j+1]^=xm(g[j],E[i]);}g=t;}const m=[...data,...new Array(n).fill(0)];for(let i=0;i<data.length;i++){if(!m[i])continue;for(let j=0;j<=n;j++)m[i+j]^=xm(m[i],g[j]);}return m.slice(data.length);}
+					// [totalData, eccPerBlock, g1n, g1k, g2n, g2k] - ECL L only
+					const VT=[,[19,7,1,19,0,0],[34,10,1,34,0,0],[55,15,1,55,0,0],[80,20,1,80,0,0],[108,26,1,108,0,0],[136,18,2,68,0,0],[156,20,2,78,0,0],[194,24,2,97,0,0],[232,30,2,116,0,0],[274,18,2,68,2,69],[324,20,4,81,0,0],[370,24,2,92,2,93],[428,26,4,107,0,0],[461,30,3,115,1,116],[523,22,5,87,1,88],[589,24,5,98,1,99],[647,28,1,107,5,108],[721,30,5,120,1,121],[795,28,3,113,4,114],[861,28,3,107,5,108]];
+					// Alignment pattern centers v1-20
+					const AP=[,[],[18],[22],[26],[30],[34],[22,38],[24,42],[26,46],[28,50],[30,54],[32,58],[34,62],[26,46,66],[26,48,70],[26,50,74],[30,54,78],[30,56,82],[30,58,86],[34,62,90]];
+					const RB=[,0,7,7,7,7,7,0,0,0,0,0,0,0,3,3,3,3,3,3,3];
+					function findVer(len){for(let v=1;v<=20;v++){const[td]=VT[v],cc=v<=9?8:16;if(len<=(td*8-4-cc)>>3)return v;}return -1;}
+					function makeData(bytes,ver){const[td]=VT[ver],cc=ver<=9?8:16,cap=td<<3;const b=[];const push=(v,n)=>{for(let i=n-1;i>=0;i--)b.push((v>>i)&1);};push(4,4);push(bytes.length,cc);for(const x of bytes)push(x,8);for(let i=0;i<4&&b.length<cap;i++)b.push(0);while(b.length%8)b.push(0);const pad=[0xEC,0x11];let pi=0;while(b.length<cap)push(pad[pi++%2],8);const out=[];for(let i=0;i<b.length;i+=8){let x=0;for(let j=0;j<8;j++)x=(x<<1)|b[i+j];out.push(x);}return out;}
+					function interleave(data,ver){const[,ec,g1n,g1k,g2n,g2k]=VT[ver];const blk=[];let off=0;for(let i=0;i<g1n;i++){const d=data.slice(off,off+g1k);blk.push([d,rsEcc(d,ec)]);off+=g1k;}for(let i=0;i<g2n;i++){const d=data.slice(off,off+g2k);blk.push([d,rsEcc(d,ec)]);off+=g2k;}const res=[],mx=Math.max(g1k,g2k||0);for(let c=0;c<mx;c++)for(const[d]of blk)if(c<d.length)res.push(d[c]);for(let c=0;c<ec;c++)for(const[,e]of blk)res.push(e[c]);return res;}
+					function fmtBits(mask){const d5=(1<<3)|mask;let rem=d5<<10;for(let i=4;i>=0;i--)if((rem>>(i+10))&1)rem^=0x537<<i;return((d5<<10)|(rem&0x3FF))^0x5412;}
+					function verBits(ver){let rem=ver<<12;for(let i=5;i>=0;i--)if((rem>>(i+12))&1)rem^=0x1F25<<i;return(ver<<12)|(rem&0xFFF);}
+					function initMat(ver){
+						const sz=ver*4+17;
+						const val=Array.from({length:sz},()=>new Uint8Array(sz));
+						const fnc=Array.from({length:sz},()=>new Uint8Array(sz));
+						const setF=(r,c,v)=>{if(r>=0&&r<sz&&c>=0&&c<sz){val[r][c]=v;fnc[r][c]=1;}};
+						const isF=(r,c)=>r>=0&&r<sz&&c>=0&&c<sz&&fnc[r][c];
+						function finder(tr,tc){for(let i=0;i<7;i++){setF(tr,tc+i,1);setF(tr+6,tc+i,1);setF(tr+i,tc,1);setF(tr+i,tc+6,1);}for(let r=1;r<6;r++)for(let c=1;c<6;c++)setF(tr+r,tc+c,0);for(let r=2;r<5;r++)for(let c=2;c<5;c++)setF(tr+r,tc+c,1);}
+						finder(0,0);finder(0,sz-7);finder(sz-7,0);
+						for(let i=0;i<8;i++){setF(7,i,0);setF(i,7,0);setF(7,sz-1-i,0);setF(i,sz-8,0);setF(sz-8,i,0);setF(sz-1-i,7,0);}
+						for(let i=8;i<sz-8;i++){setF(6,i,i%2===0?1:0);setF(i,6,i%2===0?1:0);}
+						setF(4*ver+9,8,1); // dark module
+						const ap=AP[ver]||[];for(const ar of ap)for(const ac of ap){if(isF(ar,ac))continue;for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++)setF(ar+dr,ac+dc,(Math.abs(dr)===2||Math.abs(dc)===2||(dr===0&&dc===0))?1:0);}
+						// Reserve format info (mark as function so data skips them)
+						for(let i=0;i<9;i++){if(!isF(8,i)){val[8][i]=0;fnc[8][i]=1;}if(!isF(i,8)){val[i][8]=0;fnc[i][8]=1;}}
+						for(let i=1;i<8;i++)if(!isF(8,sz-i)){val[8][sz-i]=0;fnc[8][sz-i]=1;}
+						for(let i=0;i<7;i++)if(!isF(sz-7+i,8)){val[sz-7+i][8]=0;fnc[sz-7+i][8]=1;}
+						if(ver>=7)for(let i=0;i<6;i++)for(let j=0;j<3;j++){setF(i,sz-11+j,0);setF(sz-11+j,i,0);}
+						return{val,fnc,sz};
 					}
-					throw new Error('Could not load QR library. Check your internet connection.');
-				}
-				document.getElementById('tool-qr-gen')?.addEventListener('click', async () => {
+					function placeData(val,fnc,cw,ver){
+						const sz=val.length;const bits=[];
+						for(const c of cw)for(let i=7;i>=0;i--)bits.push((c>>i)&1);
+						for(let i=0;i<(RB[ver]||0);i++)bits.push(0);
+						let bi=0,dir=-1,col=sz-1;
+						while(col>=1){if(col===6)col--;for(let ri=0;ri<sz;ri++){const r=dir===-1?sz-1-ri:ri;for(let dc=0;dc<=1;dc++){const c=col-dc;if(!fnc[r][c]){val[r][c]=bi<bits.length?bits[bi++]:0;}}}dir=-dir;col-=2;}
+					}
+					function placeFmt(val,sz,fb){
+						const p1=[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
+						const p2=[[sz-1,8],[sz-2,8],[sz-3,8],[sz-4,8],[sz-5,8],[sz-6,8],[sz-7,8],[8,sz-8],[8,sz-7],[8,sz-6],[8,sz-5],[8,sz-4],[8,sz-3],[8,sz-2],[8,sz-1]];
+						for(let i=0;i<15;i++){const b=(fb>>(14-i))&1;val[p1[i][0]][p1[i][1]]=b;val[p2[i][0]][p2[i][1]]=b;}
+					}
+					function placeVer(val,sz,vb){for(let i=0;i<6;i++)for(let j=0;j<3;j++){const b=(vb>>(i*3+j))&1;val[i][sz-11+j]=b;val[sz-11+j][i]=b;}}
+					const MASKS=[(r,c)=>(r+c)%2===0,(r,c)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c%2)+(r*c%3)===0,(r,c)=>((r*c%2)+(r*c%3))%2===0,(r,c)=>((r+c)%2+(r*c%3))%2===0];
+					function applyMask(val,fnc,sz,mi){return val.map((row,r)=>row.map((v,c)=>fnc[r][c]?v:v^(MASKS[mi](r,c)?1:0)));}
+					function penalty(mat){
+						const sz=mat.length;let p=0;
+						for(let r=0;r<sz;r++)for(let pass=0;pass<2;pass++){let run=1;for(let i=1;i<sz;i++){const cur=pass===0?mat[r][i]:mat[i][r],prv=pass===0?mat[r][i-1]:mat[i-1][r];if(cur===prv){run++;if(run===5)p+=3;else if(run>5)p++;}else run=1;}}
+						for(let r=0;r<sz-1;r++)for(let c=0;c<sz-1;c++){const v=mat[r][c];if(v===mat[r][c+1]&&v===mat[r+1][c]&&v===mat[r+1][c+1])p+=3;}
+						const P=[1,0,1,1,1,0,1,0,0,0,0],Q=[0,0,0,0,1,0,1,1,1,0,1];
+						for(let r=0;r<sz;r++)for(let c=0;c<=sz-11;c++){if(P.every((v,i)=>mat[r][c+i]===v))p+=40;if(Q.every((v,i)=>mat[r][c+i]===v))p+=40;}
+						for(let c=0;c<sz;c++)for(let r=0;r<=sz-11;r++){if(P.every((v,i)=>mat[r+i][c]===v))p+=40;if(Q.every((v,i)=>mat[r+i][c]===v))p+=40;}
+						let dark=0;for(let r=0;r<sz;r++)for(let c=0;c<sz;c++)dark+=mat[r][c];
+						p+=10*Math.floor(Math.abs(dark*100/(sz*sz)-50)/5);
+						return p;
+					}
+					return {
+						toCanvas(canvas, text, opts={}) {
+							const bytes = [...new TextEncoder().encode(text)];
+							const ver = findVer(bytes.length);
+							if (ver < 0) throw new Error('Text too long for QR code (max ~550 bytes)');
+							const data = makeData(bytes, ver);
+							const cw   = interleave(data, ver);
+							const {val, fnc, sz} = initMat(ver);
+							placeData(val, fnc, cw, ver);
+							// Pick best mask
+							let bestMask = 0, bestPen = Infinity;
+							for (let mi = 0; mi < 8; mi++) {
+								const masked = applyMask(val, fnc, sz, mi);
+								placeFmt(masked, sz, fmtBits(mi));
+								const pen = penalty(masked);
+								if (pen < bestPen) { bestPen = pen; bestMask = mi; }
+							}
+							const final = applyMask(val, fnc, sz, bestMask);
+							placeFmt(final, sz, fmtBits(bestMask));
+							if (ver >= 7) placeVer(final, sz, verBits(ver));
+							// Render
+							const scale = opts.scale || Math.max(2, Math.floor((opts.width || 200) / (sz + 4)));
+							const margin = opts.margin !== undefined ? opts.margin : 2;
+							const total = (sz + margin * 2) * scale;
+							canvas.width = canvas.height = total;
+							const ctx = canvas.getContext('2d');
+							const isDark = opts.color?.dark || '#000000';
+							const isLight = opts.color?.light || '#ffffff';
+							ctx.fillStyle = isLight; ctx.fillRect(0, 0, total, total);
+							ctx.fillStyle = isDark;
+							for (let r = 0; r < sz; r++) for (let c = 0; c < sz; c++) {
+								if (final[r][c]) ctx.fillRect((c + margin) * scale, (r + margin) * scale, scale, scale);
+							}
+						}
+					};
+				})();
+
+				document.getElementById('tool-qr-gen')?.addEventListener('click', () => {
 					const text  = (document.getElementById('tool-qr-input')?.value || '').trim();
 					const out   = document.getElementById('tool-qr-out');
 					const dlBtn = document.getElementById('tool-qr-download');
 					if (!out) return;
 					if (!text) { showToast?.('Enter some text or a URL first', 'error'); return; }
-					out.innerHTML = '<span style="font-size:0.82rem;color:var(--muted)">Generating…</span>';
 					try {
-						if (!window.QRCode) await _loadQrLib();
 						const canvas = document.createElement('canvas');
 						const isDark = document.body.classList.contains('dark');
-						await window.QRCode.toCanvas(canvas, text, {
-							width: 200, margin: 2,
+						_QR.toCanvas(canvas, text, {
+							width: 220,
 							color: { dark: isDark ? '#c7d2fe' : '#1e1b4b', light: isDark ? '#1e1b4b' : '#ffffff' }
 						});
 						out.innerHTML = '';
