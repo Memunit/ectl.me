@@ -2450,6 +2450,25 @@
 			.tool-ts-row { display: flex; gap: 8px; font-size: 0.82rem; align-items: center; }
 			.tool-ts-label { color: var(--muted); font-weight: 600; min-width: 120px; flex-shrink: 0; }
 			.tool-ts-val { font-family: ui-monospace, monospace; user-select: all; }
+			/* ── ToC & Backlinks (MD preview) ─────────────────────────────── */
+			.md-toc { background: var(--btn-bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 6px 12px; margin-bottom: 12px; font-size: 0.83rem; }
+			.md-toc summary { cursor: pointer; font-weight: 700; color: var(--muted); user-select: none; list-style: none; }
+			.md-toc summary::before { content: '▶ '; font-size: 0.7em; }
+			.md-toc[open] summary::before { content: '▼ '; }
+			.md-toc ol { margin: 6px 0 2px; padding-left: 1.1em; }
+			.md-toc li { margin: 2px 0; list-style: none; }
+			.md-toc a { color: var(--accent); text-decoration: none; }
+			.md-toc a:hover { text-decoration: underline; }
+			.md-backlinks { margin-top: 18px; padding-top: 10px; border-top: 1px solid var(--panel-border); font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+			.md-backlinks a { color: var(--accent); text-decoration: none; cursor: pointer; }
+			.md-backlinks a:hover { text-decoration: underline; }
+			/* ── Checkbox progress badge on sidebar items ──────────────────── */
+			.doc-cb-badge { font-size: 0.68rem; font-weight: 700; background: var(--accent-glow); color: var(--accent); border-radius: 99px; padding: 1px 5px; flex-shrink: 0; line-height: 1.5; }
+			/* ── Snippet drag-to-reorder ───────────────────────────────────── */
+			.snip-drag-handle { cursor: grab; opacity: 0.22; font-size: 1rem; padding: 0 3px; flex-shrink: 0; user-select: none; line-height: 1; }
+			.snip-drag-handle:hover { opacity: 0.75; }
+			.snip-item[draggable].dragging { opacity: 0.35; }
+			.snip-item[draggable].drag-over { outline: 2px dashed var(--accent); border-radius: var(--radius-md); }
 
 			/* ── Work panel ─────────────────────────────────────────── */
 			.work-subsection-label {
@@ -3558,6 +3577,8 @@
 								<button class="btn btn-small" id="btn-export-all-md" type="button" title="Export all notes as one Markdown file">⤓ All .md</button>
 								<button class="btn btn-small" id="btn-md-preview" type="button" title="Toggle Markdown preview" aria-pressed="false">👁 MD</button>
 								<button class="btn btn-small" id="btn-paste-create" type="button" title="Paste clipboard as new note">📋</button>
+								<button class="btn btn-small" id="btn-daily-note" type="button" title="Open or create today's daily note (YYYY-MM-DD)">📅</button>
+								<button class="btn btn-small" id="btn-save-sel-snip" type="button" title="Save selected text as a new snippet">✂</button>
 								<button class="btn btn-small" id="btn-focus-mode" type="button" title="Focus mode (⌘.)">⛶</button>
 								<button class="btn btn-small" id="btn-typewriter" type="button" title="Typewriter mode">⌨</button>
 								<button class="btn btn-small" id="btn-find-replace" type="button" title="Find &amp; Replace (⌘F)">🔍</button>
@@ -4292,6 +4313,47 @@
 								<button class="btn btn-small" id="mdtbl-insert" type="button">&rarr; Insert in note</button>
 							</div>
 							<textarea class="input tool-textarea" id="mdtbl-output" rows="4" readonly placeholder="Markdown table output…" spellcheck="false" style="margin-top:6px;font-family:ui-monospace,monospace;font-size:0.78rem"></textarea>
+						</div>
+					</div>
+
+					<!-- JWT Decoder -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔑 JWT Decoder</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-jwt-input" rows="3" placeholder="Paste JWT token here…" spellcheck="false" style="font-family:ui-monospace,monospace;font-size:0.78rem"></textarea>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small btn-accent" id="tool-jwt-decode" type="button">Decode</button>
+								<button class="btn btn-small" id="tool-jwt-copy-payload" type="button">Copy Payload</button>
+								<span class="tool-json-status" id="tool-jwt-status"></span>
+							</div>
+							<div id="tool-jwt-out" style="margin-top:8px"></div>
+						</div>
+					</div>
+
+					<!-- HTML Entity Encoder / Decoder -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔤 HTML Entity Encoder / Decoder</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-ent-input" rows="3" placeholder="Paste text to encode, or HTML entities to decode…" spellcheck="false"></textarea>
+							<div class="tool-row" style="margin-top:6px">
+								<button class="btn btn-small btn-accent" id="tool-ent-enc" type="button">Encode →</button>
+								<button class="btn btn-small" id="tool-ent-dec" type="button">← Decode</button>
+								<button class="btn btn-small" id="tool-ent-copy" type="button">Copy</button>
+							</div>
+							<textarea class="input tool-textarea" id="tool-ent-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
+						</div>
+					</div>
+
+					<!-- QR Code Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔲 QR Code Generator</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:8px">
+								<input class="input" id="tool-qr-input" type="text" placeholder="Text or URL to encode…" style="flex:1" />
+								<button class="btn btn-small btn-accent" id="tool-qr-gen" type="button">Generate</button>
+								<button class="btn btn-small" id="tool-qr-download" type="button" style="display:none">⤓ Save PNG</button>
+							</div>
+							<div id="tool-qr-out" style="margin-top:10px;display:flex;justify-content:center;min-height:32px"></div>
 						</div>
 					</div>
 
@@ -5869,13 +5931,17 @@
 					s = s.replace(/```([\s\S]*?)```/g, (_, c) => `<pre><code>${esc(c.trim())}</code></pre>`);
 					// Inline code
 					s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${esc(c)}</code>`);
-					// Headings
-					s = s.replace(/^###### (.+)$/gm, '<h6>$1</h6>');
-					s = s.replace(/^##### (.+)$/gm, '<h5>$1</h5>');
-					s = s.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
-					s = s.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-					s = s.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-					s = s.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+					// ToC: extract headings before processing
+					const _tocSlug = t => t.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-');
+					const _tocItems = [];
+					String(raw).replace(/^(#{1,6}) (.+)$/gm, (_, h, t) => { _tocItems.push({ level: h.length, text: t }); });
+					// Headings with anchor IDs
+					s = s.replace(/^###### (.+)$/gm, (_, t) => `<h6 id="toc-${_tocSlug(t)}">${t}</h6>`);
+					s = s.replace(/^##### (.+)$/gm,  (_, t) => `<h5 id="toc-${_tocSlug(t)}">${t}</h5>`);
+					s = s.replace(/^#### (.+)$/gm,   (_, t) => `<h4 id="toc-${_tocSlug(t)}">${t}</h4>`);
+					s = s.replace(/^### (.+)$/gm,    (_, t) => `<h3 id="toc-${_tocSlug(t)}">${t}</h3>`);
+					s = s.replace(/^## (.+)$/gm,     (_, t) => `<h2 id="toc-${_tocSlug(t)}">${t}</h2>`);
+					s = s.replace(/^# (.+)$/gm,      (_, t) => `<h1 id="toc-${_tocSlug(t)}">${t}</h1>`);
 					// Blockquote
 					s = s.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
 					// HR
@@ -5922,6 +5988,14 @@
 					}).join('\n');
 					// Clean up double <br> inside block elements
 					s = s.replace(/<br>\s*<br>/g, '<br>');
+					// Prepend ToC if ≥2 headings
+					if (_tocItems.length >= 2) {
+						const _te = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+						const _tlist = _tocItems.map(h =>
+							`<li style="padding-left:${(h.level - 1) * 12}px"><a href="#toc-${_tocSlug(h.text)}">${_te(h.text)}</a></li>`
+						).join('');
+						s = `<details class="md-toc" open><summary>Contents (${_tocItems.length})</summary><ol>${_tlist}</ol></details>` + s;
+					}
 					return s;
 				}
 
@@ -5992,9 +6066,13 @@
 							snippetHtml = `<span class="doc-item-snippet">${start > 0 ? '…' : ''}${hilited}${raw.length < doc.content.length - start ? '…' : ''}</span>`;
 							btn.classList.add('has-snippet');
 						}
-						btn.innerHTML = `
-							<span class="doc-item-left">${dotHtml}<span class="doc-item-name">${escHtml(doc.title || 'Untitled')}</span>${snippetHtml}</span>
-							<span style="display:flex;align-items:center;gap:4px;flex-shrink:0">${doc.pinned ? '<span class="doc-item-pin-badge" aria-label="Pinned" title="Pinned">📌</span>' : ''}<span class="doc-item-date" title="${escHtml(updatedFull)}">${fmtDate(doc.updated_at)}</span></span>
+// Checkbox progress badge
+					const _cbAll  = ((doc.content || '').match(/^- \[[ x]\]/gim) || []).length;
+					const _cbDone = ((doc.content || '').match(/^- \[x\]/gim) || []).length;
+					const _cbHtml = _cbAll > 0 ? `<span class="doc-cb-badge" title="${_cbDone}/${_cbAll} tasks">${_cbDone}/${_cbAll}</span>` : '';
+					btn.innerHTML = `
+						<span class="doc-item-left">${dotHtml}<span class="doc-item-name">${escHtml(doc.title || 'Untitled')}</span>${snippetHtml}</span>
+						<span style="display:flex;align-items:center;gap:4px;flex-shrink:0">${_cbHtml}${doc.pinned ? '<span class="doc-item-pin-badge" aria-label="Pinned" title="Pinned">📌</span>' : ''}<span class="doc-item-date" title="${escHtml(updatedFull)}">${fmtDate(doc.updated_at)}</span></span>
 						`;
 						btn.addEventListener('click', () => switchDoc(doc.id));
 
@@ -6121,6 +6199,30 @@
 					return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 				}
 
+				function refreshMdPreview() {
+					if (!mdPreviewOn) return;
+					const pane = document.getElementById('md-preview-pane');
+					if (!pane || !notesEl) return;
+					pane.innerHTML = renderMarkdown(notesEl.value);
+					// Backlinks: find notes that link to the current doc
+					const _curDoc = noteDocs.find(d => d.id === activeDocId);
+					const _curTitle = _curDoc?.title?.trim();
+					if (_curTitle) {
+						const _re = new RegExp('\\[\\[' + _curTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\]\\]', 'i');
+						const _sources = noteDocs.filter(d => d.id !== activeDocId && _re.test(d.content || ''));
+						if (_sources.length) {
+							const _links = _sources.map(d =>
+								`<a class="backlink-doc-link" data-doc-id="${escHtml(d.id)}" href="#">${escHtml(d.title || 'Untitled')}</a>`
+							).join(', ');
+							pane.innerHTML += `<div class="md-backlinks">🔗 <strong>Linked from:</strong> ${_links}</div>`;
+						}
+					}
+					// Wire backlink click → navigate
+					pane.querySelectorAll('.backlink-doc-link').forEach(a => {
+						a.addEventListener('click', e => { e.preventDefault(); switchDoc(a.dataset.docId); });
+					});
+				}
+
 				function switchDoc(id) {
 					// Save snapshot of current content before switching
 					if (activeDocId && notesEl) pushSnapshot(activeDocId, notesEl.value);
@@ -6137,6 +6239,7 @@
 					if (docTitleEl) { docTitleEl.value = doc.title ?? ''; }
 					notesEl?.focus();
 					renderDocList();
+					refreshMdPreview();
 				}
 
 			function createDoc(title, content = '') {
@@ -6422,7 +6525,29 @@
 					if (pane) pane.hidden = !mdPreviewOn;
 					if (btn) btn.setAttribute('aria-pressed', String(mdPreviewOn));
 					if (btn) btn.style.opacity = mdPreviewOn ? '1' : '';
-					if (mdPreviewOn && notesEl && pane) pane.innerHTML = renderMarkdown(notesEl.value);
+					if (mdPreviewOn && notesEl && pane) refreshMdPreview();
+				});
+
+				// ── Daily note ──────────────────────────────────────
+				document.getElementById('btn-daily-note')?.addEventListener('click', () => {
+					const today = new Date().toISOString().slice(0, 10);
+					const existing = noteDocs.find(d => (d.title || '').trim() === today);
+					if (existing) {
+						selectTab?.('tab-notes');
+						switchDoc(existing.id);
+						showToast?.('Opened today\'s note', 'success');
+					} else {
+						const doc = createDoc(today, '');
+						noteDocs.unshift(doc);
+						renderDocList();
+						switchDoc(doc.id);
+						selectTab?.('tab-notes');
+						if (activeUserId) saveDocsLocally(activeUserId);
+						if (activeUserId && activeAccessToken) {
+							restUpsertDoc(activeUserId, doc, activeAccessToken).catch(() => {});
+						}
+						showToast?.('Daily note created', 'success');
+					}
 				});
 
 				// ── Duplicate note ───────────────────────────────────
@@ -8268,10 +8393,7 @@ body {
 					if (_wpmHideTimer) clearTimeout(_wpmHideTimer);
 					_wpmHideTimer = setTimeout(() => { const el = document.getElementById('writing-wpm'); if (el) el.hidden = true; }, 5000);
 					applyTypewriterScroll();
-					if (mdPreviewOn) {
-						const pane = document.getElementById('md-preview-pane');
-						if (pane) pane.innerHTML = renderMarkdown(notesEl.value);
-					}
+					refreshMdPreview();
 					updateWikilinkAC(notesEl);
 				});
 
@@ -8851,6 +8973,18 @@ body {
 				document.getElementById('fnr-replace')?.addEventListener('click', fnrReplaceOne);
 				document.getElementById('fnr-replace-all')?.addEventListener('click', fnrReplaceAll);
 				document.getElementById('fnr-close')?.addEventListener('click', closeFindReplace);
+				// ── Save selection as snippet ───────────────────────────────
+				document.getElementById('btn-save-sel-snip')?.addEventListener('click', () => {
+					const ta = document.getElementById('notes');
+					const sel = ta ? ta.value.slice(ta.selectionStart, ta.selectionEnd).trim() : '';
+					if (!sel) { showToast?.('Select some text first', 'error'); return; }
+					selectTab?.('tab-snippets');
+					setTimeout(() => {
+						openSnipEditor(null);
+						const body = document.getElementById('snip-edit-body');
+						if (body) { body.value = sel; autoGrowSnip(body); }
+					}, 80);
+				});
 				document.getElementById('btn-find-replace')?.addEventListener('click', () => {
 					const b = document.getElementById('find-replace-bar');
 					if (!b) return;
@@ -11029,8 +11163,9 @@ body {
 					}
 
 					list.innerHTML = filtered.map(s => `
-						<div class="snip-item${s.pinned ? ' snip-pinned' : ''}" data-sid="${escHtml(s.id)}">
+						<div class="snip-item${s.pinned ? ' snip-pinned' : ''}" data-sid="${escHtml(s.id)}" draggable="true">
 							<div class="snip-item-head">
+								<span class="snip-drag-handle" aria-hidden="true">⠿</span>
 								<button class="snip-pin-btn${s.pinned ? ' pinned' : ''}" data-action="pin" data-sid="${escHtml(s.id)}" title="Pin snippet">📌</button>
 								<span class="snip-item-title">${escHtml(s.title || 'Untitled')}</span>
 								${s.tag ? `<span class="snip-item-tag">${escHtml(s.tag)}</span>` : ''}
@@ -11047,6 +11182,47 @@ body {
 							</div>
 						</div>
 					`).join('');
+					setupSnipDrag();
+				}
+
+				function setupSnipDrag() {
+					const list = document.getElementById('snip-list');
+					if (!list) return;
+					let _dSrcId = null;
+					list.querySelectorAll('.snip-item[draggable]').forEach(el => {
+						el.addEventListener('dragstart', e => {
+							if (e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') { e.preventDefault(); return; }
+							_dSrcId = el.dataset.sid;
+							el.classList.add('dragging');
+							e.dataTransfer.effectAllowed = 'move';
+							e.dataTransfer.setData('text/plain', el.dataset.sid);
+						});
+						el.addEventListener('dragend', () => {
+							el.classList.remove('dragging');
+							list.querySelectorAll('.snip-item').forEach(x => x.classList.remove('drag-over'));
+						});
+						el.addEventListener('dragover', e => {
+							e.preventDefault();
+							e.dataTransfer.dropEffect = 'move';
+							list.querySelectorAll('.snip-item').forEach(x => x.classList.remove('drag-over'));
+							if (el.dataset.sid !== _dSrcId) el.classList.add('drag-over');
+						});
+						el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+						el.addEventListener('drop', e => {
+							e.preventDefault();
+							el.classList.remove('drag-over');
+							if (!_dSrcId || _dSrcId === el.dataset.sid) return;
+							const snips = loadSnippets();
+							const si = snips.findIndex(s => s.id === _dSrcId);
+							const di = snips.findIndex(s => s.id === el.dataset.sid);
+							if (si === -1 || di === -1) return;
+							const [moved] = snips.splice(si, 1);
+							snips.splice(di, 0, moved);
+							saveSnippets(snips);
+							_dSrcId = null;
+							renderSnippets();
+						});
+					});
 				}
 
 				function openSnipEditor(id) {
@@ -11138,6 +11314,119 @@ body {
 					ta.dispatchEvent(new Event('input'));
 				}
 			});
+				// ── JWT Decoder ──────────────────────────────────────────
+				function _jwtB64(s) {
+					s = s.replace(/-/g, '+').replace(/_/g, '/');
+					while (s.length % 4) s += '=';
+					try { return JSON.parse(atob(s)); } catch { return null; }
+				}
+				function runJwtDecode() {
+					const raw    = (document.getElementById('tool-jwt-input')?.value || '').trim();
+					const out    = document.getElementById('tool-jwt-out');
+					const status = document.getElementById('tool-jwt-status');
+					if (!out) return;
+					if (!raw) { out.innerHTML = ''; return; }
+					const parts = raw.split('.');
+					if (parts.length < 2) {
+						if (status) { status.textContent = '✗ Invalid JWT'; status.className = 'tool-json-status err'; }
+						out.innerHTML = '';
+						return;
+					}
+					const header  = _jwtB64(parts[0]);
+					const payload = _jwtB64(parts[1]);
+					if (!header || !payload) {
+						if (status) { status.textContent = '✗ Decode failed'; status.className = 'tool-json-status err'; }
+						out.innerHTML = '';
+						return;
+					}
+					if (status) { status.textContent = '✓ Valid'; status.className = 'tool-json-status ok'; }
+					const fmtSec = (label, obj) => {
+						const d = Object.assign({}, obj);
+						['exp','iat','nbf'].forEach(k => { if (d[k]) d[k + '_date'] = new Date(d[k] * 1000).toLocaleString(); });
+						return `<div style="margin-bottom:8px"><strong style="font-size:0.78rem;color:var(--muted);text-transform:uppercase">${label}</strong>` +
+							`<pre style="margin:4px 0 0;font-size:0.75rem;background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-md);padding:8px;overflow-x:auto;white-space:pre-wrap;word-break:break-all">${escHtml(JSON.stringify(d, null, 2))}</pre></div>`;
+					};
+					out.innerHTML = fmtSec('Header', header) + fmtSec('Payload', payload) +
+						'<p style="font-size:0.73rem;color:var(--muted);margin:4px 0 0">⚠ Signature not verified — for inspection only.</p>';
+				}
+				document.getElementById('tool-jwt-decode')?.addEventListener('click', runJwtDecode);
+				document.getElementById('tool-jwt-input')?.addEventListener('keydown', e => {
+					if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runJwtDecode();
+				});
+				document.getElementById('tool-jwt-copy-payload')?.addEventListener('click', () => {
+					const parts = (document.getElementById('tool-jwt-input')?.value || '').trim().split('.');
+					const p = parts[1] ? _jwtB64(parts[1]) : null;
+					if (p) { navigator.clipboard.writeText(JSON.stringify(p, null, 2)); showToast?.('Payload copied', 'success'); }
+					else showToast?.('No payload to copy', 'error');
+				});
+
+				// ── HTML Entity Encoder / Decoder ────────────────────────────
+				function htmlEntEncode(s) {
+					return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+					        .replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/`/g,'&#x60;');
+				}
+				function htmlEntDecode(s) {
+					const t = document.createElement('textarea');
+					t.innerHTML = s;
+					return t.value;
+				}
+				document.getElementById('tool-ent-enc')?.addEventListener('click', () => {
+					const v = document.getElementById('tool-ent-input')?.value || '';
+					const o = document.getElementById('tool-ent-output');
+					if (o) o.value = htmlEntEncode(v);
+				});
+				document.getElementById('tool-ent-dec')?.addEventListener('click', () => {
+					const v = document.getElementById('tool-ent-input')?.value || '';
+					const o = document.getElementById('tool-ent-output');
+					if (o) o.value = htmlEntDecode(v);
+				});
+				document.getElementById('tool-ent-copy')?.addEventListener('click', () => {
+					const v = document.getElementById('tool-ent-output')?.value || '';
+					if (v) { navigator.clipboard.writeText(v); showToast?.('Copied', 'success'); }
+				});
+
+				// ── QR Code Generator ─────────────────────────────────────────
+				document.getElementById('tool-qr-gen')?.addEventListener('click', async () => {
+					const text  = (document.getElementById('tool-qr-input')?.value || '').trim();
+					const out   = document.getElementById('tool-qr-out');
+					const dlBtn = document.getElementById('tool-qr-download');
+					if (!out) return;
+					if (!text) { showToast?.('Enter some text or a URL first', 'error'); return; }
+					out.innerHTML = '<span style="font-size:0.82rem;color:var(--muted)">Generating…</span>';
+					try {
+						if (!window.QRCode) {
+							await new Promise((res, rej) => {
+								const sc = document.createElement('script');
+								sc.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+								sc.onload = res; sc.onerror = rej;
+								document.head.appendChild(sc);
+							});
+						}
+						const canvas = document.createElement('canvas');
+						const isDark = document.body.classList.contains('dark');
+						await window.QRCode.toCanvas(canvas, text, {
+							width: 200, margin: 2,
+							color: { dark: isDark ? '#e0e7ff' : '#1e1b4b', light: '#00000000' }
+						});
+						out.innerHTML = '';
+						out.appendChild(canvas);
+						if (dlBtn) {
+							dlBtn.style.display = '';
+							dlBtn.onclick = () => {
+								const a = document.createElement('a');
+								a.href = canvas.toDataURL('image/png');
+								a.download = 'qrcode.png';
+								a.click();
+							};
+						}
+					} catch (err) {
+						out.innerHTML = `<span style="color:#dc2626;font-size:0.82rem">Error: ${escHtml(String(err?.message || err))}</span>`;
+					}
+				});
+				document.getElementById('tool-qr-input')?.addEventListener('keydown', e => {
+					if (e.key === 'Enter') document.getElementById('tool-qr-gen')?.click();
+				});
+
 				document.getElementById('snip-search')?.addEventListener('input', renderSnippets);
 				document.getElementById('snip-tag-bar')?.addEventListener('click', e => {
 					const chip = e.target.closest('.snip-tag-chip');
