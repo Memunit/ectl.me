@@ -2,6 +2,18 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<meta name="theme-color" content="#6366f1" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="ectl" />
+		<link rel="manifest" href="/manifest.json" />
+		<meta name="theme-color" content="#6366f1" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="ectl" />
+		<link rel="manifest" href="/manifest.json" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="light dark" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -3498,6 +3510,15 @@
 							<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
 							<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
 							<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
+							<button class="tab" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">&#128202; Dash</button>
+							<button class="tab" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">&#128193; Kanban</button>
+							<button class="tab" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">&#128269; Search</button>
+							<button class="tab" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">&#9201; Timer</button>
+							<button class="tab" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">&#127919; Goals</button>
+							<button class="tab" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">&#128273; Vault</button>
+							<button class="tab" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">&#128208; Sheet</button>
+							<button class="tab" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">&#128203; Clips</button>
+							<button class="tab" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">&#127758; Clocks</button>
 							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>👤 Accounts</button>
 							<span class="tab-indicator" id="app-tab-indicator"></span>
 						</div>
@@ -3505,6 +3526,10 @@
 						<div class="header-actions" style="display:flex;gap:8px;align-items:center;">
 							<button class="btn btn-small" id="btn-cmdk-open" type="button" aria-label="Search (⌘K)" title="Search & commands (⌘K)" style="font-size:0.82rem">⌘K</button>
 					<button class="btn btn-small" id="btn-shortcuts-help" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts" style="font-weight:700">?</button>
+							<button class="btn btn-small" id="btn-voice-note" type="button" title="Voice note (speech to text)" aria-label="Voice note">&#127908;</button>
+							<button class="btn btn-small" id="btn-app-lock" type="button" title="Lock app" aria-label="Lock app" hidden>&#128274;</button>
+							<button class="btn btn-small" id="btn-quick-capture" type="button" title="Quick capture (Alt+Space)" aria-label="Quick capture">&#9998;</button>
+							<button class="btn btn-small" id="btn-ai-assist" type="button" title="AI writing assistant" aria-label="AI assistant">&#129302;</button>
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
 							<button class="btn" id="btn-signout" type="button" hidden>Sign out</button>
 						</div>
@@ -3624,6 +3649,7 @@
 					<div class="notes-layout">
 						<!-- Sidebar: document list -->
 						<div class="notes-sidebar-wrap" style="display:flex;flex-direction:column;gap:4px">
+							<div id="multisel-bar" hidden><span id="multisel-count" style="flex:1;font-size:0.82rem">0 selected</span><button class="btn btn-small" id="btn-ms-archive" type="button">&#128230; Archive</button><button class="btn btn-small" id="btn-ms-trash"   type="button">&#128465; Trash</button><button class="btn btn-small" id="btn-ms-export"  type="button">&#8659; Export</button><button class="btn btn-small" id="btn-ms-cancel"  type="button">&#10005;</button></div>
 							<input class="input notes-search" id="notes-search" type="search" placeholder="Search notes…" />
 							<!-- Note view tabs: All / Archive / Trash -->
 							<div class="note-view-tabs">
@@ -3710,6 +3736,7 @@
 						<div id="note-tabs-bar" class="note-tabs-bar" hidden></div>
 							<!-- TOC panel (shown via body.toc-open) -->
 							<div id="note-toc-panel"><strong>Contents</strong></div>
+							<div id="editor-breadcrumb" aria-label="Navigation breadcrumb"></div>
 						<!-- Find & Replace bar -->
 							<div id="find-replace-bar" hidden role="search" aria-label="Find and replace">
 								<input class="input" id="find-input" type="search" placeholder="Find…" autocomplete="off" />
@@ -3727,8 +3754,11 @@
 							<!-- Markdown preview pane -->
 							<div class="md-preview-pane" id="md-preview-pane" hidden aria-label="Markdown preview"></div>
 							<!-- Slash command menu -->
-							<div id="slash-menu" hidden role="listbox" aria-label="Slash commands"></div>
+							<div id="slash-menu"       hidden role="listbox" aria-label="Slash commands"></div>
+							<div id="tag-autocomplete" hidden role="listbox" aria-label="Tag suggestions"></div>
+							<div id="fmt-toolbar"       hidden role="toolbar"  aria-label="Format"><button class="fmt-tb-btn" data-fmt="bold"     type="button" title="Bold"><b>B</b></button><button class="fmt-tb-btn" data-fmt="italic"   type="button" title="Italic"><i>I</i></button><button class="fmt-tb-btn" data-fmt="code"     type="button" title="Code"><code>`</code></button><button class="fmt-tb-btn" data-fmt="strike"   type="button" title="Strikethrough"><s>S</s></button><span class="fmt-tb-sep"></span><button class="fmt-tb-btn" data-fmt="h1"       type="button" title="Heading 1">H1</button><button class="fmt-tb-btn" data-fmt="h2"       type="button" title="Heading 2">H2</button><button class="fmt-tb-btn" data-fmt="link"     type="button" title="Link">&#128279;</button></div>
 							<span class="notes-char-warning" id="notes-char-warning"></span>
+							<div id="editor-statusbar"><span class="statusbar-item" id="sb-linecol">Ln 1, Col 1</span><span class="statusbar-sep">|</span><span class="statusbar-item" id="sb-words">0 words</span><span class="statusbar-sep">|</span><span class="statusbar-item" id="sb-readtime">0 min read</span><span class="statusbar-sep">|</span><span class="statusbar-item" id="sb-encoding">UTF-8</span></div>
 							<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
 								<p class="hint" id="notes-hint" style="margin:0">Your notes sync to the cloud. <kbd style="font-size:0.78rem;opacity:0.6">⌘S</kbd> save &nbsp;<kbd style="font-size:0.78rem;opacity:0.6">⌘T</kbd> new</p>
 								<span class="notes-word-count" id="notes-word-count"></span>
@@ -4030,6 +4060,76 @@
 						</div>
 						<p class="hint" style="margin-top:6px;font-size:0.78rem">Injected directly into the page. Tip: <code>body { --accent: #ff6b35; }</code></p>
 					</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">Sidebar note preview</p>
+					<div class="chip-row" id="chips-sidebarpreview" role="radiogroup" aria-label="Sidebar preview">
+						<button class="chip" data-val="off" type="button">Off</button>
+						<button class="chip" data-val="on"  type="button">On</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">Show first line of note content below each title in the list.</p>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">Body font family</p>
+					<div class="chip-row" id="chips-bodyfont" role="radiogroup" aria-label="Body font">
+						<button class="chip" data-val="sans"  type="button">Sans</button>
+						<button class="chip" data-val="serif" type="button">Serif</button>
+						<button class="chip" data-val="mono"  type="button">Mono</button>
+					</div>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">Custom accent colour (hex)</p>
+					<div style="display:flex;gap:8px;align-items:center">
+						<input type="color" id="pref-accent-custom" value="#6366f1" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-accent-hex" type="text" placeholder="#6366f1" style="width:100px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-accent-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-accent-reset" type="button">Reset</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">Override the accent colour for all UI elements.</p>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">&#129302; AI Writing Assistant</p>
+					<p class="hint" style="margin:0 0 8px;font-size:0.78rem">Provide your own API key. Key is stored locally only and never sent anywhere except the AI provider.</p>
+					<div style="display:flex;gap:8px;flex-wrap:wrap">
+						<select class="input" id="ai-provider-sel" style="width:auto;font-size:0.82rem">
+							<option value="openai">OpenAI (GPT-4o)</option>
+							<option value="anthropic">Anthropic (Claude)</option>
+							<option value="groq">Groq (Llama 3)</option>
+						</select>
+						<input class="input" id="ai-key-input" type="password" placeholder="sk-…" style="flex:1;min-width:140px;font-family:monospace;font-size:0.82rem" autocomplete="off" />
+						<button class="btn btn-small btn-accent" id="btn-ai-save-key" type="button">Save key</button>
+					</div>
+					<button class="btn btn-small" id="btn-ai-open" type="button" style="margin-top:8px">&#129302; Open AI Assistant</button>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">&#128274; App Lock PIN</p>
+					<p class="hint" style="margin:0 0 8px;font-size:0.78rem">Set a PIN to lock the whole app. Press the lock button in the header to activate.</p>
+					<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+						<input class="input" id="pref-pin-input" type="password" placeholder="4–8 digit PIN…" style="width:160px;font-family:monospace;letter-spacing:4px" maxlength="8" pattern="[0-9]*" inputmode="numeric" />
+						<button class="btn btn-small btn-accent" id="btn-pin-set" type="button">Set PIN</button>
+						<button class="btn btn-small" id="btn-pin-clear" type="button">Clear PIN</button>
+					</div>
+					<p id="pin-status" style="font-size:0.78rem;color:var(--accent);margin-top:6px;min-height:18px"></p>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">&#128247; Minimap</p>
+					<div class="chip-row" id="chips-minimap" role="radiogroup" aria-label="Minimap">
+						<button class="chip" data-val="off" type="button">Off</button>
+						<button class="chip" data-val="on"  type="button">On</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">VS Code–style scrollbar overview beside the editor.</p>
+				</div>
+
+				<div class="settings-section">
+					<p class="settings-section-title">Quick Capture shortcut</p>
+					<p class="hint" style="margin:0 0 6px;font-size:0.78rem">Press <kbd>&#8997;Space</kbd> (Alt+Space) anywhere to open Quick Capture.</p>
+					<button class="btn btn-small" id="btn-qc-open" type="button">Open Quick Capture</button>
+				</div>
 
 					<!-- Desktop App Download -->
 					<div class="settings-section">
@@ -4910,6 +5010,256 @@
 						</div>
 					</div>
 
+
+				<!-- ══ JSON → TABLE ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128204; JSON &#8594; Table</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-jsontbl-in" rows="4" placeholder='[{"name":"Alice","age":30},{"name":"Bob","age":25}]' spellcheck="false" style="font-family:monospace;font-size:0.77rem;resize:vertical"></textarea>
+						<div style="overflow-x:auto;margin-top:6px" id="tool-jsontbl-out"></div>
+					</div>
+				</div>
+
+				<!-- ══ HTML → MARKDOWN ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128196; HTML &#8594; Markdown</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-htm2md-in" rows="4" placeholder="&lt;h1&gt;Hello&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;World&lt;/strong&gt;&lt;/p&gt;" spellcheck="false" style="font-size:0.77rem;resize:vertical"></textarea>
+						<textarea class="input tool-textarea" id="tool-htm2md-out" rows="4" readonly style="margin-top:6px;font-family:monospace;font-size:0.77rem;resize:vertical" placeholder="Markdown output…"></textarea>
+						<button class="btn btn-small" id="tool-htm2md-copy" type="button" style="margin-top:4px">Copy</button>
+					</div>
+				</div>
+
+				<!-- ══ SQL FORMATTER ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128200; SQL Formatter</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-sql-in" rows="4" placeholder="SELECT * FROM users WHERE id=1 AND active=true ORDER BY name;" spellcheck="false" style="font-family:monospace;font-size:0.77rem;resize:vertical"></textarea>
+						<textarea class="input tool-textarea" id="tool-sql-out" rows="5" readonly style="margin-top:6px;font-family:monospace;font-size:0.77rem;resize:vertical" placeholder="Formatted SQL…"></textarea>
+						<div style="display:flex;gap:6px;margin-top:4px">
+							<button class="btn btn-small" id="tool-sql-fmt" type="button">Format</button>
+							<button class="btn btn-small" id="tool-sql-copy" type="button">Copy</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- ══ YAML VALIDATOR ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128221; YAML Validator</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-yaml-in" rows="5" placeholder="name: John&#10;age: 30&#10;hobbies:&#10;  - reading&#10;  - coding" spellcheck="false" style="font-family:monospace;font-size:0.77rem;resize:vertical"></textarea>
+						<div id="tool-yaml-out" style="margin-top:6px;font-size:0.8rem;min-height:20px"></div>
+					</div>
+				</div>
+
+				<!-- ══ XML FORMATTER ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128196; XML Formatter</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-xml-in" rows="4" placeholder="&lt;root&gt;&lt;item id=&quot;1&quot;&gt;Hello&lt;/item&gt;&lt;/root&gt;" spellcheck="false" style="font-family:monospace;font-size:0.77rem;resize:vertical"></textarea>
+						<textarea class="input tool-textarea" id="tool-xml-out" rows="5" readonly style="margin-top:6px;font-family:monospace;font-size:0.77rem;resize:vertical" placeholder="Formatted XML…"></textarea>
+						<div style="display:flex;gap:6px;margin-top:4px">
+							<button class="btn btn-small" id="tool-xml-fmt" type="button">Format</button>
+							<button class="btn btn-small" id="tool-xml-min" type="button">Minify</button>
+							<button class="btn btn-small" id="tool-xml-copy" type="button">Copy</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- ══ CSS FORMATTER ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#127912; CSS Formatter / Minifier</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-css-in" rows="4" placeholder="body { color: red; background:blue; font-size  :  14px }" spellcheck="false" style="font-family:monospace;font-size:0.77rem;resize:vertical"></textarea>
+						<textarea class="input tool-textarea" id="tool-css-out" rows="4" readonly style="margin-top:6px;font-family:monospace;font-size:0.77rem;resize:vertical" placeholder="Output…"></textarea>
+						<div style="display:flex;gap:6px;margin-top:4px">
+							<button class="btn btn-small" id="tool-css-fmt" type="button">Format</button>
+							<button class="btn btn-small" id="tool-css-min" type="button">Minify</button>
+							<button class="btn btn-small" id="tool-css-copy" type="button">Copy</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- ══ READABILITY SCORE ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128218; Readability Scorer</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-read-in" rows="4" placeholder="Paste any text to score its readability…" style="resize:vertical"></textarea>
+						<div id="tool-read-out" style="margin-top:8px;font-size:0.82rem;line-height:1.8"></div>
+					</div>
+				</div>
+
+				<!-- ══ DATE CALCULATOR ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128197; Date Calculator</div>
+					<div class="tool-card-body" style="display:flex;flex-direction:column;gap:8px">
+						<div>
+							<p style="font-size:0.78rem;color:var(--muted);margin:0 0 4px">Days between two dates</p>
+							<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+								<input class="input" id="tool-date-a" type="date" style="flex:1" />
+								<span style="color:var(--muted)">&#8594;</span>
+								<input class="input" id="tool-date-b" type="date" style="flex:1" />
+								<button class="btn btn-small" id="tool-date-diff" type="button">Diff</button>
+							</div>
+							<div id="tool-date-diff-out" style="font-size:0.85rem;margin-top:6px;color:var(--accent);font-weight:600;min-height:20px"></div>
+						</div>
+						<div>
+							<p style="font-size:0.78rem;color:var(--muted);margin:0 0 4px">Add / subtract days</p>
+							<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+								<input class="input" id="tool-date-base" type="date" style="flex:1" />
+								<input class="input" id="tool-date-add" type="number" placeholder="Days (neg=subtract)" style="width:130px" />
+								<button class="btn btn-small" id="tool-date-calc" type="button">Calc</button>
+							</div>
+							<div id="tool-date-calc-out" style="font-size:0.85rem;margin-top:6px;color:var(--accent);font-weight:600;min-height:20px"></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- ══ COLOR CONVERTER ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#127912; Color Converter</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+							<input class="input" id="tool-color-in" type="text" placeholder="#3b82f6 or rgb(59,130,246) or hsl(217,91%,60%)" style="flex:1;font-family:monospace" />
+							<div class="color-preview-swatch" id="tool-color-swatch"></div>
+						</div>
+						<div id="tool-color-out" style="font-size:0.8rem;line-height:2;font-family:monospace"></div>
+					</div>
+				</div>
+
+				<!-- ══ ASPECT RATIO ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128247; Aspect Ratio</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+							<input class="input" id="tool-ar-w" type="number" placeholder="Width" style="width:90px" min="1" />
+							<span style="color:var(--muted)">&#215;</span>
+							<input class="input" id="tool-ar-h" type="number" placeholder="Height" style="width:90px" min="1" />
+							<button class="btn btn-small" id="tool-ar-calc" type="button">Calc</button>
+						</div>
+						<div id="tool-ar-out" style="font-size:0.85rem;margin-top:8px;line-height:1.8;color:var(--accent)"></div>
+					</div>
+				</div>
+
+				<!-- ══ BANDWIDTH CALCULATOR ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128225; Bandwidth Calculator</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+							<input class="input" id="tool-bw-size" type="number" placeholder="File size" style="width:100px" min="0" />
+							<select class="input" id="tool-bw-size-unit" style="width:auto;font-size:0.82rem">
+								<option value="1">B</option><option value="1024">KB</option>
+								<option value="1048576" selected>MB</option><option value="1073741824">GB</option>
+							</select>
+							<span style="color:var(--muted)">at</span>
+							<input class="input" id="tool-bw-speed" type="number" placeholder="Speed" style="width:80px" min="0" />
+							<select class="input" id="tool-bw-speed-unit" style="width:auto;font-size:0.82rem">
+								<option value="125000">Mbps</option><option value="12500">Kbps</option><option value="125000000">Gbps</option>
+							</select>
+							<button class="btn btn-small" id="tool-bw-calc" type="button">Calc</button>
+						</div>
+						<div id="tool-bw-out" style="font-size:0.88rem;margin-top:8px;color:var(--accent);font-weight:600;min-height:20px"></div>
+					</div>
+				</div>
+
+				<!-- ══ IBAN / LUHN VALIDATOR ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128179; IBAN / Luhn Validator</div>
+					<div class="tool-card-body">
+						<input class="input" id="tool-iban-in" type="text" placeholder="IBAN or card number (Luhn)…" style="font-family:monospace;letter-spacing:0.05em" />
+						<div id="tool-iban-out" style="font-size:0.85rem;margin-top:8px;min-height:20px"></div>
+					</div>
+				</div>
+
+				<!-- ══ ROMAN NUMERAL ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128205; Roman Numerals</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px;align-items:center">
+							<input class="input" id="tool-roman-in" type="text" placeholder="1994 or MCMXCIV" style="flex:1;font-family:monospace" />
+							<button class="btn btn-small" id="tool-roman-convert" type="button">Convert</button>
+						</div>
+						<div id="tool-roman-out" style="font-size:1rem;margin-top:8px;font-weight:700;color:var(--accent);min-height:24px;font-family:monospace"></div>
+					</div>
+				</div>
+
+				<!-- ══ TEXT TO SPEECH ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#128264; Text to Speech</div>
+					<div class="tool-card-body">
+						<textarea class="input tool-textarea" id="tool-tts-text" rows="3" placeholder="Type or paste text to speak…"></textarea>
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px">
+							<select class="input" id="tool-tts-voice" style="flex:1;min-width:120px;font-size:0.8rem"></select>
+							<label style="font-size:0.78rem;color:var(--muted);flex-shrink:0">Rate</label>
+							<input type="range" id="tool-tts-rate" min="0.5" max="2" step="0.1" value="1" style="width:70px" />
+							<span id="tool-tts-rate-val" style="font-size:0.75rem;color:var(--accent);width:24px">1×</span>
+						</div>
+						<div style="display:flex;gap:8px;margin-top:6px">
+							<button class="btn btn-accent btn-small" id="tool-tts-play" type="button">&#9654; Speak</button>
+							<button class="btn btn-small" id="tool-tts-stop" type="button">&#9632; Stop</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- ══ IP / DNS LOOKUP ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#127760; IP / DNS Lookup</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px">
+							<input class="input" id="tool-dns-in" type="text" placeholder="github.com or 8.8.8.8…" style="flex:1;font-family:monospace" />
+							<button class="btn btn-accent btn-small" id="tool-dns-lookup" type="button">Lookup</button>
+						</div>
+						<div id="tool-dns-out" style="margin-top:8px;font-size:0.8rem;line-height:1.8;font-family:monospace"></div>
+					</div>
+				</div>
+
+				<!-- ══ ASCII ART GENERATOR ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#127312; ASCII Art</div>
+					<div class="tool-card-body">
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+							<input class="input" id="tool-ascii-in" type="text" placeholder="Type text…" style="flex:1" />
+							<select class="input" id="tool-ascii-style" style="width:auto;font-size:0.82rem">
+								<option value="block">Block</option>
+								<option value="shadow">Shadow</option>
+								<option value="minimal">Minimal</option>
+							</select>
+							<button class="btn btn-small" id="tool-ascii-gen" type="button">Generate</button>
+						</div>
+						<pre id="tool-ascii-out" style="margin-top:8px;font-size:0.72rem;background:var(--panel-bg);padding:10px;border-radius:8px;overflow-x:auto;white-space:pre;font-family:monospace;line-height:1.2;max-height:200px;overflow-y:auto"></pre>
+						<button class="btn btn-small" id="tool-ascii-copy" type="button" style="margin-top:4px">Copy</button>
+					</div>
+				</div>
+
+				<!-- ══ POMODORO TIMER (tool card) ══ -->
+				<div class="tool-card">
+					<div class="tool-card-header">&#127813; Pomodoro Timer</div>
+					<div class="tool-card-body" style="display:flex;flex-direction:column;gap:10px">
+						<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+							<svg class="pomo-ring" viewBox="0 0 100 100" aria-hidden="true">
+								<circle class="bg"       cx="50" cy="50" r="46" />
+								<circle class="progress" cx="50" cy="50" r="46" id="pomo-ring-path" stroke-dasharray="289" stroke-dashoffset="0"/>
+							</svg>
+							<div>
+								<div id="pomo-time-label">25:00</div>
+								<div id="pomo-phase-label">Focus</div>
+							</div>
+						</div>
+						<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+							<button class="btn btn-accent btn-small" id="btn-pomo-start" type="button">&#9654; Start</button>
+							<button class="btn btn-small" id="btn-pomo-pause" type="button" disabled>&#9646;&#9646; Pause</button>
+							<button class="btn btn-small" id="btn-pomo-reset" type="button">&#8635; Reset</button>
+							<select class="input" id="pomo-work-min" style="width:auto;font-size:0.82rem" title="Work duration">
+								<option value="15">15 min</option>
+								<option value="25" selected>25 min</option>
+								<option value="45">45 min</option>
+								<option value="50">50 min</option>
+							</select>
+						</div>
+						<div id="pomo-session-log" class="pomo-session-log">Sessions: 0</div>
+					</div>
+				</div>
+
 				</div>
 
 				<!-- Snippets panel -->
@@ -5023,6 +5373,196 @@
 						</div>
 					</div>
 				</section>
+
+		<!-- ══ DASHBOARD PANEL ══════════════════════════════════════════ -->
+		<section class="panel" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+			<div class="settings-section" style="padding:0">
+				<div class="dash-stats-row" id="dash-stats-row"></div>
+				<div class="settings-section">
+					<p class="settings-section-title">Writing Activity (last 12 weeks)</p>
+					<div id="dash-heatmap" style="margin-top:6px"></div>
+					<div id="dash-heatmap-legend" style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:0.7rem;color:var(--muted)">Less <div class="dash-hm-cell"></div><div class="dash-hm-cell lv1"></div><div class="dash-hm-cell lv2"></div><div class="dash-hm-cell lv3"></div><div class="dash-hm-cell lv4"></div> More</div>
+				</div>
+				<div class="settings-section">
+					<p class="settings-section-title">Tag Cloud</p>
+					<div id="dash-tagcloud" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
+				</div>
+				<div class="settings-section">
+					<p class="settings-section-title">Top Notes by Word Count</p>
+					<div id="dash-wordchart" style="margin-top:6px"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ══ KANBAN PANEL ══════════════════════════════════════════════ -->
+		<section class="panel" id="panel-kanban" role="tabpanel" aria-labelledby="tab-kanban" hidden>
+			<div class="kanban-toolbar">
+				<button class="btn btn-accent btn-small" id="btn-kanban-add-col" type="button">+ Column</button>
+				<input class="input" id="kanban-new-col-name" type="text" placeholder="Column name…" style="width:140px;font-size:0.82rem" />
+				<button class="btn btn-small" id="btn-kanban-save" type="button" title="Save board to notes">&#128190; Save</button>
+				<button class="btn btn-small" id="btn-kanban-reset" type="button">Reset</button>
+			</div>
+			<div id="kanban-board" class="kanban-board">
+				<p style="color:var(--muted);font-size:0.82rem;padding:12px 0">Loading…</p>
+			</div>
+		</section>
+
+		<!-- ══ ADVANCED SEARCH PANEL ═════════════════════════════════════ -->
+		<section class="panel" id="panel-advsearch" role="tabpanel" aria-labelledby="tab-advsearch" hidden>
+			<div class="settings-section" style="padding:12px 0">
+				<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+					<input class="input" id="adv-q" type="text" placeholder="Text in title or body…" style="flex:1;min-width:140px" />
+					<input class="input" id="adv-tag" type="text" placeholder="#tag" style="width:90px" />
+					<input class="input" id="adv-from" type="date" style="width:140px" title="Modified after" />
+					<input class="input" id="adv-to"   type="date" style="width:140px" title="Modified before" />
+				</div>
+				<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+					<select class="input" id="adv-status" style="width:auto;font-size:0.82rem">
+						<option value="">Any status</option>
+						<option value="normal">Normal</option>
+						<option value="archived">Archived</option>
+						<option value="trashed">Trashed</option>
+						<option value="pinned">Pinned</option>
+						<option value="encrypted">Encrypted</option>
+					</select>
+					<input class="input" id="adv-minwords" type="number" min="0" placeholder="Min words" style="width:96px" />
+					<input class="input" id="adv-maxwords" type="number" min="0" placeholder="Max words" style="width:96px" />
+					<button class="btn btn-accent" id="btn-adv-search" type="button">Search</button>
+					<span id="adv-count" style="font-size:0.78rem;color:var(--muted)"></span>
+				</div>
+			</div>
+			<div id="adv-results"></div>
+		</section>
+
+		<!-- ══ TIME TRACKER PANEL ════════════════════════════════════════ -->
+		<section class="panel" id="panel-timetrack" role="tabpanel" aria-labelledby="tab-timetrack" hidden>
+			<div class="settings-section">
+				<p class="settings-section-title">Active Timer</p>
+				<div class="timer-row">
+					<span id="timer-note-label" style="flex:1;font-size:0.88rem;color:var(--muted)">No note open</span>
+					<span id="timer-display" class="timer-display">00:00:00</span>
+					<button class="btn btn-accent btn-small" id="btn-timer-start" type="button">&#9654; Start</button>
+					<button class="btn btn-small" id="btn-timer-stop" type="button" disabled>&#9632; Stop</button>
+				</div>
+			</div>
+			<div class="settings-section">
+				<p class="settings-section-title">Session Log</p>
+				<div id="timer-log" style="max-height:300px;overflow-y:auto"></div>
+				<div style="display:flex;gap:8px;margin-top:8px">
+					<button class="btn btn-small" id="btn-timer-export" type="button">Export CSV</button>
+					<button class="btn btn-small" id="btn-timer-clear" type="button">Clear log</button>
+				</div>
+			</div>
+		</section>
+
+		<!-- ══ GOALS / OKR PANEL ═════════════════════════════════════════ -->
+		<section class="panel" id="panel-goals" role="tabpanel" aria-labelledby="tab-goals" hidden>
+			<div class="settings-section">
+				<div id="goal-add-form" class="goal-add-form" hidden>
+					<input class="input" id="goal-title-input" type="text" placeholder="Goal title…" />
+					<div style="display:flex;gap:8px">
+						<input class="input" id="goal-target-input" type="number" min="1" placeholder="Target (e.g. 10000 words)" style="flex:1" />
+						<input class="input" id="goal-unit-input" type="text" placeholder="Unit (words, notes…)" style="flex:1" />
+					</div>
+					<input class="input" id="goal-deadline-input" type="date" />
+					<div style="display:flex;gap:8px">
+						<button class="btn btn-accent btn-small" id="btn-goal-save" type="button">Save goal</button>
+						<button class="btn btn-small" id="btn-goal-cancel" type="button">Cancel</button>
+					</div>
+				</div>
+				<button class="btn btn-accent btn-small" id="btn-goal-add" type="button" style="margin-bottom:12px">+ Add Goal</button>
+				<div id="goals-list"></div>
+			</div>
+		</section>
+
+		<!-- ══ PASSWORD VAULT PANEL ══════════════════════════════════════ -->
+		<section class="panel" id="panel-passwords" role="tabpanel" aria-labelledby="tab-passwords" hidden>
+			<div class="settings-section">
+				<div id="vault-locked-view" style="text-align:center;padding:32px 0">
+					<div style="font-size:2rem;margin-bottom:10px">&#128274;</div>
+					<p style="color:var(--muted);margin:0 0 12px;font-size:0.88rem">Vault is locked. Enter your master password.</p>
+					<input class="input" id="vault-master-input" type="password" placeholder="Master password…" style="max-width:280px;margin:0 auto 12px;display:block" autocomplete="current-password" />
+					<div style="display:flex;gap:8px;justify-content:center">
+						<button class="btn btn-accent" id="btn-vault-unlock" type="button">Unlock</button>
+						<button class="btn btn-small" id="btn-vault-set-master" type="button">Set master password</button>
+					</div>
+					<p id="vault-lock-err" style="font-size:0.78rem;color:var(--error,#dc2626);margin-top:8px;min-height:16px"></p>
+				</div>
+				<div id="vault-open-view" hidden>
+					<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+						<input class="input" id="vault-search" type="search" placeholder="Search vault…" style="flex:1;min-width:120px" />
+						<button class="btn btn-accent btn-small" id="btn-vault-add" type="button">+ Entry</button>
+						<button class="btn btn-small" id="btn-vault-lock" type="button">&#128274; Lock</button>
+					</div>
+					<div id="vault-list"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ══ SPREADSHEET PANEL ═════════════════════════════════════════ -->
+		<section class="panel" id="panel-sheet" role="tabpanel" aria-labelledby="tab-sheet" hidden>
+			<div class="settings-section">
+				<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+					<input class="input" id="sheet-formula-bar" type="text" placeholder="Cell value or =SUM(A1:B3)…" style="flex:1;font-family:ui-monospace,monospace;font-size:0.85rem" />
+					<select class="input" id="sheet-rows-sel" style="width:auto;font-size:0.82rem" title="Rows">
+						<option value="10">10 rows</option>
+						<option value="20" selected>20 rows</option>
+						<option value="50">50 rows</option>
+					</select>
+					<select class="input" id="sheet-cols-sel" style="width:auto;font-size:0.82rem" title="Columns">
+						<option value="5">5 cols</option>
+						<option value="8" selected>8 cols</option>
+						<option value="13">13 cols</option>
+					</select>
+					<button class="btn btn-small" id="btn-sheet-export" type="button">Export CSV</button>
+					<button class="btn btn-small" id="btn-sheet-clear" type="button">Clear</button>
+				</div>
+				<div id="sheet-container"></div>
+				<p class="hint" style="margin-top:6px;font-size:0.74rem">Formulas: =SUM(A1:A5) =AVG(B1:B3) =COUNT(A1:C1) =MAX(A1:A5) =MIN(A1:A5)</p>
+			</div>
+		</section>
+
+		<!-- ══ CLIPBOARD HISTORY PANEL ════════════════════════════════════ -->
+		<section class="panel" id="panel-clipboard" role="tabpanel" aria-labelledby="tab-clipboard" hidden>
+			<div class="settings-section">
+				<div style="display:flex;gap:8px;margin-bottom:10px">
+					<input class="input" id="clip-search" type="search" placeholder="Search clipboard history…" style="flex:1" />
+					<button class="btn btn-small" id="btn-clip-clear" type="button">Clear all</button>
+				</div>
+				<p class="hint" style="margin:0 0 10px;font-size:0.74rem">Captures text you copy while ectl is open (max 100 items).</p>
+				<div id="clip-list"></div>
+			</div>
+		</section>
+
+		<!-- ══ WORLD CLOCK PANEL ══════════════════════════════════════════ -->
+		<section class="panel" id="panel-worldclock" role="tabpanel" aria-labelledby="tab-worldclock" hidden>
+			<div class="settings-section">
+				<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+					<input class="input" id="clock-tz-input" type="text" placeholder="Timezone, e.g. America/New_York or Europe/Paris…" style="flex:1;min-width:200px" list="tz-datalist" />
+					<button class="btn btn-accent btn-small" id="btn-clock-add" type="button">+ Add</button>
+				</div>
+				<datalist id="tz-datalist">
+					<option value="America/New_York" /><option value="America/Los_Angeles" /><option value="America/Chicago" />
+					<option value="America/Denver" /><option value="America/Sao_Paulo" /><option value="Europe/London" />
+					<option value="Europe/Paris" /><option value="Europe/Berlin" /><option value="Europe/Moscow" />
+					<option value="Asia/Dubai" /><option value="Asia/Kolkata" /><option value="Asia/Shanghai" />
+					<option value="Asia/Tokyo" /><option value="Asia/Singapore" /><option value="Australia/Sydney" />
+					<option value="Pacific/Auckland" /><option value="UTC" />
+				</datalist>
+				<div id="clock-list" class="clock-list"></div>
+			</div>
+			<div class="settings-section">
+				<p class="settings-section-title">Time Zone Converter</p>
+				<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+					<input class="input" id="tzconv-time" type="datetime-local" style="flex:1;min-width:160px" />
+					<select class="input" id="tzconv-from" style="flex:1;min-width:130px"></select>
+					<span style="color:var(--muted);font-size:0.9rem">&#8594;</span>
+					<select class="input" id="tzconv-to"   style="flex:1;min-width:130px"></select>
+					<button class="btn btn-small" id="btn-tzconv" type="button">Convert</button>
+				</div>
+				<div id="tzconv-result" style="margin-top:8px;font-size:0.9rem;font-weight:600;color:var(--accent);min-height:20px"></div>
+			</div>
+		</section>
 
 				<!-- File preview lightbox -->
 				<div class="lightbox-overlay" id="lightbox-overlay" hidden role="dialog" aria-modal="true" aria-label="File preview">
@@ -5192,7 +5732,16 @@
 				{ tab: document.getElementById('tab-canvas'),   panel: document.getElementById('panel-canvas') },
 				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
 				{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
-				{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
+				{ tab: document.getElementById('tab-admin'),       panel: document.getElementById('panel-admin') },
+			{ tab: document.getElementById('tab-dashboard'),   panel: document.getElementById('panel-dashboard') },
+			{ tab: document.getElementById('tab-kanban'),      panel: document.getElementById('panel-kanban') },
+			{ tab: document.getElementById('tab-advsearch'),   panel: document.getElementById('panel-advsearch') },
+			{ tab: document.getElementById('tab-timetrack'),   panel: document.getElementById('panel-timetrack') },
+			{ tab: document.getElementById('tab-goals'),       panel: document.getElementById('panel-goals') },
+			{ tab: document.getElementById('tab-passwords'),   panel: document.getElementById('panel-passwords') },
+			{ tab: document.getElementById('tab-sheet'),       panel: document.getElementById('panel-sheet') },
+			{ tab: document.getElementById('tab-clipboard'),   panel: document.getElementById('panel-clipboard') },
+			{ tab: document.getElementById('tab-worldclock'),  panel: document.getElementById('panel-worldclock') },
 			];
 
 			const authTabs = [
@@ -5629,7 +6178,20 @@
 							const selected = tab.id === selectedId;
 							tab.setAttribute('aria-selected', String(selected));
 							panel.hidden = !selected;
-							if (selected) replayPanelAnimation(panel);
+							if (selected) {
+								replayPanelAnimation(panel);
+								// trigger panel-specific renders
+								const pid = panel.id;
+								if (pid === 'panel-dashboard')  { setTimeout(renderDashboard, 40); }
+								if (pid === 'panel-kanban')     { setTimeout(renderKanban, 40); }
+								if (pid === 'panel-clipboard')  { setTimeout(renderClipboard, 40); }
+								if (pid === 'panel-worldclock') { setTimeout(() => { renderWorldClocks(); initTZConv(); }, 40); }
+								if (pid === 'panel-goals')      { setTimeout(renderGoals, 40); }
+								if (pid === 'panel-passwords')  { setTimeout(checkVaultState, 40); }
+								if (pid === 'panel-sheet')      { setTimeout(() => { if (!sheetInit) initSheet(); }, 40); }
+								if (pid === 'panel-timetrack')  { setTimeout(renderTimerLog, 40); }
+								if (pid === 'panel-advsearch')  { setTimeout(() => document.getElementById('adv-q')?.focus(), 60); }
+							}
 						}
 					});
 					const activeTab = tabs.find(t => t.tab?.id === selectedId)?.tab;
@@ -8405,7 +8967,123 @@ body {
 .rpt-footer { border-top: 1.5px solid #999; padding-top: 5px; display: flex; justify-content: space-between; font-size: 6.5pt; color: #444; margin-top: 10px; flex-shrink: 0; }
 </style>
 </head>
-<body><div class="rpt-page">${a4Content}</div></body>
+<body><div class="rpt-page">${a4Content}</div>
+	<!-- ══════════════ QUICK CAPTURE OVERLAY ══════════════ -->
+	<div id="quick-capture-overlay" hidden role="dialog" aria-modal="true" aria-label="Quick capture">
+		<div id="quick-capture-box">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+				<h3 style="margin:0;font-size:0.95rem;flex:1">&#9998; Quick Capture</h3>
+				<kbd style="font-size:0.7rem;color:var(--muted);background:var(--panel-bg);padding:2px 6px;border-radius:4px">Esc to cancel</kbd>
+			</div>
+			<input class="input" id="qc-title" type="text" placeholder="Title (optional)…" style="font-size:0.9rem" />
+			<textarea class="input" id="qc-body" rows="6" placeholder="Start writing… Ctrl+Enter or Cmd+Enter to save" style="font-family:ui-monospace,monospace;font-size:0.8rem;resize:none"></textarea>
+			<div style="display:flex;gap:8px;justify-content:flex-end">
+				<button class="btn btn-small" id="btn-qc-cancel" type="button">Cancel</button>
+				<button class="btn btn-accent"  id="btn-qc-save"   type="button">Save note</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══════════════ APP LOCK OVERLAY ══════════════ -->
+	<div id="app-lock-overlay" hidden role="dialog" aria-modal="true" aria-label="App locked">
+		<div id="app-lock-box">
+			<div style="font-size:2.5rem" aria-hidden="true">&#128274;</div>
+			<h2 style="margin:0;font-size:1rem">App is locked</h2>
+			<input class="input" id="lock-pin-input" type="password" placeholder="PIN" maxlength="8" inputmode="numeric"
+				style="font-size:1.6rem;letter-spacing:8px;text-align:center;font-family:ui-monospace,monospace;width:190px" autocomplete="off" />
+			<p id="lock-pin-err" style="font-size:0.8rem;color:var(--error,#dc2626);min-height:20px;margin:0"></p>
+			<button class="btn btn-accent" id="btn-lock-submit" type="button" style="width:100%">Unlock</button>
+		</div>
+	</div>
+
+	<!-- ══════════════ AI ASSISTANT MODAL ══════════════ -->
+	<div id="ai-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="AI writing assistant">
+		<div id="ai-modal">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#129302; AI Writing Assistant</h3>
+				<button class="btn btn-small" id="btn-ai-modal-close" type="button" aria-label="Close">&#10005;</button>
+			</div>
+			<p style="font-size:0.78rem;color:var(--muted);margin:0 0 10px">Uses your saved API key from Settings. The current note content is sent as context.</p>
+			<textarea class="input" id="ai-prompt-input" rows="3"
+				placeholder="Instruction (e.g. Summarize this note, Continue writing, Fix grammar, Translate to French)…"
+				style="font-size:0.84rem;resize:none"></textarea>
+			<div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0">
+				<button class="btn btn-small ai-preset" data-p="Summarize this note in 3 bullet points" type="button">Summarize</button>
+				<button class="btn btn-small ai-preset" data-p="Continue writing this note naturally" type="button">Continue writing</button>
+				<button class="btn btn-small ai-preset" data-p="Fix grammar and improve clarity" type="button">Fix grammar</button>
+				<button class="btn btn-small ai-preset" data-p="Rewrite more concisely" type="button">Shorten</button>
+				<button class="btn btn-small ai-preset" data-p="Expand with more detail and examples" type="button">Expand</button>
+				<button class="btn btn-small ai-preset" data-p="Extract action items as a checklist" type="button">Action items</button>
+			</div>
+			<button class="btn btn-accent" id="btn-ai-run" type="button">Run &#10024;</button>
+			<div id="ai-response-box" style="display:none;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:8px;padding:12px;font-size:0.84rem;line-height:1.65;white-space:pre-wrap;max-height:320px;overflow-y:auto;margin-top:4px"></div>
+			<div id="ai-action-row" style="display:none;gap:8px;flex-wrap:wrap;margin-top:4px">
+				<button class="btn btn-small" id="btn-ai-insert"  type="button">Insert after cursor</button>
+				<button class="btn btn-small" id="btn-ai-replace" type="button">Replace note body</button>
+				<button class="btn btn-small" id="btn-ai-copy"    type="button">Copy to clipboard</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══════════════ PASSWORD VAULT: ADD ENTRY DIALOG ══════════════ -->
+	<div id="vault-add-overlay" hidden role="dialog" aria-modal="true" aria-label="Add vault entry">
+		<div id="vault-add-box" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:20px;width:min(420px,92vw);display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+			<div style="display:flex;align-items:center;gap:8px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#128273; Add / Edit Entry</h3>
+				<button class="btn btn-small" id="btn-vault-add-close" type="button">&#10005;</button>
+			</div>
+			<input class="input" id="vault-site-in"  type="text" placeholder="Site / Service name…" />
+			<input class="input" id="vault-user-in"  type="text" placeholder="Username / Email…" autocomplete="off" />
+			<input class="input" id="vault-pass-in"  type="password" placeholder="Password…" style="font-family:ui-monospace,monospace" autocomplete="new-password" />
+			<input class="input" id="vault-url-in"   type="url"  placeholder="URL (optional)…" />
+			<textarea class="input" id="vault-notes-in" rows="2" placeholder="Notes (optional)…"></textarea>
+			<input type="hidden" id="vault-edit-id" />
+			<div style="display:flex;gap:8px;justify-content:flex-end">
+				<button class="btn btn-small" id="btn-vault-add-cancel" type="button">Cancel</button>
+				<button class="btn btn-accent" id="btn-vault-add-save"   type="button">Save entry</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══════════════ INFO / DIFFVIEW MODAL ══════════════ -->
+	<div id="diff-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Note diff">
+		<div id="diff-modal" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:20px;width:min(700px,94vw);max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+			<div style="display:flex;align-items:center;gap:8px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#128208; Note Revision Diff</h3>
+				<button class="btn btn-small" id="btn-diff-close" type="button">&#10005;</button>
+			</div>
+			<div style="display:flex;gap:8px;flex-wrap:wrap">
+				<select class="input" id="diff-select-a" style="flex:1;font-size:0.8rem"></select>
+				<span style="color:var(--muted)">vs</span>
+				<select class="input" id="diff-select-b" style="flex:1;font-size:0.8rem"></select>
+				<button class="btn btn-small" id="btn-diff-run" type="button">Compare</button>
+			</div>
+			<div id="diff-output" style="font-family:ui-monospace,monospace;font-size:0.8rem;line-height:1.6;background:var(--panel-bg);padding:12px;border-radius:8px;overflow-x:auto;white-space:pre-wrap"></div>
+		</div>
+	</div>
+
+	<!-- ══════════════ CONTEXT MENU ══════════════ -->
+	<div id="note-ctx-menu" hidden role="menu">
+		<div class="ctx-item" data-ctx="open"      role="menuitem" tabindex="-1">&#128196; Open note</div>
+		<div class="ctx-item" data-ctx="split"     role="menuitem" tabindex="-1">&#9711; Open in split</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="pin"       role="menuitem" tabindex="-1">&#128204; Pin / Unpin</div>
+		<div class="ctx-item" data-ctx="lock"      role="menuitem" tabindex="-1">&#128274; Lock / Unlock</div>
+		<div class="ctx-item" data-ctx="duplicate" role="menuitem" tabindex="-1">&#10064; Duplicate</div>
+		<div class="ctx-item" data-ctx="color"     role="menuitem" tabindex="-1">&#127912; Set note color</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="archive"   role="menuitem" tabindex="-1">&#128230; Archive</div>
+		<div class="ctx-item" data-ctx="trash"     role="menuitem" tabindex="-1" style="color:var(--error,#dc2626)">&#128465; Move to trash</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="export-md" role="menuitem" tabindex="-1">&#8659; Export as .md</div>
+		<div class="ctx-item" data-ctx="diff"      role="menuitem" tabindex="-1">&#128211; View revisions</div>
+		<div class="ctx-item" data-ctx="copy-id"   role="menuitem" tabindex="-1">&#128273; Copy note ID</div>
+	</div>
+
+	<!-- ══════════════ CONFETTI CANVAS ══════════════ -->
+	<canvas id="confetti-canvas" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999"></canvas>
+
+</body>
 </html>`);
 						pw.document.close();
 						pw.focus();
@@ -12796,7 +13474,348 @@ body {
 			const safeTitle = title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			const w = window.open('', '_blank', 'width=820,height=700');
 			if (!w) { showToast?.('Pop-up blocked. Please allow pop-ups.', 'error'); return; }
-			w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>${safeTitle}</title><style>*{box-sizing:border-box}body{font-family:Georgia,serif;max-width:680px;margin:40px auto;line-height:1.75;color:#0f172a;padding:0 16px}h1,h2,h3{margin-top:1.5em;line-height:1.3}pre{background:#f1f5f9;padding:14px;border-radius:6px;overflow-x:auto;font-size:0.88rem}code{background:#f1f5f9;padding:2px 5px;border-radius:4px;font-size:0.88em}blockquote{border-left:3px solid #94a3b8;margin:0;padding-left:16px;color:#475569}table{border-collapse:collapse;width:100%}td,th{border:1px solid #cbd5e1;padding:6px 10px}@media print{@page{size:A4;margin:2cm}a{text-decoration:none}}</style></head><body><h1>${safeTitle}</h1>${mdHtml}</body></html>`);
+			w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>${safeTitle}</title><style>*{box-sizing:border-box}body{font-family:Georgia,serif;max-width:680px;margin:40px auto;line-height:1.75;color:#0f172a;padding:0 16px}h1,h2,h3{margin-top:1.5em;line-height:1.3}pre{background:#f1f5f9;padding:14px;border-radius:6px;overflow-x:auto;font-size:0.88rem}code{background:#f1f5f9;padding:2px 5px;border-radius:4px;font-size:0.88em}blockquote{border-left:3px solid #94a3b8;margin:0;padding-left:16px;color:#475569}table{border-collapse:collapse;width:100%}td,th{border:1px solid #cbd5e1;padding:6px 10px}@media print{@page{size:A4;margin:2cm}a{text-decoration:none}}
+		/* ══ DASHBOARD ═══════════════════════════════════════════════ */
+		.dash-stats-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; margin-bottom:20px; }
+		.dash-stat { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:14px 16px; display:flex; flex-direction:column; gap:4px; cursor:pointer; }
+		.dash-stat:hover { border-color:var(--accent); }
+		.dash-stat-val { font-size:1.7rem; font-weight:700; color:var(--accent); line-height:1; }
+		.dash-stat-lbl { font-size:0.74rem; color:var(--muted); }
+		.dash-heatmap { display:flex; gap:2px; overflow-x:auto; padding:4px 0; }
+		.dash-heatmap-col { display:flex; flex-direction:column; gap:2px; }
+		.dash-hm-cell { width:11px; height:11px; border-radius:2px; background:var(--panel-bg); flex-shrink:0; }
+		.dash-hm-cell.lv1 { background:color-mix(in srgb, var(--accent) 30%, transparent); }
+		.dash-hm-cell.lv2 { background:color-mix(in srgb, var(--accent) 55%, transparent); }
+		.dash-hm-cell.lv3 { background:color-mix(in srgb, var(--accent) 80%, transparent); }
+		.dash-hm-cell.lv4 { background:var(--accent); }
+		.dash-tag-pill { background:var(--accent-glow); border:1px solid var(--panel-border); border-radius:20px; padding:3px 10px; font-size:0.78rem; cursor:pointer; user-select:none; display:inline-flex; }
+		.dash-tag-pill:hover { background:var(--accent); color:#fff; }
+		.dash-bar-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:0.8rem; }
+		.dash-bar-track { flex:1; height:8px; background:var(--panel-bg); border-radius:4px; overflow:hidden; }
+		.dash-bar-fill { height:100%; background:var(--accent); border-radius:4px; min-width:2px; }
+		/* ══ KANBAN ═══════════════════════════════════════════════════ */
+		.kanban-toolbar { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
+		.kanban-board { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; align-items:flex-start; min-height:200px; }
+		.kanban-col { background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--radius-md); min-width:210px; max-width:255px; flex-shrink:0; display:flex; flex-direction:column; }
+		.kanban-col-header { display:flex; align-items:center; gap:6px; padding:9px 12px 7px; font-weight:600; font-size:0.85rem; border-bottom:1px solid var(--panel-border); }
+		.kanban-col-count { background:var(--accent); color:#fff; border-radius:999px; font-size:0.7rem; padding:1px 7px; }
+		.kanban-col-del { margin-left:auto; opacity:0.4; cursor:pointer; }
+		.kanban-col-del:hover { opacity:1; color:var(--error,#dc2626); }
+		.kanban-cards { padding:8px; display:flex; flex-direction:column; gap:6px; min-height:50px; flex:1; }
+		.kanban-col.drag-over-col > .kanban-cards { background:var(--accent-glow); border-radius:8px; }
+		.kanban-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:7px; padding:8px 10px; cursor:grab; font-size:0.82rem; display:flex; align-items:flex-start; gap:6px; }
+		.kanban-card:active { cursor:grabbing; opacity:0.7; }
+		.kanban-card-title { flex:1; line-height:1.4; }
+		.kanban-card-del { opacity:0; font-size:0.8rem; color:var(--muted); cursor:pointer; flex-shrink:0; }
+		.kanban-card:hover .kanban-card-del { opacity:0.6; }
+		.kanban-card-del:hover { color:var(--error,#dc2626); opacity:1; }
+		.kanban-add-row { display:flex; gap:5px; padding:6px 8px 10px; }
+		/* ══ ADVANCED SEARCH ══════════════════════════════════════════ */
+		.adv-result-item { display:flex; flex-direction:column; gap:3px; padding:9px 0; border-bottom:1px solid var(--panel-border); cursor:pointer; }
+		.adv-result-item:hover .adv-result-title { color:var(--accent); }
+		.adv-result-title { font-weight:600; font-size:0.88rem; }
+		.adv-result-meta { font-size:0.72rem; color:var(--muted); }
+		.adv-result-excerpt { font-size:0.78rem; color:var(--muted); }
+		mark.adv-hl { background:color-mix(in srgb, var(--accent) 30%, transparent); border-radius:2px; padding:0 2px; }
+		/* ══ TIME TRACKER ═════════════════════════════════════════════ */
+		.timer-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px 0; }
+		.timer-display { font-size:1.3rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); min-width:80px; }
+		.timer-log-row { display:flex; align-items:baseline; gap:8px; padding:6px 0; border-bottom:1px solid var(--panel-border); font-size:0.82rem; }
+		.timer-log-dur { font-family:ui-monospace,monospace; color:var(--accent); min-width:60px; }
+		/* ══ GOALS / OKR ══════════════════════════════════════════════ */
+		.goal-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:14px 16px; margin-bottom:10px; }
+		.goal-title-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+		.goal-title { font-weight:600; font-size:0.9rem; flex:1; }
+		.goal-del { opacity:0.4; cursor:pointer; font-size:0.85rem; }
+		.goal-del:hover { opacity:1; color:var(--error,#dc2626); }
+		.goal-progress-bar { height:7px; background:var(--panel-bg); border-radius:4px; overflow:hidden; margin-bottom:4px; }
+		.goal-progress-fill { height:100%; background:var(--accent); border-radius:4px; transition:width .4s; }
+		.goal-meta { font-size:0.74rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; }
+		.goal-add-form { background:var(--panel-bg); border-radius:var(--radius-md); padding:12px; margin-bottom:14px; display:flex; flex-direction:column; gap:8px; }
+		/* ══ PASSWORD VAULT ═══════════════════════════════════════════ */
+		.vault-item { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:8px; }
+		.vault-item-header { display:flex; align-items:center; gap:8px; }
+		.vault-site { font-weight:600; font-size:0.88rem; flex:1; }
+		.vault-user { font-size:0.78rem; color:var(--muted); }
+		.vault-pass-row { display:flex; align-items:center; gap:6px; margin-top:6px; }
+		.vault-pass-text { font-family:ui-monospace,monospace; font-size:0.82rem; flex:1; letter-spacing:0.1em; }
+		/* ══ SPREADSHEET ══════════════════════════════════════════════ */
+		#sheet-container { overflow:auto; }
+		#sheet-container table { border-collapse:collapse; font-size:0.8rem; }
+		#sheet-container th { background:var(--panel-bg); border:1px solid var(--panel-border); padding:3px 8px; font-weight:600; user-select:none; min-width:70px; text-align:center; font-size:0.72rem; color:var(--muted); }
+		#sheet-container td { border:1px solid var(--panel-border); padding:0; min-width:70px; }
+		.sheet-cell { width:100%; box-sizing:border-box; border:none; background:transparent; outline:none; padding:4px 6px; font-size:0.8rem; font-family:inherit; color:var(--text); text-align:right; }
+		.sheet-cell:focus { background:var(--accent-glow); outline:2px solid var(--accent); }
+		.sheet-cell.formula-val { color:var(--accent); }
+		.sheet-row-num { background:var(--panel-bg); border:1px solid var(--panel-border); padding:3px 6px; font-size:0.72rem; color:var(--muted); text-align:center; user-select:none; }
+		/* ══ CLIPBOARD HISTORY ════════════════════════════════════════ */
+		.clip-item { display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid var(--panel-border); }
+		.clip-text { flex:1; font-size:0.82rem; white-space:pre-wrap; word-break:break-all; max-height:58px; overflow:hidden; color:var(--text); cursor:pointer; }
+		.clip-text:hover { color:var(--accent); }
+		.clip-time { font-size:0.68rem; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+		/* ══ WORLD CLOCK ══════════════════════════════════════════════ */
+		.clock-list { display:flex; flex-direction:column; gap:7px; }
+		.clock-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:9px 13px; display:flex; align-items:center; gap:12px; }
+		.clock-city-name { font-weight:600; font-size:0.88rem; flex:1; }
+		.clock-tz-label { font-size:0.7rem; color:var(--muted); }
+		.clock-time { font-size:1.1rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); }
+		.clock-date { font-size:0.7rem; color:var(--muted); }
+		.clock-del { opacity:0.35; cursor:pointer; font-size:0.82rem; }
+		.clock-del:hover { opacity:1; color:var(--error,#dc2626); }
+		/* ══ FLOATING FORMAT TOOLBAR ══════════════════════════════════ */
+		#fmt-toolbar { position:fixed; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:3px; display:flex; gap:2px; z-index:3500; box-shadow:0 4px 18px rgba(0,0,0,.2); pointer-events:auto; }
+		#fmt-toolbar[hidden] { display:none !important; }
+		.fmt-tb-btn { background:transparent; border:none; border-radius:5px; padding:4px 8px; cursor:pointer; font-size:0.82rem; color:var(--text); }
+		.fmt-tb-btn:hover { background:var(--btn-hover); }
+		.fmt-tb-sep { width:1px; background:var(--panel-border); margin:3px 1px; }
+		/* ══ STATUS BAR ═══════════════════════════════════════════════ */
+		#editor-statusbar { display:flex; gap:12px; align-items:center; padding:3px 10px 3px; font-size:0.68rem; color:var(--muted); background:var(--panel-bg); border-top:1px solid var(--panel-border); flex-shrink:0; };
+		/* ══ BREADCRUMB ═══════════════════════════════════════════════ */
+		#editor-breadcrumb { display:flex; gap:4px; align-items:center; padding:3px 10px; font-size:0.73rem; color:var(--muted); flex-wrap:wrap; min-height:22px; border-bottom:1px solid var(--panel-border); }
+		.breadcrumb-item { cursor:pointer; color:var(--accent); }
+		.breadcrumb-item:hover { text-decoration:underline; }
+		.breadcrumb-sep { opacity:0.35; }
+		/* ══ CONTEXT MENU ═════════════════════════════════════════════ */
+		#note-ctx-menu { position:fixed; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; box-shadow:0 6px 28px rgba(0,0,0,.22); z-index:6000; min-width:170px; padding:4px; }
+		#note-ctx-menu[hidden] { display:none !important; }
+		.ctx-item { display:flex; align-items:center; gap:9px; padding:7px 12px; border-radius:6px; font-size:0.83rem; cursor:pointer; white-space:nowrap; }
+		.ctx-item:hover { background:var(--accent-glow); color:var(--accent); }
+		.ctx-sep { height:1px; background:var(--panel-border); margin:3px 6px; }
+		/* ══ QUICK CAPTURE ════════════════════════════════════════════ */
+		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; backdrop-filter:blur(4px); padding-top:68px; }
+		#quick-capture-overlay[hidden] { display:none !important; }
+		#quick-capture-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg,12px); padding:18px; width:min(580px,94vw); box-shadow:0 20px 60px rgba(0,0,0,.3); display:flex; flex-direction:column; gap:10px; }
+		/* ══ APP LOCK ═════════════════════════════════════════════════ */
+		#app-lock-overlay { position:fixed; inset:0; background:var(--bg); z-index:99000; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+		#app-lock-overlay[hidden] { display:none !important; }
+		#app-lock-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg,12px); padding:32px; width:min(340px,90vw); display:flex; flex-direction:column; gap:14px; align-items:center; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+		#lock-pin-input { font-size:1.4rem; letter-spacing:8px; text-align:center; font-family:ui-monospace,monospace; width:180px; }
+		#lock-status { font-size:0.8rem; color:var(--error,#dc2626); min-height:18px; }
+		/* ══ AI ASSISTANT ═════════════════════════════════════════════ */
+		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8500; backdrop-filter:blur(4px); }
+		#ai-modal-overlay[hidden] { display:none !important; }
+		#ai-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg,12px); padding:22px; width:min(620px,96vw); max-height:82vh; overflow-y:auto; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+		#ai-response-box { background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px; padding:12px; font-size:0.84rem; line-height:1.65; white-space:pre-wrap; min-height:80px; max-height:300px; overflow-y:auto; }
+		/* ══ SIDEBAR PREVIEW ══════════════════════════════════════════ */
+		.doc-item-preview { font-size:0.71rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; margin-top:1px; }
+		body:not(.sidebar-preview) .doc-item-preview { display:none; }
+		/* ══ POMODORO ═════════════════════════════════════════════════ */
+		.pomo-ring { width:110px; height:110px; flex-shrink:0; transform:rotate(-90deg); }
+		.pomo-ring circle { fill:none; stroke-width:8; }
+		.pomo-ring .bg { stroke:var(--panel-border); }
+		.pomo-ring .progress { stroke:var(--accent); stroke-linecap:round; transition:stroke-dashoffset .9s linear; }
+		#pomo-time-label { font-size:1.7rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); }
+		#pomo-phase-label { font-size:0.78rem; color:var(--muted); }
+		/* ══ COLOR SWATCH ═════════════════════════════════════════════ */
+		.color-preview-swatch { width:36px; height:36px; border-radius:8px; border:1px solid var(--panel-border); flex-shrink:0; display:inline-block; vertical-align:middle; }
+		/* ══ CONFETTI ═════════════════════════════════════════════════ */
+		#confetti-canvas { position:fixed; inset:0; pointer-events:none; z-index:99999; }
+		/* ══ VOICE NOTES ══════════════════════════════════════════════ */
+		#btn-voice-note.recording { background:var(--error,#dc2626); color:#fff; border-color:var(--error,#dc2626); animation:pulse-btn 1s infinite; }
+		@keyframes pulse-btn { 0%,100%{opacity:1} 50%{opacity:.6} }
+		/* ══ MULTI-SELECT ═════════════════════════════════════════════ */
+		.doc-item.selected { background:var(--accent-glow); outline:1.5px solid var(--accent); }
+		#multisel-bar { position:sticky; top:0; background:var(--card-bg); border:1px solid var(--accent); border-radius:8px; padding:7px 10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; z-index:10; margin-bottom:6px; }
+		#multisel-bar[hidden] { display:none !important; }
+		/* ══ TAG AUTOCOMPLETE ═════════════════════════════════════════ */
+		#tag-autocomplete { position:absolute; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:4px; z-index:4100; box-shadow:0 4px 16px rgba(0,0,0,.18); max-height:180px; overflow-y:auto; min-width:140px; }
+		#tag-autocomplete[hidden] { display:none !important; }
+		.tag-ac-item { padding:5px 10px; border-radius:5px; font-size:0.82rem; cursor:pointer; }
+		.tag-ac-item:hover { background:var(--accent-glow); color:var(--accent); }
+		.tag-ac-item.active { background:var(--accent); color:#fff; }
+		/* ══ MINIMAP ══════════════════════════════════════════════════ */
+		#notes-minimap { width:60px; background:var(--panel-bg); border-left:1px solid var(--panel-border); overflow:hidden; flex-shrink:0; position:relative; cursor:pointer; display:none; }
+		body.minimap-on #notes-minimap { display:block; }
+		#notes-minimap canvas { position:absolute; top:0; left:0; width:100%; }
+		#minimap-viewport { position:absolute; left:0; right:0; background:var(--accent); opacity:0.18; pointer-events:none; border-radius:2px; }
+
+		
+		/* ════════════════════════════════════════════════════════════════
+		   NEW FEATURE CSS — Dashboard, Kanban, AdvSearch, TimeTrack,
+		   Goals, Vault, Sheet, Clipboard, WorldClock, AI, Lock, QC …
+		   ════════════════════════════════════════════════════════════════ */
+
+		/* ── DASH ─────────────────────────────────────────────────── */
+		.dash-stats-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-bottom:18px; }
+		.dash-stat { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px 14px; cursor:pointer; transition:border-color .15s; }
+		.dash-stat:hover { border-color:var(--accent); }
+		.dash-stat-val { font-size:1.55rem; font-weight:700; color:var(--accent); line-height:1; }
+		.dash-stat-lbl { font-size:0.72rem; color:var(--muted); margin-top:4px; }
+		.dash-hm-row   { display:flex; gap:2px; margin-bottom:2px; }
+		.dash-hm-cell  { width:11px; height:11px; border-radius:2px; background:var(--panel-bg); flex-shrink:0; }
+		.dash-hm-cell.lv1 { background:color-mix(in srgb,var(--accent) 25%,transparent); }
+		.dash-hm-cell.lv2 { background:color-mix(in srgb,var(--accent) 50%,transparent); }
+		.dash-hm-cell.lv3 { background:color-mix(in srgb,var(--accent) 75%,transparent); }
+		.dash-hm-cell.lv4 { background:var(--accent); }
+		.dash-tag-pill  { background:var(--accent-glow,rgba(99,102,241,.12)); border:1px solid var(--panel-border); border-radius:20px; padding:3px 10px; font-size:0.78rem; cursor:pointer; }
+		.dash-tag-pill:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+		.dash-bar-row   { display:flex; align-items:center; gap:8px; margin-bottom:5px; font-size:0.78rem; }
+		.dash-bar-track { flex:1; height:6px; background:var(--panel-bg); border-radius:3px; overflow:hidden; }
+		.dash-bar-fill  { height:100%; background:var(--accent); border-radius:3px; }
+
+		/* ── KANBAN ────────────────────────────────────────────────── */
+		.kanban-toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+		.kanban-board   { display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; align-items:flex-start; min-height:200px; }
+		.kanban-col     { background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--radius-md); min-width:220px; max-width:260px; flex-shrink:0; display:flex; flex-direction:column; }
+		.kanban-col-head { display:flex; align-items:center; gap:6px; padding:9px 12px 7px; font-weight:600; font-size:0.84rem; border-bottom:1px solid var(--panel-border); }
+		.kanban-col-cnt  { background:var(--accent); color:#fff; border-radius:999px; font-size:0.7rem; padding:1px 6px; min-width:18px; text-align:center; }
+		.kanban-col-del  { margin-left:auto; opacity:.35; cursor:pointer; font-size:.8rem; }
+		.kanban-col-del:hover { opacity:1; color:var(--error,#dc2626); }
+		.kanban-cards    { flex:1; padding:8px; display:flex; flex-direction:column; gap:6px; min-height:56px; }
+		.kanban-card     { background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:7px 10px; cursor:grab; font-size:0.81rem; display:flex; align-items:flex-start; gap:6px; transition:box-shadow .1s; }
+		.kanban-card:hover { box-shadow:0 2px 10px rgba(0,0,0,.15); }
+		.kanban-card.dragging { opacity:.5; cursor:grabbing; }
+		.kanban-card-txt { flex:1; line-height:1.45; word-break:break-word; }
+		.kanban-card-del { opacity:0; font-size:.75rem; color:var(--muted); cursor:pointer; flex-shrink:0; }
+		.kanban-card:hover .kanban-card-del { opacity:.6; }
+		.kanban-card-del:hover { opacity:1; color:var(--error,#dc2626); }
+		.kanban-col.drag-over .kanban-cards { outline:2px dashed var(--accent); border-radius:6px; background:color-mix(in srgb,var(--accent) 8%,transparent); }
+		.kanban-add-row  { display:flex; gap:6px; padding:6px 8px 9px; }
+		.kanban-add-inp  { flex:1; font-size:.8rem; }
+
+		/* ── ADVANCED SEARCH ───────────────────────────────────────── */
+		.adv-res-item  { display:flex; flex-direction:column; gap:2px; padding:9px 0; border-bottom:1px solid var(--panel-border); cursor:pointer; }
+		.adv-res-item:hover .adv-res-title { color:var(--accent); }
+		.adv-res-title   { font-weight:600; font-size:0.87rem; }
+		.adv-res-excerpt { font-size:0.77rem; color:var(--muted); }
+		.adv-res-meta    { font-size:0.71rem; color:var(--muted); display:flex; gap:8px; flex-wrap:wrap; }
+		.adv-hl          { background:color-mix(in srgb,var(--accent) 30%,transparent); border-radius:2px; padding:0 2px; }
+
+		/* ── TIME TRACKER ──────────────────────────────────────────── */
+		.timer-row      { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:8px 0; }
+		.timer-display  { font-size:1.35rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); min-width:84px; }
+		.timer-log-row  { display:flex; align-items:baseline; gap:10px; padding:5px 0; border-bottom:1px solid var(--panel-border); font-size:0.8rem; }
+		.timer-log-dur  { font-family:ui-monospace,monospace; color:var(--accent); min-width:64px; flex-shrink:0; }
+		.timer-log-note { flex:1; color:var(--muted); }
+
+		/* ── GOALS ─────────────────────────────────────────────────── */
+		.goal-add-form   { display:flex; flex-direction:column; gap:8px; padding:12px; background:var(--panel-bg); border-radius:var(--radius-md); margin-bottom:14px; border:1px solid var(--panel-border); }
+		.goal-card       { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:10px; }
+		.goal-title-row  { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+		.goal-title      { flex:1; font-weight:600; font-size:0.88rem; }
+		.goal-del        { opacity:.35; cursor:pointer; font-size:.82rem; }
+		.goal-del:hover  { opacity:1; color:var(--error,#dc2626); }
+		.goal-prog-bar   { height:7px; background:var(--panel-bg); border-radius:4px; overflow:hidden; margin-bottom:5px; }
+		.goal-prog-fill  { height:100%; background:var(--accent); border-radius:4px; transition:width .4s; }
+		.goal-meta       { font-size:0.73rem; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px; }
+		.goal-inc-row    { display:flex; gap:6px; align-items:center; margin-top:8px; }
+
+		/* ── VAULT ─────────────────────────────────────────────────── */
+		.vault-item        { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:8px; }
+		.vault-item-head   { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+		.vault-site        { font-weight:600; font-size:0.87rem; flex:1; }
+		.vault-user-txt    { font-size:0.77rem; color:var(--muted); }
+		.vault-pass-row    { display:flex; align-items:center; gap:6px; margin-top:6px; }
+		.vault-pass-field  { font-family:ui-monospace,monospace; font-size:0.8rem; flex:1; -webkit-text-security:disc; word-break:break-all; }
+		.vault-pass-field.vis { -webkit-text-security:none; }
+		#vault-add-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:8800; backdrop-filter:blur(3px); }
+		#vault-add-overlay[hidden] { display:none!important; }
+
+		/* ── SPREADSHEET ───────────────────────────────────────────── */
+		#sheet-container { overflow:auto; max-height:460px; }
+		#sheet-container table { border-collapse:collapse; font-size:0.8rem; }
+		#sheet-container th { background:var(--panel-bg); border:1px solid var(--panel-border); padding:3px 8px; font-weight:600; user-select:none; min-width:72px; text-align:center; font-size:0.72rem; color:var(--muted); position:sticky; top:0; z-index:1; }
+		#sheet-container td { border:1px solid var(--panel-border); padding:0; min-width:72px; }
+		.sh-cell    { width:100%; box-sizing:border-box; border:none; background:transparent; outline:none; padding:3px 6px; font-size:0.8rem; font-family:inherit; color:var(--text); text-align:right; }
+		.sh-cell:focus { background:color-mix(in srgb,var(--accent) 12%,transparent); outline:2px solid var(--accent); }
+		.sh-cell.formula { color:var(--accent); }
+		.sh-rnum  { background:var(--panel-bg); border:1px solid var(--panel-border); padding:2px 6px; font-size:0.71rem; color:var(--muted); text-align:center; user-select:none; position:sticky; left:0; z-index:1; }
+
+		/* ── CLIPBOARD ─────────────────────────────────────────────── */
+		.clip-item  { display:flex; align-items:flex-start; gap:8px; padding:7px 0; border-bottom:1px solid var(--panel-border); }
+		.clip-item:hover .clip-text { color:var(--accent); }
+		.clip-text  { flex:1; font-size:0.8rem; white-space:pre-wrap; word-break:break-all; max-height:56px; overflow:hidden; cursor:pointer; }
+		.clip-time  { font-size:0.68rem; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+
+		/* ── WORLD CLOCK ───────────────────────────────────────────── */
+		.clock-list  { display:flex; flex-direction:column; gap:8px; }
+		.clock-card  { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:9px 13px; display:flex; align-items:center; gap:12px; }
+		.clock-city  { flex:1; }
+		.clock-tz    { font-size:0.72rem; color:var(--muted); }
+		.clock-name  { font-weight:600; font-size:0.85rem; }
+		.clock-time  { font-size:1.05rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); }
+		.clock-date  { font-size:0.7rem; color:var(--muted); }
+		.clock-del   { opacity:.3; cursor:pointer; font-size:.82rem; }
+		.clock-del:hover { opacity:1; color:var(--error,#dc2626); }
+
+		/* ── FLOATING FORMAT TOOLBAR ───────────────────────────────── */
+		#fmt-toolbar { position:fixed; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:3px; display:flex; gap:2px; z-index:3500; box-shadow:0 4px 18px rgba(0,0,0,.22); }
+		#fmt-toolbar[hidden] { display:none!important; }
+		.fmt-tb-btn  { background:transparent; border:none; border-radius:5px; padding:4px 8px; cursor:pointer; font-size:0.82rem; color:var(--text); display:flex; align-items:center; }
+		.fmt-tb-btn:hover { background:color-mix(in srgb,var(--accent) 15%,transparent); color:var(--accent); }
+		.fmt-tb-sep  { width:1px; background:var(--panel-border); margin:3px 2px; align-self:stretch; }
+
+		/* ── STATUS BAR ────────────────────────────────────────────── */
+		#editor-statusbar { display:flex; gap:10px; align-items:center; padding:2px 10px; font-size:0.7rem; color:var(--muted); background:var(--panel-bg); border-top:1px solid var(--panel-border); flex-shrink:0; user-select:none; flex-wrap:wrap; }
+		.statusbar-item { white-space:nowrap; }
+		.statusbar-sep { opacity:.3; }
+
+		/* ── BREADCRUMB ────────────────────────────────────────────── */
+		#editor-breadcrumb { display:flex; gap:4px; align-items:center; padding:3px 10px; font-size:0.73rem; color:var(--muted); flex-wrap:wrap; min-height:22px; background:var(--panel-bg); border-bottom:1px solid var(--panel-border); }
+		.bc-item { cursor:pointer; color:var(--accent); }
+		.bc-item:hover { text-decoration:underline; }
+		.bc-sep  { opacity:.4; }
+
+		/* ── CONTEXT MENU ──────────────────────────────────────────── */
+		#note-ctx-menu { position:fixed; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,.22); z-index:7000; min-width:170px; padding:4px; }
+		#note-ctx-menu[hidden] { display:none!important; }
+		.ctx-item { display:flex; align-items:center; gap:9px; padding:7px 12px; border-radius:6px; font-size:0.82rem; cursor:pointer; white-space:nowrap; user-select:none; }
+		.ctx-item:hover { background:color-mix(in srgb,var(--accent) 15%,transparent); color:var(--accent); }
+		.ctx-sep  { height:1px; background:var(--panel-border); margin:3px 6px; }
+
+		/* ── QUICK CAPTURE ─────────────────────────────────────────── */
+		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; backdrop-filter:blur(4px); padding-top:80px; }
+		#quick-capture-overlay[hidden] { display:none!important; }
+		#quick-capture-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:18px; width:min(580px,92vw); box-shadow:0 20px 60px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:10px; }
+
+		/* ── APP LOCK ──────────────────────────────────────────────── */
+		#app-lock-overlay { position:fixed; inset:0; background:var(--bg); z-index:99000; display:flex; align-items:center; justify-content:center; }
+		#app-lock-overlay[hidden] { display:none!important; }
+		#app-lock-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:32px 28px; width:min(320px,90vw); display:flex; flex-direction:column; align-items:center; gap:14px; box-shadow:0 20px 60px rgba(0,0,0,.35); text-align:center; }
+		#lock-pin-input { font-size:1.5rem; letter-spacing:8px; text-align:center; font-family:ui-monospace,monospace; width:190px; }
+
+		/* ── AI MODAL ──────────────────────────────────────────────── */
+		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8700; backdrop-filter:blur(4px); }
+		#ai-modal-overlay[hidden] { display:none!important; }
+		#ai-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:22px; width:min(600px,94vw); max-height:80vh; overflow-y:auto; display:flex; flex-direction:column; gap:11px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+
+		/* ── DIFF MODAL ────────────────────────────────────────────── */
+		#diff-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8600; backdrop-filter:blur(4px); }
+		#diff-modal-overlay[hidden] { display:none!important; }
+
+		/* ── SIDEBAR PREVIEW ───────────────────────────────────────── */
+		.doc-item-preview { font-size:0.71rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; margin-top:1px; }
+		body:not(.sidebar-preview) .doc-item-preview { display:none; }
+
+		/* ── MULTISELECT BAR ───────────────────────────────────────── */
+		#multisel-bar { display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--accent-glow,rgba(99,102,241,.12)); border:1px solid var(--accent); border-radius:8px; flex-wrap:wrap; margin-bottom:6px; }
+		#multisel-bar[hidden] { display:none!important; }
+
+		/* ── TAG AUTOCOMPLETE ──────────────────────────────────────── */
+		#tag-autocomplete { position:absolute; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; box-shadow:0 4px 18px rgba(0,0,0,.2); z-index:4000; min-width:150px; max-height:180px; overflow-y:auto; padding:4px; }
+		#tag-autocomplete[hidden] { display:none!important; }
+		.tag-ac-item { padding:6px 10px; border-radius:5px; cursor:pointer; font-size:0.82rem; }
+		.tag-ac-item:hover, .tag-ac-item.active { background:color-mix(in srgb,var(--accent) 14%,transparent); color:var(--accent); }
+
+		/* ── POMODORO ──────────────────────────────────────────────── */
+		.pomo-ring circle { fill:none; stroke-width:8; }
+		.pomo-ring .bg       { stroke:var(--panel-border); }
+		.pomo-ring .progress { stroke:var(--accent); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset .9s linear; }
+		#pomo-time-label { font-size:1.55rem; font-weight:700; font-family:ui-monospace,monospace; color:var(--accent); line-height:1; }
+		#pomo-phase-label { font-size:0.77rem; color:var(--muted); margin-top:3px; }
+		.pomo-session-log { font-size:0.77rem; color:var(--muted); }
+
+		/* ── COLOR CONVERTER SWATCH ────────────────────────────────── */
+		.color-preview-swatch { width:36px; height:36px; border-radius:8px; border:1px solid var(--panel-border); flex-shrink:0; display:block; }
+
+		/* ── CONFETTI ──────────────────────────────────────────────── */
+		#confetti-canvas { position:fixed; inset:0; pointer-events:none; z-index:99999; }
+
+		/* ── VOICE NOTE RECORDING PULSING ──────────────────────────── */
+		#btn-voice-note.recording { animation:pulse-rec 1s ease-in-out infinite; color:var(--error,#dc2626); border-color:var(--error,#dc2626); }
+		@keyframes pulse-rec { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+		</style></head><body><h1>${safeTitle}</h1>${mdHtml}</body></html>`);
 			w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
 		});
 
@@ -13146,6 +14165,1920 @@ body {
 			}
 		});
 
+
+
+		// ═══════════════════════════════════════════════════════════════════
+		//  NEW FEATURES — JS Block 1: Dashboard, Kanban, AdvSearch, Timer,
+		//  Goals, Vault, Sheet, Clipboard, WorldClock
+		// ═══════════════════════════════════════════════════════════════════
+
+		// ── HELPERS ──────────────────────────────────────────────────────
+		function fmtDuration(ms) {
+			const s = Math.floor(ms/1000), m = Math.floor(s/60), h = Math.floor(m/60);
+			return String(h).padStart(2,'0')+':'+String(m%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+		}
+		function escapedHtml(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+		function allNotes(){
+			try { return JSON.parse(localStorage.getItem('ectl_notes_v2')||'[]'); } catch(e){ return []; }
+		}
+		function saveNotes(arr){ localStorage.setItem('ectl_notes_v2', JSON.stringify(arr)); }
+		function noteWordCount(n){ return (n.body||'').trim().split(/\s+/).filter(Boolean).length; }
+
+		// ── DASHBOARD ─────────────────────────────────────────────────────
+		function renderDashboard() {
+			const notes = allNotes().filter(n => n.status !== 'trashed');
+			const archived = notes.filter(n => n.status === 'archived').length;
+			const active = notes.filter(n => n.status !== 'archived').length;
+			const totalWords = notes.reduce((a,n)=> a + noteWordCount(n), 0);
+			const pinned = notes.filter(n => n.pinned).length;
+			const row = document.getElementById('dash-stats-row');
+			if (row) row.innerHTML = [
+				['Total notes', active],
+				['Archived',    archived],
+				['Total words', totalWords.toLocaleString()],
+				['Pinned',      pinned],
+			].map(([l,v]) =>
+				`<div class="dash-stat"><div class="dash-stat-val">${v}</div><div class="dash-stat-lbl">${l}</div></div>`
+			).join('');
+
+			// Activity heatmap (simplified: notes created over last 84 days = 12 weeks)
+			const hm = document.getElementById('dash-heatmap');
+			if (hm) {
+				const days = 84;
+				const now = Date.now();
+				const counts = {};
+				for (const n of notes) {
+					if (!n.createdAt) continue;
+					const d = new Date(n.createdAt);
+					const key = d.toDateString();
+					counts[key] = (counts[key]||0) + 1;
+				}
+				const cells = [];
+				for (let i = days-1; i >= 0; i--) {
+					const d = new Date(now - i*864e5);
+					const c = counts[d.toDateString()]||0;
+					const lv = c===0?'':c===1?'lv1':c<=3?'lv2':c<=6?'lv3':'lv4';
+					cells.push(`<div class="dash-hm-cell ${lv}" title="${d.toDateString()}: ${c} note${c!==1?'s':''}"></div>`);
+				}
+				// group into rows of 7
+				let rows = '';
+				for (let r=0; r<12; r++) {
+					rows += `<div class="dash-hm-row">${cells.slice(r*7,(r+1)*7).join('')}</div>`;
+				}
+				hm.innerHTML = rows;
+			}
+
+			// Tag cloud
+			const tc = document.getElementById('dash-tagcloud');
+			if (tc) {
+				const tagCounts = {};
+				for (const n of notes) {
+					for (const t of (n.tags||[])) tagCounts[t] = (tagCounts[t]||0) + 1;
+				}
+				if (Object.keys(tagCounts).length === 0) {
+					tc.innerHTML = '<span style="font-size:0.78rem;color:var(--muted)">No tags yet</span>';
+				} else {
+					tc.innerHTML = Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,30).map(([t,c])=>
+						`<span class="dash-tag-pill" title="${c} note${c!==1?'s':''}" data-tag="${escapedHtml(t)}">#${escapedHtml(t)} <b>${c}</b></span>`
+					).join('');
+					tc.querySelectorAll('.dash-tag-pill').forEach(el => {
+						el.addEventListener('click', () => {
+							selectTab('tab-notes');
+							const si = document.getElementById('notes-search');
+							if (si) { si.value = '#'+el.dataset.tag; si.dispatchEvent(new Event('input')); }
+						});
+					});
+				}
+			}
+
+			// Top notes by word count
+			const wc = document.getElementById('dash-wordchart');
+			if (wc) {
+				const sorted = [...notes].sort((a,b)=>noteWordCount(b)-noteWordCount(a)).slice(0,8);
+				const max = Math.max(1, noteWordCount(sorted[0]));
+				wc.innerHTML = sorted.map(n => {
+					const c = noteWordCount(n);
+					return `<div class="dash-bar-row">
+						<span style="flex:0 0 120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem">${escapedHtml((n.title||'Untitled').substring(0,20))}</span>
+						<div class="dash-bar-track"><div class="dash-bar-fill" style="width:${Math.max(2,c/max*100)}%"></div></div>
+						<span style="font-size:0.74rem;color:var(--muted);flex:0 0 40px;text-align:right">${c}</span>
+					</div>`;
+				}).join('');
+			}
+		}
+
+		// ── KANBAN ──────────────────────────────────────────────────────
+		const KANBAN_KEY = 'ectl_kanban_v1';
+		function loadKanban(){ try{ return JSON.parse(localStorage.getItem(KANBAN_KEY)||'null'); }catch(e){ return null; } }
+		function saveKanban(b){ localStorage.setItem(KANBAN_KEY, JSON.stringify(b)); }
+		let kanbanBoard = loadKanban() || [
+			{ id: 'k1', name: 'To Do',       cards: [] },
+			{ id: 'k2', name: 'In Progress', cards: [] },
+			{ id: 'k3', name: 'Done',        cards: [] },
+		];
+		let kanbanDragCard = null, kanbanDragCol = null;
+
+		function renderKanban() {
+			const board = document.getElementById('kanban-board');
+			if (!board) return;
+			board.innerHTML = '';
+			for (const col of kanbanBoard) {
+				const colEl = document.createElement('div');
+				colEl.className = 'kanban-col';
+				colEl.dataset.colId = col.id;
+				colEl.innerHTML = `
+					<div class="kanban-col-head">
+						<span class="kanban-col-title" contenteditable="true" data-col-id="${col.id}">${escapedHtml(col.name)}</span>
+						<span class="kanban-col-cnt">${col.cards.length}</span>
+						<span class="kanban-col-del" title="Delete column" data-del-col="${col.id}">&#10005;</span>
+					</div>
+					<div class="kanban-cards" data-drop-col="${col.id}">
+						${col.cards.map(card => `
+							<div class="kanban-card" draggable="true" data-card-id="${card.id}" data-col-id="${col.id}">
+								<span class="kanban-card-txt">${escapedHtml(card.text)}</span>
+								<span class="kanban-card-del" data-del-card="${card.id}" data-del-from="${col.id}" title="Delete">&#10005;</span>
+							</div>`).join('')}
+					</div>
+					<div class="kanban-add-row">
+						<input class="input kanban-add-inp" type="text" placeholder="Add card…" data-add-col="${col.id}" />
+						<button class="btn btn-small" type="button" data-add-btn-col="${col.id}">+</button>
+					</div>`;
+				board.appendChild(colEl);
+
+				// inline rename col
+				colEl.querySelector('.kanban-col-title').addEventListener('blur', (e) => {
+					const c = kanbanBoard.find(c=>c.id===col.id);
+					if (c) { c.name = e.target.textContent.trim()||c.name; saveKanban(kanbanBoard); }
+				});
+			}
+
+			// drag events
+			board.querySelectorAll('.kanban-card').forEach(card => {
+				card.addEventListener('dragstart', e => {
+					kanbanDragCard = { id: card.dataset.cardId, fromCol: card.dataset.colId };
+					card.classList.add('dragging');
+					e.dataTransfer.effectAllowed = 'move';
+				});
+				card.addEventListener('dragend', e => { card.classList.remove('dragging'); kanbanDragCard = null; });
+			});
+			board.querySelectorAll('.kanban-cards').forEach(drop => {
+				drop.addEventListener('dragover', e => { e.preventDefault(); drop.closest('.kanban-col').classList.add('drag-over'); });
+				drop.addEventListener('dragleave', e => { drop.closest('.kanban-col').classList.remove('drag-over'); });
+				drop.addEventListener('drop', e => {
+					e.preventDefault();
+					drop.closest('.kanban-col').classList.remove('drag-over');
+					if (!kanbanDragCard) return;
+					const toColId = drop.dataset.dropCol;
+					const fromCol = kanbanBoard.find(c=>c.id===kanbanDragCard.fromCol);
+					const toCol   = kanbanBoard.find(c=>c.id===toColId);
+					if (!fromCol||!toCol) return;
+					const cardIdx = fromCol.cards.findIndex(c=>c.id===kanbanDragCard.id);
+					if (cardIdx === -1) return;
+					const [card] = fromCol.cards.splice(cardIdx, 1);
+					toCol.cards.push(card);
+					saveKanban(kanbanBoard);
+					renderKanban();
+				});
+			});
+			// delete card/col
+			board.querySelectorAll('.kanban-card-del').forEach(btn => {
+				btn.addEventListener('click', e => {
+					e.stopPropagation();
+					const col = kanbanBoard.find(c=>c.id===btn.dataset.delFrom);
+					if (!col) return;
+					col.cards = col.cards.filter(c=>c.id!==btn.dataset.delCard);
+					saveKanban(kanbanBoard); renderKanban();
+				});
+			});
+			board.querySelectorAll('.kanban-col-del').forEach(btn => {
+				btn.addEventListener('click', () => {
+					if (!confirm('Delete this column and all its cards?')) return;
+					kanbanBoard = kanbanBoard.filter(c=>c.id!==btn.dataset.delCol);
+					saveKanban(kanbanBoard); renderKanban();
+				});
+			});
+			// add card
+			board.querySelectorAll('[data-add-btn-col]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const inp = board.querySelector(`[data-add-col="${btn.dataset.addBtnCol}"]`);
+					const txt = inp?.value.trim();
+					if (!txt) return;
+					const col = kanbanBoard.find(c=>c.id===btn.dataset.addBtnCol);
+					if (col) { col.cards.push({ id: 'kc'+Date.now(), text: txt }); saveKanban(kanbanBoard); renderKanban(); }
+				});
+			});
+			board.querySelectorAll('.kanban-add-inp').forEach(inp => {
+				inp.addEventListener('keydown', e => {
+					if (e.key==='Enter') { const btn = board.querySelector(`[data-add-btn-col="${inp.dataset.addCol}"]`); btn?.click(); }
+				});
+			});
+		}
+		document.getElementById('btn-kanban-add-col')?.addEventListener('click', () => {
+			const nameInp = document.getElementById('kanban-new-col-name');
+			const name = nameInp?.value.trim() || 'New Column';
+			kanbanBoard.push({ id: 'kcol'+Date.now(), name, cards: [] });
+			if (nameInp) nameInp.value = '';
+			saveKanban(kanbanBoard); renderKanban();
+		});
+		document.getElementById('btn-kanban-reset')?.addEventListener('click', () => {
+			if (!confirm('Reset the Kanban board? This removes all columns and cards.')) return;
+			kanbanBoard = [
+				{ id: 'k1', name: 'To Do', cards: [] },
+				{ id: 'k2', name: 'In Progress', cards: [] },
+				{ id: 'k3', name: 'Done', cards: [] },
+			];
+			saveKanban(kanbanBoard); renderKanban();
+		});
+		document.getElementById('btn-kanban-save')?.addEventListener('click', () => {
+			const md = kanbanBoard.map(col =>
+				`## ${col.name}\n` + col.cards.map(c => `- ${c.text}`).join('\n')
+			).join('\n\n');
+			const newNote = { id: 'n'+Date.now(), title: 'Kanban Board Export', body: md, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: ['kanban'], status: 'normal' };
+			const notes = allNotes(); notes.unshift(newNote); saveNotes(notes);
+			alert('Kanban board saved as a note.');
+		});
+
+		// ── ADVANCED SEARCH ───────────────────────────────────────────
+		document.getElementById('btn-adv-search')?.addEventListener('click', runAdvSearch);
+		document.getElementById('adv-q')?.addEventListener('keydown', e => { if (e.key==='Enter') runAdvSearch(); });
+
+		function runAdvSearch() {
+			const q      = (document.getElementById('adv-q')?.value||'').toLowerCase().trim();
+			const tag    = (document.getElementById('adv-tag')?.value||'').replace(/^#/,'').toLowerCase().trim();
+			const from   = document.getElementById('adv-from')?.value;
+			const to_    = document.getElementById('adv-to')?.value;
+			const status = document.getElementById('adv-status')?.value||'';
+			const minW   = parseInt(document.getElementById('adv-minwords')?.value||'0')||0;
+			const maxW   = parseInt(document.getElementById('adv-maxwords')?.value||'0')||0;
+			let notes = allNotes();
+			if (q)      notes = notes.filter(n => (n.title+' '+(n.body||'')).toLowerCase().includes(q));
+			if (tag)    notes = notes.filter(n => (n.tags||[]).some(t=>t.toLowerCase().includes(tag)));
+			if (status) notes = notes.filter(n => (n.status||'normal')===status || (status==='pinned'&&n.pinned));
+			if (from)   notes = notes.filter(n => new Date(n.updatedAt||n.createdAt) >= new Date(from));
+			if (to_)    notes = notes.filter(n => new Date(n.updatedAt||n.createdAt) <= new Date(to_+'T23:59:59'));
+			if (minW>0) notes = notes.filter(n => noteWordCount(n) >= minW);
+			if (maxW>0) notes = notes.filter(n => noteWordCount(n) <= maxW);
+			const res = document.getElementById('adv-results');
+			const cnt = document.getElementById('adv-count');
+			if (cnt) cnt.textContent = notes.length + ' result' + (notes.length!==1?'s':'');
+			if (!res) return;
+			if (!notes.length) { res.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;padding:12px 0">No notes match your filters.</p>'; return; }
+			res.innerHTML = notes.slice(0,100).map(n => {
+				const wc = noteWordCount(n);
+				const dateStr = n.updatedAt ? new Date(n.updatedAt).toLocaleDateString() : '';
+				let excerpt = (n.body||'').substring(0,120).replace(/\n/g,' ').trim();
+				if (q) excerpt = excerpt.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark class="adv-hl">${m}</mark>`);
+				return `<div class="adv-res-item" data-nid="${n.id}">
+					<div class="adv-res-title">${escapedHtml(n.title||'Untitled')}</div>
+					<div class="adv-res-meta">
+						<span>${dateStr}</span><span>${wc} words</span>
+						<span>${n.status||'normal'}</span>
+						${(n.tags||[]).slice(0,3).map(t=>`<span style="color:var(--accent)">#${escapedHtml(t)}</span>`).join('')}
+					</div>
+					${excerpt ? `<div class="adv-res-excerpt">${excerpt}${(n.body||'').length>120?'…':''}</div>` : ''}
+				</div>`;
+			}).join('');
+			res.querySelectorAll('.adv-res-item').forEach(el => {
+				el.addEventListener('click', () => {
+					const id = el.dataset.nid;
+					selectTab('tab-notes');
+					setTimeout(() => {
+						// try to open the note by id
+						const noteEl = document.querySelector(`[data-note-id="${id}"]`);
+						if (noteEl) noteEl.click();
+					}, 80);
+				});
+			});
+		}
+
+		// ── TIME TRACKER ────────────────────────────────────────────────
+		const TIMER_KEY = 'ectl_timer_log_v1';
+		let timerInterval = null, timerStart = null, timerNoteId = null;
+
+		function getTimerLog(){ try{ return JSON.parse(localStorage.getItem(TIMER_KEY)||'[]'); }catch(e){ return []; } }
+		function saveTimerLog(log){ localStorage.setItem(TIMER_KEY, JSON.stringify(log)); }
+
+		function renderTimerLog() {
+			const log = getTimerLog();
+			const el = document.getElementById('timer-log');
+			if (!el) return;
+			if (!log.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.8rem">No sessions yet.</p>'; return; }
+			el.innerHTML = log.slice().reverse().slice(0,50).map(l =>
+				`<div class="timer-log-row"><span class="timer-log-dur">${fmtDuration(l.ms)}</span><span class="timer-log-note">${escapedHtml(l.title||'Untitled')} <span style="color:var(--muted);font-size:0.7rem">${new Date(l.end).toLocaleString()}</span></span></div>`
+			).join('');
+		}
+
+		function timerTick() {
+			const el = document.getElementById('timer-display');
+			if (el && timerStart) el.textContent = fmtDuration(Date.now() - timerStart);
+		}
+
+		document.getElementById('btn-timer-start')?.addEventListener('click', () => {
+			if (timerInterval) return;
+			timerStart = Date.now();
+			// get current open note title
+			const titleEl = document.getElementById('note-title-input') || document.querySelector('.note-title-input');
+			const lbl = document.getElementById('timer-note-label');
+			if (lbl) lbl.textContent = (titleEl?.value||titleEl?.textContent||'Current note').trim() || 'Untitled';
+			timerInterval = setInterval(timerTick, 1000);
+			document.getElementById('btn-timer-start').disabled = true;
+			document.getElementById('btn-timer-stop').disabled  = false;
+		});
+		document.getElementById('btn-timer-stop')?.addEventListener('click', () => {
+			if (!timerInterval) return;
+			clearInterval(timerInterval); timerInterval = null;
+			const ms = Date.now() - timerStart;
+			const lbl = document.getElementById('timer-note-label');
+			const log = getTimerLog();
+			log.push({ ms, title: lbl?.textContent||'Untitled', end: new Date().toISOString() });
+			saveTimerLog(log);
+			renderTimerLog();
+			timerStart = null;
+			document.getElementById('timer-display').textContent = '00:00:00';
+			document.getElementById('btn-timer-start').disabled = false;
+			document.getElementById('btn-timer-stop').disabled  = true;
+		});
+		document.getElementById('btn-timer-clear')?.addEventListener('click', () => {
+			if (!confirm('Clear all timer log entries?')) return;
+			localStorage.removeItem(TIMER_KEY); renderTimerLog();
+		});
+		document.getElementById('btn-timer-export')?.addEventListener('click', () => {
+			const log = getTimerLog();
+			if (!log.length) { alert('No timer log entries.'); return; }
+			let csv = 'Title,Duration,Duration(seconds),Date\n';
+			for (const l of log) csv += `"${(l.title||'').replace(/"/g,'""')}","${fmtDuration(l.ms)}",${Math.floor(l.ms/1000)},"${l.end}"\n`;
+			const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], {type:'text/csv'})), download: 'ectl_time_log.csv' });
+			a.click(); URL.revokeObjectURL(a.href);
+		});
+
+		// ── GOALS / OKR ───────────────────────────────────────────────
+		const GOALS_KEY = 'ectl_goals_v1';
+		function getGoals(){ try{ return JSON.parse(localStorage.getItem(GOALS_KEY)||'[]'); }catch(e){ return []; } }
+		function saveGoalsData(g){ localStorage.setItem(GOALS_KEY, JSON.stringify(g)); }
+
+		function renderGoals() {
+			const goals = getGoals();
+			const el = document.getElementById('goals-list');
+			if (!el) return;
+			if (!goals.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem">No goals yet. Add one above!</p>'; return; }
+			el.innerHTML = goals.map(g => {
+				const pct = Math.min(100, g.target>0 ? Math.round(g.current/g.target*100) : 0);
+				const deadline = g.deadline ? ` · Due ${new Date(g.deadline).toLocaleDateString()}` : '';
+				return `<div class="goal-card" data-gid="${g.id}">
+					<div class="goal-title-row">
+						<span class="goal-title">${escapedHtml(g.title)}</span>
+						<span class="goal-del" data-del-goal="${g.id}" title="Delete goal">&#128465;</span>
+					</div>
+					<div class="goal-prog-bar"><div class="goal-prog-fill" style="width:${pct}%"></div></div>
+					<div class="goal-meta">
+						<span>${g.current.toLocaleString()} / ${g.target.toLocaleString()} ${escapedHtml(g.unit||'')} (${pct}%)</span>
+						<span>${deadline}</span>
+					</div>
+					<div class="goal-inc-row">
+						<input class="input" type="number" min="1" placeholder="Progress amount" style="width:130px;font-size:0.8rem" data-prog-for="${g.id}" />
+						<button class="btn btn-small btn-accent" type="button" data-add-prog="${g.id}">+ Add</button>
+					</div>
+				</div>`;
+			}).join('');
+			el.querySelectorAll('[data-del-goal]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					if (!confirm('Delete this goal?')) return;
+					const g = getGoals().filter(x=>x.id!==btn.dataset.delGoal);
+					saveGoalsData(g); renderGoals();
+				});
+			});
+			el.querySelectorAll('[data-add-prog]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const inp = el.querySelector(`[data-prog-for="${btn.dataset.addProg}"]`);
+					const amt = parseFloat(inp?.value||'0');
+					if (isNaN(amt)||amt<=0) return;
+					const goals = getGoals();
+					const g = goals.find(x=>x.id===btn.dataset.addProg);
+					if (!g) return;
+					g.current = Math.min(g.target, g.current + amt);
+					saveGoalsData(goals); renderGoals();
+					if (g.current >= g.target) launchConfetti();
+				});
+			});
+		}
+		document.getElementById('btn-goal-add')?.addEventListener('click', () => {
+			document.getElementById('goal-add-form').hidden = false;
+			document.getElementById('goal-title-input')?.focus();
+			document.getElementById('btn-goal-add').hidden = true;
+		});
+		document.getElementById('btn-goal-cancel')?.addEventListener('click', () => {
+			document.getElementById('goal-add-form').hidden = true;
+			document.getElementById('btn-goal-add').hidden = false;
+		});
+		document.getElementById('btn-goal-save')?.addEventListener('click', () => {
+			const title  = document.getElementById('goal-title-input')?.value.trim();
+			const target = parseFloat(document.getElementById('goal-target-input')?.value||'100');
+			const unit   = document.getElementById('goal-unit-input')?.value.trim()||'';
+			const dl     = document.getElementById('goal-deadline-input')?.value||'';
+			if (!title) { alert('Please enter a goal title.'); return; }
+			const goals = getGoals();
+			goals.push({ id: 'g'+Date.now(), title, target: target||100, current:0, unit, deadline:dl });
+			saveGoalsData(goals);
+			document.getElementById('goal-title-input').value  = '';
+			document.getElementById('goal-target-input').value = '';
+			document.getElementById('goal-unit-input').value   = '';
+			document.getElementById('goal-deadline-input').value = '';
+			document.getElementById('goal-add-form').hidden = true;
+			document.getElementById('btn-goal-add').hidden  = false;
+			renderGoals();
+		});
+
+		// ── PASSWORD VAULT ────────────────────────────────────────────
+		const VAULT_META_KEY  = 'ectl_vault_meta_v1';   // salt + iv hash
+		const VAULT_DATA_KEY  = 'ectl_vault_data_v1';   // encrypted blob
+		let vaultKey = null;
+
+		function checkVaultState() {
+			const hasMaster = !!localStorage.getItem(VAULT_META_KEY);
+			const locked    = !vaultKey;
+			document.getElementById('vault-locked-view').hidden = !locked;
+			document.getElementById('vault-open-view').hidden   = locked;
+			if (!locked) renderVault('');
+			const setBtn = document.getElementById('btn-vault-set-master');
+			if (setBtn) setBtn.textContent = hasMaster ? 'Change master password' : 'Set master password';
+		}
+
+		async function vaultDeriveKey(password, salt) {
+			const enc = new TextEncoder();
+			const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+			return crypto.subtle.deriveKey(
+				{ name:'PBKDF2', salt, iterations:200000, hash:'SHA-256' },
+				keyMaterial, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+			);
+		}
+
+		document.getElementById('btn-vault-set-master')?.addEventListener('click', async () => {
+			const pw = prompt('Enter new master password (min 8 chars):');
+			if (!pw || pw.length < 8) { alert('Password must be at least 8 characters.'); return; }
+			const salt = crypto.getRandomValues(new Uint8Array(16));
+			const key  = await vaultDeriveKey(pw, salt);
+			// encrypt empty array to test
+			const enc  = new TextEncoder();
+			const iv   = crypto.getRandomValues(new Uint8Array(12));
+			const ct   = await crypto.subtle.encrypt({name:'AES-GCM',iv}, key, enc.encode('[]'));
+			localStorage.setItem(VAULT_META_KEY, JSON.stringify({salt:Array.from(salt)}));
+			localStorage.setItem(VAULT_DATA_KEY, JSON.stringify({iv:Array.from(iv), ct:Array.from(new Uint8Array(ct))}));
+			vaultKey = key;
+			checkVaultState();
+			alert('Master password set!');
+		});
+
+		document.getElementById('btn-vault-unlock')?.addEventListener('click', async () => {
+			const pw  = document.getElementById('vault-master-input')?.value;
+			const err = document.getElementById('vault-lock-err');
+			if (!pw) return;
+			const metaStr = localStorage.getItem(VAULT_META_KEY);
+			if (!metaStr) { alert('No master password set. Click "Set master password" first.'); return; }
+			const meta = JSON.parse(metaStr);
+			const salt = new Uint8Array(meta.salt);
+			try {
+				const key = await vaultDeriveKey(pw, salt);
+				const dataStr = localStorage.getItem(VAULT_DATA_KEY);
+				if (dataStr) {
+					const { iv, ct } = JSON.parse(dataStr);
+					await crypto.subtle.decrypt({name:'AES-GCM', iv:new Uint8Array(iv)}, key, new Uint8Array(ct));
+				}
+				vaultKey = key;
+				if (err) err.textContent = '';
+				document.getElementById('vault-master-input').value = '';
+				checkVaultState();
+			} catch(e) {
+				if (err) err.textContent = 'Incorrect password.';
+			}
+		});
+
+		document.getElementById('btn-vault-lock')?.addEventListener('click', () => { vaultKey = null; checkVaultState(); });
+
+		async function vaultGetEntries() {
+			if (!vaultKey) return [];
+			const dataStr = localStorage.getItem(VAULT_DATA_KEY);
+			if (!dataStr) return [];
+			try {
+				const { iv, ct } = JSON.parse(dataStr);
+				const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv:new Uint8Array(iv)}, vaultKey, new Uint8Array(ct));
+				return JSON.parse(new TextDecoder().decode(plain));
+			} catch(e) { return []; }
+		}
+
+		async function vaultSaveEntries(entries) {
+			if (!vaultKey) return;
+			const enc = new TextEncoder();
+			const iv  = crypto.getRandomValues(new Uint8Array(12));
+			const ct  = await crypto.subtle.encrypt({name:'AES-GCM',iv}, vaultKey, enc.encode(JSON.stringify(entries)));
+			localStorage.setItem(VAULT_DATA_KEY, JSON.stringify({iv:Array.from(iv), ct:Array.from(new Uint8Array(ct))}));
+		}
+
+		async function renderVault(query) {
+			const entries = await vaultGetEntries();
+			const el = document.getElementById('vault-list');
+			if (!el) return;
+			const filtered = query ? entries.filter(e=>(e.site+e.username).toLowerCase().includes(query.toLowerCase())) : entries;
+			if (!filtered.length) { el.innerHTML = `<p style="color:var(--muted);font-size:0.82rem">${query?'No matches.':'No entries yet.'}</p>`; return; }
+			el.innerHTML = filtered.map(e =>
+				`<div class="vault-item" data-vid="${e.id}">
+					<div class="vault-item-head">
+						<span class="vault-site">${escapedHtml(e.site)}</span>
+						<span class="vault-user-txt">${escapedHtml(e.username)}</span>
+						<button class="btn btn-small" data-vault-edit="${e.id}" type="button" style="font-size:0.72rem">Edit</button>
+						<button class="btn btn-small" data-vault-del="${e.id}" type="button" style="font-size:0.72rem;color:var(--error,#dc2626)">Del</button>
+					</div>
+					<div class="vault-pass-row">
+						<span class="vault-pass-field" id="vp-${e.id}">${escapedHtml(e.password)}</span>
+						<button class="btn btn-small" type="button" data-vault-tog="${e.id}" style="font-size:0.72rem">Show</button>
+						<button class="btn btn-small" type="button" data-vault-copy="${e.id}" style="font-size:0.72rem">Copy</button>
+					</div>
+					${e.url ? `<a href="${escapedHtml(e.url)}" target="_blank" rel="noopener noreferrer" style="font-size:0.72rem;color:var(--accent)">${escapedHtml(e.url)}</a>` : ''}
+				</div>`
+			).join('');
+			el.querySelectorAll('[data-vault-tog]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const pf = document.getElementById('vp-'+btn.dataset.vaultTog);
+					pf?.classList.toggle('vis');
+					btn.textContent = pf?.classList.contains('vis') ? 'Hide' : 'Show';
+				});
+			});
+			el.querySelectorAll('[data-vault-copy]').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					const entries = await vaultGetEntries();
+					const e = entries.find(x=>x.id===btn.dataset.vaultCopy);
+					if (e) { await navigator.clipboard.writeText(e.password); btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500); }
+				});
+			});
+			el.querySelectorAll('[data-vault-del]').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					if (!confirm('Delete this entry?')) return;
+					const entries = (await vaultGetEntries()).filter(e=>e.id!==btn.dataset.vaultDel);
+					await vaultSaveEntries(entries); renderVault('');
+				});
+			});
+			el.querySelectorAll('[data-vault-edit]').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					const entries = await vaultGetEntries();
+					const e = entries.find(x=>x.id===btn.dataset.vaultEdit);
+					if (!e) return;
+					openVaultAddDialog(e);
+				});
+			});
+		}
+
+		document.getElementById('vault-search')?.addEventListener('input', (e) => renderVault(e.target.value));
+
+		function openVaultAddDialog(entry=null) {
+			const overlay = document.getElementById('vault-add-overlay');
+			document.getElementById('vault-site-in').value  = entry?.site||'';
+			document.getElementById('vault-user-in').value  = entry?.username||'';
+			document.getElementById('vault-pass-in').value  = entry?.password||'';
+			document.getElementById('vault-url-in').value   = entry?.url||'';
+			document.getElementById('vault-notes-in').value = entry?.notes||'';
+			document.getElementById('vault-edit-id').value  = entry?.id||'';
+			overlay.hidden = false;
+			document.getElementById('vault-site-in')?.focus();
+		}
+		document.getElementById('btn-vault-add')?.addEventListener('click', () => openVaultAddDialog());
+		document.getElementById('btn-vault-add-close')?.addEventListener('click', () => { document.getElementById('vault-add-overlay').hidden = true; });
+		document.getElementById('btn-vault-add-cancel')?.addEventListener('click', () => { document.getElementById('vault-add-overlay').hidden = true; });
+		document.getElementById('btn-vault-add-save')?.addEventListener('click', async () => {
+			const site  = document.getElementById('vault-site-in').value.trim();
+			const user  = document.getElementById('vault-user-in').value.trim();
+			const pass  = document.getElementById('vault-pass-in').value;
+			const url   = document.getElementById('vault-url-in').value.trim();
+			const notes = document.getElementById('vault-notes-in').value.trim();
+			const editId = document.getElementById('vault-edit-id').value;
+			if (!site||!pass) { alert('Site and password are required.'); return; }
+			const entries = await vaultGetEntries();
+			if (editId) {
+				const existing = entries.find(e=>e.id===editId);
+				if (existing) { Object.assign(existing, {site,username:user,password:pass,url,notes}); }
+			} else {
+				entries.push({ id:'ve'+Date.now(), site, username:user, password:pass, url, notes });
+			}
+			await vaultSaveEntries(entries);
+			document.getElementById('vault-add-overlay').hidden = true;
+			renderVault('');
+		});
+
+		// ── SPREADSHEET ──────────────────────────────────────────────
+		let sheetInit = false, sheetData = {}, sheetRows = 20, sheetCols = 8;
+		let sheetActive = { r:0, c:0 };
+
+		const SHEET_KEY = 'ectl_sheet_v1';
+		function loadSheetData(){ try{ return JSON.parse(localStorage.getItem(SHEET_KEY)||'null'); }catch(e){ return null; } }
+		function colName(i){ let s='',n=i+1; while(n>0){s=String.fromCharCode(64+(n%26||26))+s;n=Math.floor((n-1)/26);} return s; }
+
+		function evalSheetFormula(expr) {
+			if (!expr.startsWith('=')) return expr;
+			const f = expr.slice(1).trim();
+			const rangeRe = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
+			const cellRe  = /([A-Z]+)(\d+)/gi;
+			const getRef = (c,r) => {
+				const ci = c.toUpperCase().split('').reduce((a,ch)=>a*26+(ch.charCodeAt(0)-64),0)-1;
+				const ri = parseInt(r)-1;
+				return parseFloat(sheetData[ri+'_'+ci])||0;
+			};
+			const getRangeVals = (m) => {
+				const ci1 = m[1].toUpperCase().split('').reduce((a,ch)=>a*26+(ch.charCodeAt(0)-64),0)-1;
+				const ri1 = parseInt(m[2])-1;
+				const ci2 = m[3].toUpperCase().split('').reduce((a,ch)=>a*26+(ch.charCodeAt(0)-64),0)-1;
+				const ri2 = parseInt(m[4])-1;
+				const vals = [];
+				for(let r=ri1;r<=ri2;r++) for(let c=ci1;c<=ci2;c++) vals.push(parseFloat(sheetData[r+'_'+c])||0);
+				return vals;
+			};
+			try {
+				if (/^SUM\(/i.test(f)) { const m=f.match(rangeRe); if(m){const v=getRangeVals(m);return String(v.reduce((a,b)=>a+b,0));} }
+				if (/^AVG\(/i.test(f)||/^AVERAGE\(/i.test(f)) { const m=f.match(rangeRe); if(m){const v=getRangeVals(m);return v.length?String(v.reduce((a,b)=>a+b,0)/v.length):'0';} }
+				if (/^COUNT\(/i.test(f)) { const m=f.match(rangeRe); if(m){const v=getRangeVals(m);return String(v.filter(x=>!isNaN(x)&&x!==0).length);} }
+				if (/^MAX\(/i.test(f)) { const m=f.match(rangeRe); if(m){const v=getRangeVals(m);return String(Math.max(...v));} }
+				if (/^MIN\(/i.test(f)) { const m=f.match(rangeRe); if(m){const v=getRangeVals(m);return String(Math.min(...v));} }
+				// cell references substitution for simple expressions
+				const expr2 = f.replace(cellRe, (_,c,r) => getRef(c,r));
+				// eslint-disable-next-line no-new-func
+				const result = Function('"use strict"; return ('+expr2+')')();
+				return String(isFinite(result)?result:'#ERR');
+			} catch(e) { return '#ERR'; }
+		}
+
+		function initSheet() {
+			sheetInit = true;
+			const saved = loadSheetData();
+			if (saved) { sheetRows = saved.rows||20; sheetCols = saved.cols||8; sheetData = saved.data||{}; }
+			document.getElementById('sheet-rows-sel')?.addEventListener('change', e => { sheetRows=parseInt(e.target.value); renderSheetTable(); });
+			document.getElementById('sheet-cols-sel')?.addEventListener('change', e => { sheetCols=parseInt(e.target.value); renderSheetTable(); });
+			document.getElementById('btn-sheet-clear')?.addEventListener('click', () => { if(!confirm('Clear all sheet data?'))return; sheetData={}; localStorage.removeItem(SHEET_KEY); renderSheetTable(); });
+			document.getElementById('btn-sheet-export')?.addEventListener('click', () => {
+				let csv='';
+				for(let r=0;r<sheetRows;r++){
+					csv+=Array.from({length:sheetCols},(_,c)=>{const v=sheetData[r+'_'+c]||'';return v.includes(',')?'"'+v.replace(/"/g,'""')+'"':v;}).join(',')+'\n';
+				}
+				const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})),download:'ectl_sheet.csv'});a.click();URL.revokeObjectURL(a.href);
+			});
+			renderSheetTable();
+		}
+
+		function renderSheetTable() {
+			const cont = document.getElementById('sheet-container');
+			if (!cont) return;
+			let html = '<table><thead><tr><th></th>';
+			for(let c=0;c<sheetCols;c++) html+=`<th>${colName(c)}</th>`;
+			html+='</tr></thead><tbody>';
+			for(let r=0;r<sheetRows;r++){
+				html+=`<tr><td class="sh-rnum">${r+1}</td>`;
+				for(let c=0;c<sheetCols;c++){
+					const key=r+'_'+c, raw=sheetData[key]||'';
+					const disp=raw.startsWith('=')?evalSheetFormula(raw):raw;
+					html+=`<td><input class="sh-cell${raw.startsWith('=')?'formula':''??' sh-cell formula':''}" type="text" value="${escapedHtml(disp)}" data-r="${r}" data-c="${c}" /></td>`;
+				}
+				html+='</tr>';
+			}
+			html+='</tbody></table>';
+			cont.innerHTML=html;
+			cont.querySelectorAll('.sh-cell').forEach(inp=>{
+				inp.addEventListener('focus',()=>{
+					const r=inp.dataset.r, c=inp.dataset.c;
+					const fb=document.getElementById('sheet-formula-bar');
+					if(fb) fb.value=sheetData[r+'_'+c]||'';
+				});
+				inp.addEventListener('input', ()=>{
+					const r=inp.dataset.r, c=inp.dataset.c, val=inp.value;
+					sheetData[r+'_'+c]=val;
+					inp.className='sh-cell'+(val.startsWith('=')?'formula':''?+' formula':'');
+					localStorage.setItem(SHEET_KEY, JSON.stringify({rows:sheetRows,cols:sheetCols,data:sheetData}));
+				});
+				inp.addEventListener('keydown',e=>{
+					if(e.key==='Enter'){e.preventDefault();const nr=parseInt(inp.dataset.r)+1;cont.querySelector(`[data-r="${nr}"][data-c="${inp.dataset.c}"]`)?.focus();}
+					if(e.key==='Tab'){e.preventDefault();const nc=parseInt(inp.dataset.c)+1;cont.querySelector(`[data-r="${inp.dataset.r}"][data-c="${nc}"]`)?.focus();}
+				});
+				inp.addEventListener('blur',()=>{
+					const r=inp.dataset.r, c=inp.dataset.c, raw=sheetData[r+'_'+c]||'';
+					if(raw.startsWith('=')){inp.value=evalSheetFormula(raw);}
+				});
+			});
+			// formula bar editing
+			document.getElementById('sheet-formula-bar')?.addEventListener('keydown', e=>{
+				if(e.key!=='Enter') return;
+				const focused=cont.querySelector('.sh-cell:focus');
+				if(!focused) return;
+				const r=focused.dataset.r, c=focused.dataset.c, val=e.target.value;
+				sheetData[r+'_'+c]=val; focused.value=val.startsWith('=')?evalSheetFormula(val):val;
+				localStorage.setItem(SHEET_KEY,JSON.stringify({rows:sheetRows,cols:sheetCols,data:sheetData}));
+			});
+		}
+
+		// ── CLIPBOARD HISTORY ─────────────────────────────────────────
+		const CLIP_KEY = 'ectl_clipboard_v1';
+		let clipList2 = [];
+		try { clipList2 = JSON.parse(localStorage.getItem(CLIP_KEY)||'[]'); } catch(e){}
+
+		document.addEventListener('copy', () => {
+			setTimeout(async () => {
+				try {
+					const text = await navigator.clipboard.readText();
+					if (!text || !text.trim()) return;
+					clipList2 = clipList2.filter(c=>c.text!==text);
+					clipList2.unshift({ text, ts: Date.now() });
+					if (clipList2.length > 100) clipList2.length = 100;
+					localStorage.setItem(CLIP_KEY, JSON.stringify(clipList2));
+					if (!document.getElementById('panel-clipboard')?.hidden) renderClipboard();
+				} catch(e){}
+			}, 80);
+		});
+
+		function renderClipboard() {
+			try { clipList2 = JSON.parse(localStorage.getItem(CLIP_KEY)||'[]'); } catch(e){}
+			const q = (document.getElementById('clip-search')?.value||'').toLowerCase();
+			const el = document.getElementById('clip-list');
+			if (!el) return;
+			const filtered = q ? clipList2.filter(c=>c.text.toLowerCase().includes(q)) : clipList2;
+			if (!filtered.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.8rem">No clipboard entries yet.</p>'; return; }
+			el.innerHTML = filtered.slice(0,100).map((c,i) =>
+				`<div class="clip-item">
+					<span class="clip-text" title="Click to paste into editor" data-ci="${i}">${escapedHtml(c.text.substring(0,200))}</span>
+					<span class="clip-time">${new Date(c.ts).toLocaleTimeString()}</span>
+					<button class="btn btn-small" type="button" data-clip-copy="${i}" style="font-size:0.72rem">Copy</button>
+				</div>`
+			).join('');
+			el.querySelectorAll('.clip-text').forEach(span => {
+				span.addEventListener('click', () => {
+					const ta = document.getElementById('note-editor') || document.querySelector('textarea.note-body');
+					if (ta) { const s=ta.selectionStart,e=ta.selectionEnd; ta.setRangeText(filtered[span.dataset.ci]?.text||'',s,e,'end'); ta.dispatchEvent(new Event('input')); ta.focus(); }
+				});
+			});
+			el.querySelectorAll('[data-clip-copy]').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					const c = filtered[btn.dataset.clipCopy];
+					if (c) { await navigator.clipboard.writeText(c.text); btn.textContent='OK'; setTimeout(()=>btn.textContent='Copy',1200); }
+				});
+			});
+		}
+		document.getElementById('clip-search')?.addEventListener('input', () => renderClipboard());
+		document.getElementById('btn-clip-clear')?.addEventListener('click', () => {
+			if (!confirm('Clear all clipboard history?')) return;
+			clipList2=[]; localStorage.removeItem(CLIP_KEY); renderClipboard();
+		});
+
+		// ── WORLD CLOCK ───────────────────────────────────────────────
+		const CLOCKS_KEY = 'ectl_clocks_v1';
+		let clockZones = JSON.parse(localStorage.getItem(CLOCKS_KEY)||'["UTC","America/New_York","Europe/London","Asia/Tokyo"]');
+		let clocksInterval = null;
+
+		function startClocksTick() {
+			if (clocksInterval) return;
+			clocksInterval = setInterval(() => {
+				if (!document.getElementById('panel-worldclock')?.hidden) {
+					document.querySelectorAll('.clock-time').forEach(el => {
+						const tz = el.dataset.tz;
+						if (!tz) return;
+						try { el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }); } catch(e){}
+					});
+					document.querySelectorAll('.clock-date').forEach(el => {
+						const tz = el.dataset.tz;
+						if (!tz) return;
+						try { el.textContent = new Date().toLocaleDateString('en-US', { timeZone: tz, weekday:'short', month:'short', day:'numeric' }); } catch(e){}
+					});
+				}
+			}, 1000);
+		}
+
+		function renderWorldClocks() {
+			const list = document.getElementById('clock-list');
+			if (!list) return;
+			list.innerHTML = clockZones.map(tz => {
+				let timeStr='', dateStr='', city=tz.split('/').pop().replace(/_/g,' ');
+				try { timeStr=new Date().toLocaleTimeString('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}); } catch(e){}
+				try { dateStr=new Date().toLocaleDateString('en-US',{timeZone:tz,weekday:'short',month:'short',day:'numeric'}); } catch(e){}
+				return `<div class="clock-card">
+					<div class="clock-city"><div class="clock-name">${escapedHtml(city)}</div><div class="clock-tz">${escapedHtml(tz)}</div></div>
+					<div style="text-align:right">
+						<div class="clock-time" data-tz="${escapedHtml(tz)}">${escapedHtml(timeStr)}</div>
+						<div class="clock-date" data-tz="${escapedHtml(tz)}">${escapedHtml(dateStr)}</div>
+					</div>
+					<span class="clock-del" data-del-tz="${escapedHtml(tz)}" title="Remove">&#10005;</span>
+				</div>`;
+			}).join('');
+			list.querySelectorAll('.clock-del').forEach(btn => {
+				btn.addEventListener('click', () => {
+					clockZones = clockZones.filter(z=>z!==btn.dataset.delTz);
+					localStorage.setItem(CLOCKS_KEY, JSON.stringify(clockZones));
+					renderWorldClocks();
+				});
+			});
+			startClocksTick();
+		}
+
+		document.getElementById('btn-clock-add')?.addEventListener('click', () => {
+			const inp = document.getElementById('clock-tz-input');
+			const tz  = inp?.value.trim();
+			if (!tz) return;
+			try {
+				new Date().toLocaleTimeString('en-US', { timeZone: tz });
+			} catch(e) { alert('Invalid IANA timezone: '+ tz); return; }
+			if (!clockZones.includes(tz)) { clockZones.push(tz); localStorage.setItem(CLOCKS_KEY, JSON.stringify(clockZones)); }
+			if (inp) inp.value = '';
+			renderWorldClocks();
+		});
+		document.getElementById('clock-tz-input')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btn-clock-add')?.click(); });
+
+		function initTZConv() {
+			const common = ['UTC','America/New_York','America/Los_Angeles','America/Chicago','America/Denver','America/Sao_Paulo','Europe/London','Europe/Paris','Europe/Berlin','Europe/Moscow','Asia/Dubai','Asia/Kolkata','Asia/Shanghai','Asia/Tokyo','Asia/Singapore','Australia/Sydney','Pacific/Auckland'];
+			const from = document.getElementById('tzconv-from'), to2 = document.getElementById('tzconv-to');
+			if (!from||!to2||from.options.length>0) return;
+			common.forEach(tz => {
+				from.add(new Option(tz,tz)); to2.add(new Option(tz,tz));
+			});
+			// set defaults
+			from.value = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+			to2.value  = 'America/New_York';
+			// set now
+			const ti = document.getElementById('tzconv-time');
+			if (ti) ti.value = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+		}
+		document.getElementById('btn-tzconv')?.addEventListener('click', () => {
+			const tStr = document.getElementById('tzconv-time')?.value;
+			const from = document.getElementById('tzconv-from')?.value;
+			const to_  = document.getElementById('tzconv-to')?.value;
+			const out  = document.getElementById('tzconv-result');
+			if (!tStr||!from||!to_||!out) return;
+			try {
+				const d = new Date(tStr);
+				const converted = d.toLocaleString('en-US', { timeZone: to_, weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+				out.textContent = converted + '  (' + to_ + ')';
+			} catch(e) { out.textContent = 'Error: '+e.message; }
+		});
+
+
+
+		// ═══════════════════════════════════════════════════════════════════
+		//  NEW FEATURES — JS Block 2: Format Toolbar, Status Bar, Breadcrumb,
+		//  Context Menu, Quick Capture, App Lock, AI Assistant, Tag Complete,
+		//  Pomodoro, Voice Notes, Multi-select, Confetti, Settings additions,
+		//  Tool Cards
+		// ═══════════════════════════════════════════════════════════════════
+
+		// ── FLOATING FORMAT TOOLBAR ───────────────────────────────────────
+		(function() {
+			const toolbar = document.getElementById('fmt-toolbar');
+			if (!toolbar) return;
+			let fmtEditor = null;
+
+			document.addEventListener('mouseup', (e) => {
+				const sel = window.getSelection();
+				if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+					if (!toolbar.contains(e.target)) toolbar.hidden = true;
+					return;
+				}
+				const r = fmtEditor = sel.anchorNode?.closest?.('textarea');
+				if (!r) { toolbar.hidden = true; return; }
+				const rect = sel.getRangeAt(0).getBoundingClientRect();
+				toolbar.hidden = false;
+				const tx = Math.max(4, rect.left + rect.width/2 - toolbar.offsetWidth/2);
+				const ty = Math.max(4, rect.top + window.scrollY - toolbar.offsetHeight - 8);
+				toolbar.style.left = tx + 'px';
+				toolbar.style.top  = ty + 'px';
+			});
+
+			toolbar.querySelectorAll('.fmt-tb-btn').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const ta = fmtEditor || document.querySelector('textarea:not([hidden])');
+					if (!ta) return;
+					const s = ta.selectionStart, e = ta.selectionEnd, sel = ta.value.slice(s,e);
+					if (!sel) return;
+					const fmt = btn.dataset.fmt;
+					const map = {bold:`**${sel}**`, italic:`_${sel}_`, code:'`'+sel+'`', strike:`~~${sel}~~`, h1:`# ${sel}`, h2:`## ${sel}`, link:`[${sel}](url)`};
+					const rep = map[fmt];
+					if (!rep) return;
+					ta.setRangeText(rep, s, e, 'select');
+					ta.dispatchEvent(new Event('input'));
+					ta.focus();
+					toolbar.hidden = true;
+				});
+			});
+
+			document.addEventListener('keydown', e => { if (e.key === 'Escape') toolbar.hidden = true; });
+		})();
+
+		// ── STATUS BAR ────────────────────────────────────────────────────
+		(function() {
+			const sb = document.getElementById('editor-statusbar');
+			if (!sb) return;
+			function updateSB(ta) {
+				if (!ta) {
+					ta = document.getElementById('note-editor') || document.querySelector('#panel-notes textarea');
+				}
+				if (!ta) return;
+				const val = ta.value || '';
+				const pos = ta.selectionStart || 0;
+				const before = val.slice(0, pos);
+				const line = before.split('\n').length;
+				const col  = pos - before.lastIndexOf('\n');
+				const words = val.trim().split(/\s+/).filter(Boolean).length;
+				const readMin = Math.max(1, Math.round(words / 200));
+				const sbLc = document.getElementById('sb-linecol');
+				const sbW  = document.getElementById('sb-words');
+				const sbR  = document.getElementById('sb-readtime');
+				if (sbLc) sbLc.textContent = `Ln ${line}, Col ${col}`;
+				if (sbW)  sbW.textContent  = `${words} word${words!==1?'s':''}`;
+				if (sbR)  sbR.textContent  = `~${readMin} min read`;
+			}
+			// observe keypresses on any textarea in the notes panel
+			document.addEventListener('keyup', e => { if (e.target.tagName==='TEXTAREA') updateSB(e.target); });
+			document.addEventListener('click', e => { if (e.target.tagName==='TEXTAREA') updateSB(e.target); });
+		})();
+
+		// ── BREADCRUMB (recent notes trail) ──────────────────────────────
+		(function() {
+			const bc_key = 'ectl_breadcrumb_v1';
+			let trail = [];
+			try { trail = JSON.parse(sessionStorage.getItem(bc_key)||'[]'); } catch(e){}
+
+			function renderBc() {
+				const el = document.getElementById('editor-breadcrumb');
+				if (!el) return;
+				if (!trail.length) { el.innerHTML = ''; return; }
+				el.innerHTML = trail.map((t,i) =>
+					(i>0 ? '<span class="bc-sep">›</span>' : '') +
+					`<span class="bc-item" data-bc="${i}">${escapedHtml(t.title.substring(0,22)||'Untitled')}</span>`
+				).join('');
+				el.querySelectorAll('.bc-item').forEach(span => {
+					span.addEventListener('click', () => {
+						const entry = trail[span.dataset.bc];
+						if (!entry) return;
+						trail = trail.slice(0, Number(span.dataset.bc)+1);
+						sessionStorage.setItem(bc_key, JSON.stringify(trail));
+						renderBc();
+						// open the note
+						const noteEl = document.querySelector(`[data-note-id="${entry.id}"]`);
+						if (noteEl) noteEl.click();
+					});
+				});
+			}
+
+			// Hook into note open events — look for a custom event or MutationObserver on the title
+			const titleObs = new MutationObserver(() => {
+				const th = document.getElementById('note-title-input') || document.querySelector('.note-title-input');
+				if (!th) return;
+				const title = (th.value || th.textContent || '').trim();
+				const id = document.querySelector('[data-note-id].active')?.dataset.noteId || ('bc'+Date.now());
+				if (!title) return;
+				const last = trail[trail.length-1];
+				if (last && last.id === id) return;
+				trail = trail.filter(t=>t.id!==id);
+				trail.push({ id, title });
+				if (trail.length > 5) trail = trail.slice(-5);
+				sessionStorage.setItem(bc_key, JSON.stringify(trail));
+				renderBc();
+			});
+			const titleEl = document.getElementById('note-title-input') || document.querySelector('.note-title-input');
+			if (titleEl) titleObs.observe(titleEl.closest?.('div')||document.body, { childList:true, subtree:true, characterData:true });
+		})();
+
+		// ── CONTEXT MENU ──────────────────────────────────────────────────
+		(function() {
+			const menu = document.getElementById('note-ctx-menu');
+			if (!menu) return;
+			let ctxNoteId = null;
+
+			document.addEventListener('contextmenu', (e) => {
+				const docItem = e.target.closest?.('[data-note-id]');
+				if (!docItem) { menu.hidden = true; return; }
+				e.preventDefault();
+				ctxNoteId = docItem.dataset.noteId;
+				// position
+				const x = Math.min(e.clientX, window.innerWidth  - menu.offsetWidth  - 8);
+				const y = Math.min(e.clientY, window.innerHeight - menu.offsetHeight - 8);
+				menu.style.left = x+'px';
+				menu.style.top  = y+'px';
+				menu.hidden = false;
+				menu.querySelector('.ctx-item')?.focus();
+			});
+
+			document.addEventListener('click', e => { if(!menu.contains(e.target)) menu.hidden=true; });
+			document.addEventListener('keydown', e => { if(e.key==='Escape') menu.hidden=true; });
+
+			menu.querySelectorAll('.ctx-item').forEach(item => {
+				item.addEventListener('click', () => {
+					menu.hidden = true;
+					const notes = allNotes();
+					const note  = notes.find(n=>n.id===ctxNoteId);
+					if (!note) return;
+					const action = item.dataset.ctx;
+					if (action==='open') {
+						selectTab('tab-notes');
+						setTimeout(()=>document.querySelector(`[data-note-id="${ctxNoteId}"]`)?.click(), 50);
+					} else if (action==='pin') {
+						note.pinned = !note.pinned; saveNotes(notes);
+					} else if (action==='lock') {
+						note.locked = !note.locked; saveNotes(notes);
+					} else if (action==='duplicate') {
+						const copy = {...note, id:'n'+Date.now(), title:(note.title||'')+'(copy)', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()};
+						notes.unshift(copy); saveNotes(notes);
+					} else if (action==='archive') {
+						note.status='archived'; saveNotes(notes);
+					} else if (action==='trash') {
+						note.status='trashed'; saveNotes(notes);
+					} else if (action==='color') {
+						const c = prompt('Enter a CSS colour (e.g. #ffeed5, pink):');
+						if (c) { note.color=c; saveNotes(notes); }
+					} else if (action==='export-md') {
+						const blob = new Blob([note.body||''], {type:'text/markdown'});
+						const a = Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:(note.title||'note')+'.md'}); a.click(); URL.revokeObjectURL(a.href);
+					} else if (action==='copy-id') {
+						navigator.clipboard.writeText(note.id);
+					} else if (action==='split') {
+						selectTab('tab-notes');
+						setTimeout(()=>{ document.querySelector(`[data-note-id="${ctxNoteId}"]`)?.click(); document.getElementById('btn-split-view')?.click(); }, 80);
+					} else if (action==='diff') {
+						document.getElementById('diff-modal-overlay').hidden = false;
+						populateDiffSelects(ctxNoteId);
+					}
+					// refresh note list
+					document.querySelector('.doc-list')?.dispatchEvent(new Event('refresh'));
+				});
+			});
+		})();
+
+		// ── NOTE REVISION DIFF ───────────────────────────────────────────
+		const REVISIONS_KEY = 'ectl_revisions_v1';
+		function getRevisions(noteId){ try{ const r=JSON.parse(localStorage.getItem(REVISIONS_KEY)||'{}'); return r[noteId]||[]; }catch(e){ return []; } }
+		function saveRevision(noteId, body) {
+			try {
+				const all = JSON.parse(localStorage.getItem(REVISIONS_KEY)||'{}');
+				if (!all[noteId]) all[noteId]=[];
+				all[noteId].push({ ts:Date.now(), body });
+				if (all[noteId].length>20) all[noteId]=all[noteId].slice(-20);
+				localStorage.setItem(REVISIONS_KEY, JSON.stringify(all));
+			} catch(e){}
+		}
+
+		function populateDiffSelects(noteId) {
+			const revs = getRevisions(noteId);
+			const sel1 = document.getElementById('diff-select-a');
+			const sel2 = document.getElementById('diff-select-b');
+			if (!sel1||!sel2) return;
+			const opts = revs.map((r,i)=>`<option value="${i}">${new Date(r.ts).toLocaleString()}</option>`).join('');
+			sel1.innerHTML = opts; sel2.innerHTML = opts;
+			if (revs.length>1) sel2.selectedIndex = revs.length-1;
+		}
+		document.getElementById('btn-diff-run')?.addEventListener('click', () => {
+			const sel1 = document.getElementById('diff-select-a');
+			const sel2 = document.getElementById('diff-select-b');
+			const out  = document.getElementById('diff-output');
+			if (!sel1||!sel2||!out) return;
+			// get noteId from open overlay context
+			const noteId = document.querySelector('[data-note-id].active')?.dataset.noteId;
+			if (!noteId) { out.textContent='No note selected.'; return; }
+			const revs = getRevisions(noteId);
+			const aText = revs[sel1.value]?.body||'';
+			const bText = revs[sel2.value]?.body||'';
+			out.innerHTML = simpleDiff(aText, bText);
+		});
+		document.getElementById('btn-diff-close')?.addEventListener('click', () => { document.getElementById('diff-modal-overlay').hidden=true; });
+
+		function simpleDiff(a, b) {
+			const al = a.split('\n'), bl = b.split('\n');
+			const al2 = new Set(al), bl2 = new Set(bl);
+			let html='';
+			for (const l of al) { if (!bl2.has(l)) html+=`<span style="color:var(--error,#dc2626);background:rgba(220,38,38,.1);display:block">- ${escapedHtml(l)}</span>`; else html+=`<span style="display:block"> ${escapedHtml(l)}</span>`; }
+			for (const l of bl) { if (!al2.has(l)) html+=`<span style="color:var(--success,#16a34a);background:rgba(22,163,74,.1);display:block">+ ${escapedHtml(l)}</span>`; }
+			return html||'<span style="color:var(--muted)">No differences.</span>';
+		}
+
+		// ── QUICK CAPTURE ────────────────────────────────────────────────
+		(function() {
+			function openQC() {
+				document.getElementById('quick-capture-overlay').hidden = false;
+				document.getElementById('qc-title')?.focus();
+			}
+			function closeQC() { document.getElementById('quick-capture-overlay').hidden = true; }
+
+			document.getElementById('btn-qc-open')?.addEventListener('click', openQC);
+			document.getElementById('btn-quick-capture')?.addEventListener('click', openQC);
+			document.getElementById('btn-qc-cancel')?.addEventListener('click', closeQC);
+			document.getElementById('quick-capture-overlay')?.addEventListener('click', e => { if(e.target===e.currentTarget)closeQC(); });
+
+			document.addEventListener('keydown', e => {
+				if ((e.altKey||e.metaKey) && e.key===' ') { e.preventDefault(); openQC(); }
+				if (e.key==='Escape') closeQC();
+			});
+
+			document.getElementById('btn-qc-save')?.addEventListener('click', () => {
+				const title = document.getElementById('qc-title')?.value.trim()||('Quick note '+new Date().toLocaleTimeString());
+				const body  = document.getElementById('qc-body')?.value||'';
+				const note  = { id:'n'+Date.now(), title, body, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), status:'normal', tags:['quick-capture'] };
+				const notes = allNotes(); notes.unshift(note); saveNotes(notes);
+				if (document.getElementById('qc-title')) document.getElementById('qc-title').value='';
+				if (document.getElementById('qc-body'))  document.getElementById('qc-body').value='';
+				closeQC();
+				// refresh list
+				document.querySelector('.doc-list')?.dispatchEvent(new Event('refresh'));
+			});
+
+			document.getElementById('qc-body')?.addEventListener('keydown', e => {
+				if ((e.ctrlKey||e.metaKey) && e.key==='Enter') document.getElementById('btn-qc-save')?.click();
+			});
+		})();
+
+		// ── APP LOCK ─────────────────────────────────────────────────────
+		(function() {
+			const PIN_KEY    = 'ectl_app_pin_v1';
+			const overlay    = document.getElementById('app-lock-overlay');
+			const pinInput   = document.getElementById('lock-pin-input');
+			const pinErr     = document.getElementById('lock-pin-err');
+			const lockBtn    = document.getElementById('btn-app-lock');
+			let idleTimer    = null;
+
+			function hashPin(pin) { return btoa(pin+':ectl-salt-v1'); }
+
+			function isLockEnabled() { return !!localStorage.getItem(PIN_KEY); }
+
+			function showLockScreen() { if (overlay) overlay.hidden = false; if (pinInput) { pinInput.value=''; pinInput.focus(); } }
+			function hideLockScreen() { if (overlay) overlay.hidden = true; if (pinErr) pinErr.textContent=''; }
+
+			function resetIdleTimer() {
+				clearTimeout(idleTimer);
+				if (isLockEnabled()) idleTimer = setTimeout(showLockScreen, 5*60*1000);
+			}
+
+			['mousemove','keydown','click','touchstart'].forEach(ev => document.addEventListener(ev, resetIdleTimer, {passive:true}));
+
+			if (lockBtn) {
+				lockBtn.hidden = !isLockEnabled();
+				lockBtn.addEventListener('click', showLockScreen);
+			}
+
+			document.getElementById('btn-lock-submit')?.addEventListener('click', () => {
+				const pin  = pinInput?.value;
+				const hash = localStorage.getItem(PIN_KEY);
+				if (!hash) { hideLockScreen(); return; }
+				if (hashPin(pin) === hash) { hideLockScreen(); resetIdleTimer(); if(pinErr) pinErr.textContent=''; }
+				else { if(pinErr) pinErr.textContent='Incorrect PIN. Try again.'; if(pinInput) pinInput.value=''; pinInput?.focus(); }
+			});
+			pinInput?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btn-lock-submit')?.click(); });
+
+			// Settings PIN setup
+			document.getElementById('btn-pin-set')?.addEventListener('click', () => {
+				const pin  = document.getElementById('pref-pin-input')?.value;
+				const stat = document.getElementById('pin-status');
+				if (!pin||pin.length<4) { if(stat) stat.textContent='PIN must be at least 4 digits.'; return; }
+				if (!/^\d+$/.test(pin))  { if(stat) stat.textContent='PIN must be digits only.'; return; }
+				localStorage.setItem(PIN_KEY, hashPin(pin));
+				if (document.getElementById('pref-pin-input')) document.getElementById('pref-pin-input').value='';
+				if (stat) stat.textContent='PIN set! App will lock after 5 min idle.';
+				if (lockBtn) lockBtn.hidden = false;
+				resetIdleTimer();
+			});
+			document.getElementById('btn-pin-clear')?.addEventListener('click', () => {
+				localStorage.removeItem(PIN_KEY);
+				const stat = document.getElementById('pin-status');
+				if (stat) stat.textContent='PIN cleared.';
+				if (lockBtn) lockBtn.hidden = true;
+				clearTimeout(idleTimer);
+			});
+
+			// init idle timer
+			if (isLockEnabled()) resetIdleTimer();
+		})();
+
+		// ── AI WRITING ASSISTANT ─────────────────────────────────────────
+		(function() {
+			const AI_KEY_STORE = 'ectl_ai_key_v1';
+			const AI_PROV_STORE= 'ectl_ai_provider_v1';
+			const overlay = document.getElementById('ai-modal-overlay');
+			const respBox = document.getElementById('ai-response-box');
+			const actRow  = document.getElementById('ai-action-row');
+			let lastResponse = '';
+
+			function openAIModal() {
+				if (overlay) overlay.hidden = false;
+				document.getElementById('ai-prompt-input')?.focus();
+			}
+			function closeAIModal() { if (overlay) overlay.hidden = false; overlay.hidden = true; }
+
+			document.getElementById('btn-ai-open')?.addEventListener('click', openAIModal);
+			document.getElementById('btn-ai-assist')?.addEventListener('click', openAIModal);
+			document.getElementById('btn-ai-modal-close')?.addEventListener('click', closeAIModal);
+			overlay?.addEventListener('click', e => { if(e.target===overlay) closeAIModal(); });
+
+			document.getElementById('btn-ai-save-key')?.addEventListener('click', () => {
+				const k = document.getElementById('ai-key-input')?.value.trim();
+				const p = document.getElementById('ai-provider-sel')?.value||'openai';
+				if (!k) return;
+				localStorage.setItem(AI_KEY_STORE, k);
+				localStorage.setItem(AI_PROV_STORE, p);
+				alert('API key saved!');
+			});
+
+			// presets
+			document.querySelectorAll('.ai-preset').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const pInp = document.getElementById('ai-prompt-input');
+					if (pInp) pInp.value = btn.dataset.p;
+					pInp?.focus();
+				});
+			});
+
+			document.getElementById('btn-ai-run')?.addEventListener('click', async () => {
+				const prompt = document.getElementById('ai-prompt-input')?.value.trim();
+				if (!prompt) { alert('Please enter an instruction.'); return; }
+				const apiKey = localStorage.getItem(AI_KEY_STORE);
+				if (!apiKey) { alert('No API key saved. Go to Settings → AI Writing Assistant to add your key.'); return; }
+				const provider = localStorage.getItem(AI_PROV_STORE)||'openai';
+				// get current note body
+				const ta = document.getElementById('note-editor') || document.querySelector('#panel-notes textarea');
+				const noteBody = ta?.value.trim()||'';
+				const runBtn = document.getElementById('btn-ai-run');
+				runBtn.disabled = true; runBtn.textContent = 'Running…';
+				if (respBox) { respBox.style.display='block'; respBox.textContent='Thinking…'; }
+				if (actRow)  actRow.style.display='none';
+				try {
+					let result='';
+					if (provider==='anthropic') {
+						const r = await fetch('https://api.anthropic.com/v1/messages', {
+							method:'POST',
+							headers:{ 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'content-type':'application/json' },
+							body:JSON.stringify({ model:'claude-3-5-sonnet-20241022', max_tokens:1024, messages:[{role:'user',content:`${prompt}\n\n---\nNote content:\n${noteBody.substring(0,6000)}`}] }),
+						});
+						const d=await r.json(); result=d.content?.[0]?.text||d.error?.message||JSON.stringify(d);
+					} else if (provider==='groq') {
+						const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+							method:'POST',
+							headers:{ 'Authorization':'Bearer '+apiKey, 'content-type':'application/json' },
+							body:JSON.stringify({ model:'llama-3.1-8b-instant', messages:[{role:'system',content:'You are a helpful writing assistant.'},{role:'user',content:`${prompt}\n\n---\nNote:\n${noteBody.substring(0,6000)}`}] }),
+						});
+						const d=await r.json(); result=d.choices?.[0]?.message?.content||d.error?.message||JSON.stringify(d);
+					} else {
+						// openai
+						const r = await fetch('https://api.openai.com/v1/chat/completions', {
+							method:'POST',
+							headers:{ 'Authorization':'Bearer '+apiKey, 'content-type':'application/json' },
+							body:JSON.stringify({ model:'gpt-4o-mini', messages:[{role:'system',content:'You are a helpful writing assistant.'},{role:'user',content:`${prompt}\n\n---\nNote:\n${noteBody.substring(0,6000)}`}] }),
+						});
+						const d=await r.json(); result=d.choices?.[0]?.message?.content||d.error?.message||JSON.stringify(d);
+					}
+					lastResponse = result;
+					if (respBox) { respBox.textContent=result; }
+					if (actRow)  actRow.style.display='flex';
+				} catch(e) {
+					if (respBox) { respBox.textContent='Error: '+e.message; }
+				} finally {
+					runBtn.disabled=false; runBtn.textContent='Run ✨';
+				}
+			});
+
+			document.getElementById('btn-ai-insert')?.addEventListener('click', () => {
+				const ta = document.getElementById('note-editor') || document.querySelector('#panel-notes textarea');
+				if (ta && lastResponse) { const e=ta.selectionEnd; ta.setRangeText('\n\n'+lastResponse, e, e, 'end'); ta.dispatchEvent(new Event('input')); }
+				closeAIModal();
+			});
+			document.getElementById('btn-ai-replace')?.addEventListener('click', () => {
+				const ta = document.getElementById('note-editor') || document.querySelector('#panel-notes textarea');
+				if (ta && lastResponse) { ta.value=lastResponse; ta.dispatchEvent(new Event('input')); }
+				closeAIModal();
+			});
+			document.getElementById('btn-ai-copy')?.addEventListener('click', () => { if(lastResponse) navigator.clipboard.writeText(lastResponse); });
+		})();
+
+		// ── INLINE TAG AUTOCOMPLETE ───────────────────────────────────────
+		(function() {
+			const ac = document.getElementById('tag-autocomplete');
+			if (!ac) return;
+			let acActive = false, acItems = [];
+
+			function getTagList() {
+				const notes = allNotes();
+				const tags = new Set();
+				for (const n of notes) for (const t of (n.tags||[])) tags.add(t);
+				return [...tags].sort();
+			}
+
+			document.addEventListener('input', e => {
+				const ta = e.target;
+				if (ta.tagName !== 'TEXTAREA') { ac.hidden=true; return; }
+				const val = ta.value, pos = ta.selectionStart;
+				const before = val.slice(0, pos);
+				const hashMatch = before.match(/#(\w*)$/);
+				if (!hashMatch) { ac.hidden=true; acActive=false; return; }
+				const partial = hashMatch[1].toLowerCase();
+				const tags = getTagList().filter(t => t.toLowerCase().startsWith(partial) && t.toLowerCase()!==partial);
+				if (!tags.length) { ac.hidden=true; acActive=false; return; }
+				acItems = tags.slice(0,10);
+				ac.innerHTML = acItems.map((t,i)=>`<div class="tag-ac-item" data-ti="${i}">#${escapedHtml(t)}</div>`).join('');
+				// position near cursor
+				const rect = ta.getBoundingClientRect();
+				ac.style.left = (rect.left+8)+'px'; ac.style.top=(rect.top+20)+'px';
+				ac.hidden = false; acActive = true;
+				ac.querySelectorAll('.tag-ac-item').forEach(item => {
+					item.addEventListener('click', () => insertTag(ta, pos, hashMatch, acItems[item.dataset.ti]));
+				});
+			});
+
+			function insertTag(ta, pos, m, tag) {
+				const start = pos - m[0].length;
+				ta.setRangeText('#'+tag, start, pos, 'end');
+				ta.dispatchEvent(new Event('input'));
+				ac.hidden=true; acActive=false;
+			}
+
+			document.addEventListener('keydown', e => {
+				if (!acActive||ac.hidden) return;
+				const items = ac.querySelectorAll('.tag-ac-item');
+				const cur   = ac.querySelector('.tag-ac-item.active');
+				const idx   = cur ? [...items].indexOf(cur) : -1;
+				if (e.key==='ArrowDown') { e.preventDefault(); const ni=Math.min(idx+1,items.length-1); items.forEach((x,i)=>x.classList.toggle('active',i===ni)); }
+				if (e.key==='ArrowUp')   { e.preventDefault(); const ni=Math.max(idx-1,0); items.forEach((x,i)=>x.classList.toggle('active',i===ni)); }
+				if (e.key==='Enter'||e.key==='Tab') {
+					if (cur) { e.preventDefault(); cur.click(); }
+					else { ac.hidden=true; acActive=false; }
+				}
+				if (e.key==='Escape') { ac.hidden=true; acActive=false; }
+			});
+		})();
+
+		// ── POMODORO TIMER ────────────────────────────────────────────────
+		(function() {
+			let pomoPhase='work', pomoSessions=0, pomoLeft=0, pomoTotal=0, pomoRunning=false, pomoInterval=null;
+			const CIRCUMFERENCE = 289; // 2*PI*46
+
+			function pomoWorkMin() { return parseInt(document.getElementById('pomo-work-min')?.value||'25')||25; }
+
+			function pomoReset() {
+				pomoPhase='work'; pomoLeft=pomoWorkMin()*60; pomoTotal=pomoWorkMin()*60; pomoRunning=false;
+				clearInterval(pomoInterval); pomoInterval=null;
+				pomoUpdateUI(); updatePomoRing(1);
+				document.getElementById('btn-pomo-start').disabled=false;
+				document.getElementById('btn-pomo-pause').disabled=true;
+			}
+
+			function pomoUpdateUI() {
+				const m=Math.floor(pomoLeft/60), s=pomoLeft%60;
+				const el=document.getElementById('pomo-time-label');
+				const ph=document.getElementById('pomo-phase-label');
+				if(el) el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+				if(ph) ph.textContent=pomoPhase==='work'?'Focus ●':'Break ○';
+			}
+
+			function updatePomoRing(frac) {
+				const path=document.getElementById('pomo-ring-path');
+				if(path) path.style.strokeDashoffset=String(CIRCUMFERENCE*(1-frac));
+			}
+
+			document.getElementById('btn-pomo-start')?.addEventListener('click', () => {
+				if (pomoRunning) return;
+				if (!pomoLeft) pomoReset();
+				pomoRunning=true;
+				document.getElementById('btn-pomo-start').disabled=true;
+				document.getElementById('btn-pomo-pause').disabled=false;
+				pomoInterval=setInterval(()=>{
+					if(!pomoRunning) return;
+					pomoLeft--;
+					updatePomoRing(Math.max(0,pomoLeft/pomoTotal));
+					pomoUpdateUI();
+					if(pomoLeft<=0){
+						clearInterval(pomoInterval); pomoRunning=false;
+						if(pomoPhase==='work'){
+							pomoSessions++;
+							const log=document.getElementById('pomo-session-log');
+							if(log) log.textContent=`Sessions: ${pomoSessions}`;
+							if(pomoSessions%4===0){ pomoPhase='break'; pomoLeft=15*60; pomoTotal=15*60; }
+							else { pomoPhase='break'; pomoLeft=5*60; pomoTotal=5*60; }
+							if(pomoSessions%5===0) launchConfetti();
+						} else {
+							pomoPhase='work'; pomoLeft=pomoWorkMin()*60; pomoTotal=pomoWorkMin()*60;
+						}
+						updatePomoRing(1);
+						pomoUpdateUI();
+						try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA').play(); } catch(e){}
+						document.getElementById('btn-pomo-start').disabled=false;
+						document.getElementById('btn-pomo-pause').disabled=true;
+					}
+				},1000);
+			});
+			document.getElementById('btn-pomo-pause')?.addEventListener('click', () => {
+				pomoRunning=!pomoRunning;
+				document.getElementById('btn-pomo-pause').textContent=pomoRunning?'⏸ Pause':'▶ Resume';
+			});
+			document.getElementById('btn-pomo-reset')?.addEventListener('click', pomoReset);
+			document.getElementById('pomo-work-min')?.addEventListener('change', pomoReset);
+			pomoReset();
+		})();
+
+		// ── VOICE NOTES ───────────────────────────────────────────────────
+		(function() {
+			const btn = document.getElementById('btn-voice-note');
+			if (!btn) return;
+			const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+			if (!SpeechRecognition) { btn.title='Speech recognition not supported in this browser'; btn.disabled=true; return; }
+			const rec = new SpeechRecognition();
+			rec.continuous=true; rec.interimResults=false;
+			let isRec=false;
+			rec.onresult=(e)=>{
+				let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript;
+				const ta=document.getElementById('note-editor')||document.querySelector('#panel-notes textarea');
+				if(ta){ const s=ta.selectionEnd; ta.setRangeText(t,s,s,'end'); ta.dispatchEvent(new Event('input')); ta.focus(); }
+			};
+			rec.onend=()=>{ isRec=false; btn.classList.remove('recording'); btn.textContent='🎤'; };
+			btn.addEventListener('click',()=>{
+				if(isRec){ rec.stop(); } else { rec.start(); isRec=true; btn.classList.add('recording'); btn.textContent='⏹'; }
+			});
+		})();
+
+		// ── MULTI-SELECT NOTES ────────────────────────────────────────────
+		(function() {
+			let msMode=false, msSelected=new Set();
+			const bar=document.getElementById('multisel-bar');
+			const cnt=document.getElementById('multisel-count');
+
+			function updateMsBar() { if(cnt) cnt.textContent=msSelected.size+' selected'; }
+
+			function activateMs(noteId) {
+				if(!msMode){ msMode=true; if(bar) bar.hidden=false; }
+				if(msSelected.has(noteId)) { msSelected.delete(noteId); document.querySelector(`[data-note-id="${noteId}"]`)?.classList.remove('selected'); }
+				else { msSelected.add(noteId); document.querySelector(`[data-note-id="${noteId}"]`)?.classList.add('selected'); }
+				if(msSelected.size===0){ deactivateMs(); return; }
+				updateMsBar();
+			}
+
+			function deactivateMs() { msMode=false; msSelected.clear(); if(bar) bar.hidden=true; document.querySelectorAll('[data-note-id].selected').forEach(el=>el.classList.remove('selected')); }
+
+			document.addEventListener('click', e => {
+				const docItem=e.target.closest?.('[data-note-id]');
+				if(!docItem) return;
+				if(e.shiftKey||e.ctrlKey||e.metaKey||msMode) { e.preventDefault(); activateMs(docItem.dataset.noteId); }
+			});
+
+			document.getElementById('btn-ms-cancel')?.addEventListener('click', deactivateMs);
+
+			document.getElementById('btn-ms-archive')?.addEventListener('click', ()=>{
+				if(!msSelected.size) return;
+				const notes=allNotes();
+				notes.forEach(n=>{ if(msSelected.has(n.id)) n.status='archived'; });
+				saveNotes(notes); deactivateMs();
+				document.querySelector('.doc-list')?.dispatchEvent(new Event('refresh'));
+			});
+			document.getElementById('btn-ms-trash')?.addEventListener('click', ()=>{
+				if(!msSelected.size||!confirm(`Move ${msSelected.size} notes to trash?`)) return;
+				const notes=allNotes();
+				notes.forEach(n=>{ if(msSelected.has(n.id)) n.status='trashed'; });
+				saveNotes(notes); deactivateMs();
+				document.querySelector('.doc-list')?.dispatchEvent(new Event('refresh'));
+			});
+			document.getElementById('btn-ms-export')?.addEventListener('click', ()=>{
+				if(!msSelected.size) return;
+				const notes=allNotes().filter(n=>msSelected.has(n.id));
+				const md=notes.map(n=>`# ${n.title||'Untitled'}\n\n${n.body||''}`).join('\n\n---\n\n');
+				const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([md],{type:'text/markdown'})),download:'ectl_export.md'}); a.click(); URL.revokeObjectURL(a.href);
+				deactivateMs();
+			});
+		})();
+
+		// ── CONFETTI ─────────────────────────────────────────────────────
+		function launchConfetti() {
+			const canvas=document.getElementById('confetti-canvas');
+			if(!canvas) return;
+			canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+			const ctx=canvas.getContext('2d');
+			const pieces=Array.from({length:120},()=>({
+				x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height,
+				r:Math.random()*6+3, d:Math.random()*120+60, color:`hsl(${Math.random()*360},90%,65%)`,
+				tilt:Math.random()*10-5, tiltA:Math.random()*0.1+0.05
+			}));
+			let frame=0; const maxF=180;
+			function draw(){
+				ctx.clearRect(0,0,canvas.width,canvas.height);
+				for(const p of pieces){
+					ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,2*Math.PI); ctx.fillStyle=p.color; ctx.fill();
+					p.y+=(Math.cos(frame/10+p.d)+1.2)*2; p.tilt+=p.tiltA; p.x+=Math.sin(frame/5+p.tilt)*1.5;
+					if(p.y>canvas.height) { p.y=-10; p.x=Math.random()*canvas.width; }
+				}
+				if(++frame<maxF) requestAnimationFrame(draw); else ctx.clearRect(0,0,canvas.width,canvas.height);
+			}
+			draw();
+		}
+
+		// ── SETTINGS: Sidebar preview, body font, accent colour ──────────
+		(function() {
+			// Sidebar preview
+			const spChips = document.getElementById('chips-sidebarpreview');
+			if (spChips) {
+				const saved = localStorage.getItem('ectl_sidebar_preview')||'off';
+				spChips.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.val===saved));
+				document.body.classList.toggle('sidebar-preview', saved==='on');
+				spChips.addEventListener('click', e=>{
+					const chip=e.target.closest('.chip'); if(!chip) return;
+					spChips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+					chip.classList.add('active');
+					const v=chip.dataset.val; localStorage.setItem('ectl_sidebar_preview',v);
+					document.body.classList.toggle('sidebar-preview',v==='on');
+				});
+			}
+
+			// Body font family
+			const bfChips = document.getElementById('chips-bodyfont');
+			if (bfChips) {
+				const fontMap={'sans':'"Inter",system-ui,sans-serif','serif':'"Georgia",serif','mono':'"JetBrains Mono","Fira Code",monospace'};
+				const saved2 = localStorage.getItem('ectl_body_font')||'sans';
+				bfChips.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.val===saved2));
+				document.body.style.fontFamily = fontMap[saved2]||'';
+				bfChips.addEventListener('click', e=>{
+					const chip=e.target.closest('.chip'); if(!chip) return;
+					bfChips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+					chip.classList.add('active');
+					const v=chip.dataset.val; localStorage.setItem('ectl_body_font',v);
+					document.body.style.fontFamily=fontMap[v]||'';
+				});
+			}
+
+			// Custom accent colour
+			const colorInp = document.getElementById('pref-accent-custom');
+			const hexInp   = document.getElementById('pref-accent-hex');
+			const savedAcc = localStorage.getItem('ectl_custom_accent');
+			if (savedAcc) { document.documentElement.style.setProperty('--accent',savedAcc); if(colorInp) colorInp.value=savedAcc; if(hexInp) hexInp.value=savedAcc; }
+			colorInp?.addEventListener('input', e=>{ if(hexInp) hexInp.value=e.target.value; });
+			hexInp?.addEventListener('input', e=>{ if(colorInp&&/^#[0-9a-f]{6}$/i.test(e.target.value)) colorInp.value=e.target.value; });
+			document.getElementById('btn-accent-apply')?.addEventListener('click', ()=>{
+				const val=hexInp?.value||colorInp?.value; if(!val) return;
+				document.documentElement.style.setProperty('--accent',val);
+				localStorage.setItem('ectl_custom_accent',val);
+			});
+			document.getElementById('btn-accent-reset')?.addEventListener('click', ()=>{
+				document.documentElement.style.removeProperty('--accent');
+				localStorage.removeItem('ectl_custom_accent');
+				if(colorInp) colorInp.value='#6366f1';
+				if(hexInp)   hexInp.value='#6366f1';
+			});
+
+			// Minimap chip
+			const mnChips = document.getElementById('chips-minimap');
+			if (mnChips) {
+				const saved3 = localStorage.getItem('ectl_minimap')||'off';
+				mnChips.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.val===saved3));
+				document.body.classList.toggle('minimap-on', saved3==='on');
+				mnChips.addEventListener('click', e=>{
+					const chip=e.target.closest('.chip'); if(!chip) return;
+					mnChips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+					chip.classList.add('active');
+					const v=chip.dataset.val; localStorage.setItem('ectl_minimap',v);
+					document.body.classList.toggle('minimap-on',v==='on');
+				});
+			}
+		})();
+
+		// ── TOOL CARDS — JS implementations ──────────────────────────────
+
+		// JSON → Table
+		document.getElementById('tool-jsontbl-in')?.addEventListener('input', function() {
+			const out = document.getElementById('tool-jsontbl-out');
+			if (!out) return;
+			try {
+				const data = JSON.parse(this.value);
+				const rows = Array.isArray(data) ? data : [data];
+				if (!rows.length || typeof rows[0]!=='object') { out.innerHTML='<span style="color:var(--error)">Expected array of objects</span>'; return; }
+				const keys = [...new Set(rows.flatMap(r=>Object.keys(r)))];
+				const html = `<table style="border-collapse:collapse;font-size:0.78rem;width:100%">
+					<thead><tr>${keys.map(k=>`<th style="border:1px solid var(--panel-border);padding:4px 8px;background:var(--panel-bg);white-space:nowrap">${escapedHtml(k)}</th>`).join('')}</tr></thead>
+					<tbody>${rows.slice(0,200).map(r=>`<tr>${keys.map(k=>`<td style="border:1px solid var(--panel-border);padding:3px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapedHtml(String(r[k]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
+				</table>`;
+				out.innerHTML = html;
+			} catch(e) { out.innerHTML = `<span style="color:var(--error,#dc2626);font-size:0.8rem">${escapedHtml(e.message)}</span>`; }
+		});
+
+		// HTML → Markdown
+		document.getElementById('tool-htm2md-in')?.addEventListener('input', function() {
+			const out = document.getElementById('tool-htm2md-out');
+			if (!out) return;
+			let md = this.value
+				.replace(/<br\s*\/?>/gi, '\n')
+				.replace(/<h([1-6])[^>]*>(.*?)<\/h\1>/gi, (_,l,t)=>'#'.repeat(+l)+' '+t.replace(/<[^>]+>/g,'')+'\n\n')
+				.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+				.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
+				.replace(/<em[^>]*>(.*?)<\/em>/gi, '_$1_')
+				.replace(/<i[^>]*>(.*?)<\/i>/gi, '_$1_')
+				.replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`')
+				.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+				.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+				.replace(/<[^>]+>/g,'')
+				.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
+				.replace(/\n{3,}/g,'\n\n').trim();
+			out.value = md;
+		});
+		document.getElementById('tool-htm2md-copy')?.addEventListener('click', ()=>{ const t=document.getElementById('tool-htm2md-out'); if(t){ navigator.clipboard.writeText(t.value); } });
+
+		// SQL Formatter
+		function formatSQL(sql) {
+			const kw = ['SELECT','FROM','WHERE','JOIN','INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL JOIN','ON','GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','INSERT INTO','VALUES','UPDATE','SET','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE','AND','OR','NOT','IN','IS NULL','IS NOT NULL','BETWEEN','LIKE','UNION','UNION ALL','DISTINCT','AS','WITH','CASE','WHEN','THEN','ELSE','END'];
+			let result = sql.replace(/\s+/g,' ').trim();
+			for (const k of kw.sort((a,b)=>b.length-a.length)) {
+				result = result.replace(new RegExp('\\b'+k.replace(/ /g,'\\s+')+'\\b','gi'), '\n'+k);
+			}
+			return result.replace(/^\n+/,'').split('\n').map((l,i)=>i===0?l:'  '+l.trimStart()).join('\n');
+		}
+		document.getElementById('tool-sql-fmt')?.addEventListener('click', ()=>{ const i=document.getElementById('tool-sql-in'),o=document.getElementById('tool-sql-out'); if(i&&o) o.value=formatSQL(i.value); });
+		document.getElementById('tool-sql-copy')?.addEventListener('click', ()=>{ const t=document.getElementById('tool-sql-out'); if(t) navigator.clipboard.writeText(t.value); });
+
+		// YAML Validator (simple)
+		document.getElementById('tool-yaml-in')?.addEventListener('input', function() {
+			const out = document.getElementById('tool-yaml-out');
+			if (!out) return;
+			try {
+				const lines = this.value.split('\n');
+				const errors = [];
+				lines.forEach((l,i) => {
+					if (/\t/.test(l)) errors.push(`Line ${i+1}: Tab characters are not allowed in YAML`);
+					if (l.match(/^\s*-\s*$/) && false) errors.push(`Line ${i+1}: Empty list item`);
+				});
+				if (!this.value.trim()) { out.innerHTML=''; return; }
+				out.innerHTML = errors.length ? errors.map(e=>`<span style="color:var(--error,#dc2626)">❌ ${escapedHtml(e)}</span>`).join('<br>') : '<span style="color:var(--success,#16a34a)">✅ Valid YAML (lightweight check)</span>';
+			} catch(e) { out.innerHTML = `<span style="color:var(--error,#dc2626)">❌ ${escapedHtml(e.message)}</span>`; }
+		});
+
+		// XML Formatter
+		function formatXML(xml, indent='  ') {
+			let depth=0, result='';
+			xml.replace(/</g,'\n<').split('\n').filter(n=>n.trim()).forEach(node=>{
+				if(node.match(/^<\/[^>]+>/)){ depth=Math.max(0,depth-1); result+=indent.repeat(depth)+node.trim()+'\n'; }
+				else if(node.match(/^<[^>]+\/>\s*$/)){ result+=indent.repeat(depth)+node.trim()+'\n'; }
+				else if(node.match(/^<[^/][^>]*>(?!.*<\/.*>)/)){ result+=indent.repeat(depth)+node.trim()+'\n'; depth++; }
+				else{ result+=indent.repeat(depth)+node.trim()+'\n'; }
+			});
+			return result.trim();
+		}
+		document.getElementById('tool-xml-fmt')?.addEventListener('click', ()=>{ const i=document.getElementById('tool-xml-in'),o=document.getElementById('tool-xml-out'); if(i&&o) { try{o.value=formatXML(i.value);}catch(e){o.value='Error: '+e.message;} } });
+		document.getElementById('tool-xml-min')?.addEventListener('click', ()=>{ const i=document.getElementById('tool-xml-in'),o=document.getElementById('tool-xml-out'); if(i&&o) o.value=i.value.replace(/>\s+</g,'><').replace(/\s+/g,' ').trim(); });
+		document.getElementById('tool-xml-copy')?.addEventListener('click', ()=>{ const t=document.getElementById('tool-xml-out'); if(t) navigator.clipboard.writeText(t.value); });
+
+		// CSS Formatter/Minifier
+		function formatCSS(css) {
+			return css.replace(/\s*{\s*/g,' {\n  ').replace(/;\s*/g,';\n  ').replace(/\s*}\s*/g,'\n}\n').replace(/\n {2}(\n})/g,'\n$1').trim();
+		}
+		function minifyCSS(css) {
+			return css.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s+/g,' ').replace(/\s*([{}:;,])\s*/g,'$1').replace(/;}/g,'}').trim();
+		}
+		document.getElementById('tool-css-fmt')?.addEventListener('click', ()=>{ const i=document.getElementById('tool-css-in'),o=document.getElementById('tool-css-out'); if(i&&o) o.value=formatCSS(i.value); });
+		document.getElementById('tool-css-min')?.addEventListener('click', ()=>{ const i=document.getElementById('tool-css-in'),o=document.getElementById('tool-css-out'); if(i&&o) o.value=minifyCSS(i.value); });
+		document.getElementById('tool-css-copy')?.addEventListener('click', ()=>{ const t=document.getElementById('tool-css-out'); if(t) navigator.clipboard.writeText(t.value); });
+
+		// Readability Scorer
+		document.getElementById('tool-read-in')?.addEventListener('input', function() {
+			const out = document.getElementById('tool-read-out');
+			if (!out) return;
+			const text = this.value.trim();
+			if (!text) { out.innerHTML=''; return; }
+			const words = text.split(/\s+/).filter(Boolean);
+			const sents = text.split(/[.!?]+/).filter(s=>s.trim().length>0);
+			const sylls = words.reduce((a,w)=>{
+				const m=w.toLowerCase().replace(/[^a-z]/g,'').match(/[aeiouy]+/g);
+				return a+Math.max(1, m?m.length:1);
+			},0);
+			const wc = words.length, sc = Math.max(1,sents.length), sylc = sylls;
+			const fk = 206.835 - 1.015*(wc/sc) - 84.6*(sylc/wc);
+			const fkg = 0.39*(wc/sc)+11.8*(sylc/wc)-15.59;
+			const avgW = wc/sc, avgS = sylc/wc;
+			const level = fk>=90?'Very Easy':fk>=80?'Easy':fk>=70?'Fairly Easy':fk>=60?'Standard':fk>=50?'Fairly Difficult':fk>=30?'Difficult':'Very Difficult';
+			out.innerHTML = `<table style="font-size:0.8rem;border-collapse:collapse;width:100%">
+				<tr><td style="padding:3px 8px;color:var(--muted)">Words</td><td style="padding:3px 8px;font-weight:600">${wc}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Sentences</td><td style="padding:3px 8px;font-weight:600">${sc}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Syllables</td><td style="padding:3px 8px;font-weight:600">${sylc}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Avg words/sentence</td><td style="padding:3px 8px;font-weight:600">${avgW.toFixed(1)}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Flesch Reading Ease</td><td style="padding:3px 8px;font-weight:600;color:var(--accent)">${fk.toFixed(1)} — ${level}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Flesch-Kincaid Grade</td><td style="padding:3px 8px;font-weight:600">${fkg.toFixed(1)}</td></tr>
+				<tr><td style="padding:3px 8px;color:var(--muted)">Read time</td><td style="padding:3px 8px;font-weight:600">~${Math.max(1,Math.round(wc/200))} min</td></tr>
+			</table>`;
+		});
+
+		// Date Calculator
+		document.getElementById('tool-date-diff')?.addEventListener('click', ()=>{
+			const a=new Date(document.getElementById('tool-date-a')?.value), b=new Date(document.getElementById('tool-date-b')?.value);
+			const out=document.getElementById('tool-date-diff-out');
+			if(!out) return;
+			if(isNaN(a)||isNaN(b)){out.textContent='Please select both dates.';return;}
+			const diff=Math.round((b-a)/864e5);
+			out.textContent=`${Math.abs(diff)} day${diff!==1?'s':''} ${diff>=0?'':'(reversed)'} · ${Math.abs(Math.round(diff/7))} week${Math.abs(Math.round(diff/7))!==1?'s':''} · ${Math.abs(diff/365).toFixed(2)} years`;
+		});
+		document.getElementById('tool-date-calc')?.addEventListener('click', ()=>{
+			const base=new Date(document.getElementById('tool-date-base')?.value);
+			const add=parseInt(document.getElementById('tool-date-add')?.value||'0');
+			const out=document.getElementById('tool-date-calc-out');
+			if(!out) return;
+			if(isNaN(base)){out.textContent='Please select a base date.';return;}
+			const result=new Date(base); result.setDate(result.getDate()+add);
+			out.textContent=result.toDateString()+' ('+result.toLocaleDateString('en-US',{weekday:'long'})+')';
+		});
+
+		// Color Converter
+		document.getElementById('tool-color-in')?.addEventListener('input', function() {
+			const out=document.getElementById('tool-color-out'), sw=document.getElementById('tool-color-swatch');
+			if(!out) return;
+			const val=this.value.trim();
+			if(!val){out.innerHTML='';if(sw)sw.style.background='';return;}
+			try {
+				// parse hex
+				let r,g,b,a=1;
+				const hexM=val.match(/^#?([0-9a-f]{3,8})$/i);
+				const rgbM=val.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+				const hslM=val.match(/hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%(?:\s*,\s*([\d.]+))?\s*\)/i);
+				if(hexM){
+					let h=hexM[1];
+					if(h.length===3) h=h.split('').map(x=>x+x).join('');
+					r=parseInt(h.slice(0,2),16); g=parseInt(h.slice(2,4),16); b=parseInt(h.slice(4,6),16);
+				} else if(rgbM){
+					r=+rgbM[1];g=+rgbM[2];b=+rgbM[3];a=rgbM[4]!=null?+rgbM[4]:1;
+				} else if(hslM){
+					const H=+hslM[1],S=+hslM[2]/100,L=+hslM[3]/100;
+					const c2=(1-Math.abs(2*L-1))*S, x2=c2*(1-Math.abs((H/60)%2-1)), m2=L-c2/2;
+					const [rr,gg,bb]=H<60?[c2,x2,0]:H<120?[x2,c2,0]:H<180?[0,c2,x2]:H<240?[0,x2,c2]:H<300?[x2,0,c2]:[c2,0,x2];
+					r=Math.round((rr+m2)*255);g=Math.round((gg+m2)*255);b=Math.round((bb+m2)*255);
+				} else { out.innerHTML='<span style="color:var(--error)">Unrecognised format</span>'; return; }
+				const toHex=n=>n.toString(16).padStart(2,'0');
+				const hex='#'+toHex(r)+toHex(g)+toHex(b);
+				// calc HSL
+				const rn=r/255,gn=g/255,bn=b/255,mx=Math.max(rn,gn,bn),mn=Math.min(rn,gn,bn),delta=mx-mn;
+				const L2=(mx+mn)/2, S2=delta===0?0:delta/(1-Math.abs(2*L2-1));
+				let H2=0; if(delta>0){ if(mx===rn)H2=60*((gn-bn)/delta%6); else if(mx===gn)H2=60*((bn-rn)/delta+2); else H2=60*((rn-gn)/delta+4); } if(H2<0)H2+=360;
+				if(sw) sw.style.background=hex;
+				out.innerHTML=`<div style="cursor:pointer" onclick="navigator.clipboard.writeText('${hex}')">HEX: <b>${hex}</b> 📋</div>
+					<div style="cursor:pointer" onclick="navigator.clipboard.writeText('rgb(${r},${g},${b})')">RGB: <b>rgb(${r}, ${g}, ${b})</b> 📋</div>
+					<div style="cursor:pointer" onclick="navigator.clipboard.writeText('hsl(${Math.round(H2)},${Math.round(S2*100)}%,${Math.round(L2*100)}%)')">HSL: <b>hsl(${Math.round(H2)}, ${Math.round(S2*100)}%, ${Math.round(L2*100)}%)</b> 📋</div>`;
+			} catch(e) { out.innerHTML='<span style="color:var(--error)">Error parsing colour</span>'; }
+		});
+
+		// Aspect Ratio
+		document.getElementById('tool-ar-calc')?.addEventListener('click', ()=>{
+			const w=parseInt(document.getElementById('tool-ar-w')?.value||'0');
+			const h=parseInt(document.getElementById('tool-ar-h')?.value||'0');
+			const out=document.getElementById('tool-ar-out');
+			if(!out) return;
+			if(!w||!h){out.textContent='Enter width and height.';return;}
+			function gcd(a,b){return b===0?a:gcd(b,a%b);}
+			const d=gcd(w,h),rw=w/d,rh=h/d;
+			const common={[16/9]:'16:9 (Widescreen)',[4/3]:'4:3 (TV)',[21/9]:'21:9 (Ultrawide)',[1]:'1:1 (Square)',[3/2]:'3:2',[2/3]:'2:3'};
+			const ratio=w/h, match=common[Math.round(ratio*100)/100]||'';
+			out.innerHTML=`Ratio: <b>${rw}:${rh}</b>${match?' ('+match+')':''}<br>Decimal: ${ratio.toFixed(6)}<br>
+				<span style="font-size:0.75rem;color:var(--muted)">To keep ${rw}:${rh} — for width <em>w</em>, height = w×${rh/rw}</span>`;
+		});
+
+		// Bandwidth Calculator
+		document.getElementById('tool-bw-calc')?.addEventListener('click', ()=>{
+			const size=parseFloat(document.getElementById('tool-bw-size')?.value||'0');
+			const sUnit=parseInt(document.getElementById('tool-bw-size-unit')?.value||'1048576');
+			const speed=parseFloat(document.getElementById('tool-bw-speed')?.value||'0');
+			const spUnit=parseInt(document.getElementById('tool-bw-speed-unit')?.value||'125000');
+			const out=document.getElementById('tool-bw-out');
+			if(!out) return;
+			if(!size||!speed){out.textContent='Enter both file size and speed.';return;}
+			const bytes=size*sUnit, bps=speed*spUnit;
+			const secs=bytes/bps;
+			const m=Math.floor(secs/60),s=Math.round(secs%60),h=Math.floor(m/60);
+			out.textContent=`Download time: ${h>0?h+'h ':''} ${m%60>0?m%60+'m ':''}${s}s`;
+		});
+
+		// IBAN / Luhn Validator
+		document.getElementById('tool-iban-in')?.addEventListener('input', function() {
+			const val=this.value.replace(/\s/g,'');
+			const out=document.getElementById('tool-iban-out');
+			if(!out||!val) return;
+			// try IBAN first
+			if(/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/i.test(val)){
+				const moved=val.slice(4)+val.slice(0,4);
+				const num=moved.split('').map(c=>/[A-Z]/i.test(c)?c.toUpperCase().charCodeAt(0)-55:c).join('');
+				let rem=0; for(const d of num) rem=(rem*10+parseInt(d,10))%97;
+				out.innerHTML=rem===1?'<span style="color:var(--success,#16a34a)">✅ Valid IBAN</span>':'<span style="color:var(--error,#dc2626)">❌ Invalid IBAN (checksum failed)</span>';
+				return;
+			}
+			// Luhn check
+			const digits=val.replace(/\D/g,'');
+			if(!digits){out.innerHTML='<span style="color:var(--muted)">Enter IBAN or card number</span>';return;}
+			let sum=0; let alt=false;
+			for(let i=digits.length-1;i>=0;i--){ let n=+digits[i]; if(alt){ n*=2; if(n>9)n-=9; } sum+=n; alt=!alt; }
+			out.innerHTML=sum%10===0?'<span style="color:var(--success,#16a34a)">✅ Valid (Luhn check passed)</span>':'<span style="color:var(--error,#dc2626)">❌ Invalid (Luhn check failed)</span>';
+		});
+
+		// Roman Numerals
+		document.getElementById('tool-roman-convert')?.addEventListener('click', ()=>{
+			const inp=document.getElementById('tool-roman-in')?.value.trim();
+			const out=document.getElementById('tool-roman-out');
+			if(!out||!inp) return;
+			const rMap=[['M',1000],['CM',900],['D',500],['CD',400],['C',100],['XC',90],['L',50],['XL',40],['X',10],['IX',9],['V',5],['IV',4],['I',1]];
+			if(/^\d+$/.test(inp)){
+				let n=parseInt(inp),res='';
+				for(const[sym,val] of rMap){while(n>=val){res+=sym;n-=val;}}
+				out.textContent=res||'0';
+			} else {
+				const r=inp.toUpperCase(); let n=0, i=0;
+				for(const[sym,val] of rMap){while(r.startsWith(sym,i)){n+=val;i+=sym.length;}}
+				out.textContent=i===r.length?String(n):'Invalid Roman numeral';
+			}
+		});
+		document.getElementById('tool-roman-in')?.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('tool-roman-convert')?.click(); });
+
+		// Text to Speech
+		(function(){
+			const voiceSel = document.getElementById('tool-tts-voice');
+			const rateSlider = document.getElementById('tool-tts-rate');
+			const rateVal = document.getElementById('tool-tts-rate-val');
+			let voices=[];
+			function loadVoices(){
+				voices=speechSynthesis.getVoices(); if(!voiceSel) return;
+				voiceSel.innerHTML=voices.map((v,i)=>`<option value="${i}">${v.name} (${v.lang})</option>`).join('');
+			}
+			speechSynthesis.onvoiceschanged=loadVoices; loadVoices();
+			rateSlider?.addEventListener('input', ()=>{ if(rateVal) rateVal.textContent=rateSlider.value+'×'; });
+			document.getElementById('tool-tts-play')?.addEventListener('click', ()=>{
+				speechSynthesis.cancel();
+				const text=document.getElementById('tool-tts-text')?.value.trim();
+				if(!text) return;
+				const utt=new SpeechSynthesisUtterance(text);
+				if(voices[voiceSel?.value]) utt.voice=voices[voiceSel.value];
+				utt.rate=parseFloat(rateSlider?.value||'1');
+				speechSynthesis.speak(utt);
+			});
+			document.getElementById('tool-tts-stop')?.addEventListener('click', ()=>speechSynthesis.cancel());
+		})();
+
+		// IP / DNS Lookup
+		document.getElementById('tool-dns-lookup')?.addEventListener('click', async ()=>{
+			const inp=document.getElementById('tool-dns-in')?.value.trim();
+			const out=document.getElementById('tool-dns-out');
+			if(!out||!inp){if(out) out.textContent='Enter a hostname or IP.'; return;}
+			out.textContent='Looking up…';
+			try {
+				// Use Cloudflare DNS over HTTPS (DoH) — no server-side, purely DNS query
+				const encoded=encodeURIComponent(inp);
+				const [aRes, aaaaRes] = await Promise.all([
+					fetch(`https://cloudflare-dns.com/dns-query?name=${encoded}&type=A`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()),
+					fetch(`https://cloudflare-dns.com/dns-query?name=${encoded}&type=AAAA`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null),
+				]);
+				const records = [];
+				(aRes.Answer||[]).forEach(r=>records.push({type:'A (IPv4)',value:r.data}));
+				(aaaaRes?.Answer||[]).forEach(r=>records.push({type:'AAAA (IPv6)',value:r.data}));
+				if(!records.length) { out.textContent='No A or AAAA records found.'; return; }
+				out.innerHTML=records.map(r=>`<span style="color:var(--accent)">${r.type}</span>  ${escapedHtml(r.value)}`).join('\n');
+			} catch(e) { out.textContent='Lookup failed: '+e.message; }
+		});
+		document.getElementById('tool-dns-in')?.addEventListener('keydown', e=>{if(e.key==='Enter') document.getElementById('tool-dns-lookup')?.click();});
+
+		// ASCII Art
+		(function(){
+			// minimal block font map
+			const BLOCK = {
+				'A':'##\n# #\n###\n# #\n# #','B':'## \n# #\n## \n# #\n## ','C':'###\n#  \n#  \n#  \n###',
+				'D':'## \n# #\n# #\n# #\n## ','E':'###\n#  \n## \n#  \n###','F':'###\n#  \n## \n#  \n#  ',
+				'G':'###\n#  \n# #\n# #\n###','H':'# #\n# #\n###\n# #\n# #','I':'###\n # \n # \n # \n###',
+				'J':'  #\n  #\n  #\n# #\n###','K':'# #\n## \n#  \n## \n# #','L':'#  \n#  \n#  \n#  \n###',
+				'M':'# #\n###\n# #\n# #\n# #','N':'# #\n##\n# #\n# #\n# #','O':'###\n# #\n# #\n# #\n###',
+				'P':'###\n# #\n###\n#  \n#  ','Q':'###\n# #\n# #\n## \n###','R':'## \n# #\n## \n# #\n# #',
+				'S':'###\n#  \n###\n  #\n###','T':'###\n # \n # \n # \n # ','U':'# #\n# #\n# #\n# #\n###',
+				'V':'# #\n# #\n# #\n# #\n # ','W':'# #\n# #\n###\n###\n# #','X':'# #\n ##\n # \n ##\n# #',
+				'Y':'# #\n # \n # \n # \n # ','Z':'###\n  #\n # \n#  \n###',
+				'0':'###\n# #\n# #\n# #\n###','1':' # \n ## \n # \n # \n###',
+				'2':'###\n  #\n###\n#  \n###','3':'###\n  #\n###\n  #\n###',
+				'4':'# #\n# #\n###\n  #\n  #','5':'###\n#  \n###\n  #\n###',
+				'6':'###\n#  \n###\n# #\n###','7':'###\n  #\n  #\n  #\n  #',
+				'8':'###\n# #\n###\n# #\n###','9':'###\n# #\n###\n  #\n###',
+				' ':'   \n   \n   \n   \n   ',
+			};
+			document.getElementById('tool-ascii-gen')?.addEventListener('click', ()=>{
+				const inp=document.getElementById('tool-ascii-in')?.value.toUpperCase().slice(0,15);
+				const out=document.getElementById('tool-ascii-out');
+				const style=document.getElementById('tool-ascii-style')?.value||'block';
+				if(!out||!inp) return;
+				if(style==='minimal'){out.textContent=inp.split('').map(c=>`[${c}]`).join(''); return;}
+				const chars=inp.split('').map(c=>BLOCK[c]||BLOCK[' ']);
+				const rows=chars.map(c=>c.split('\n'));
+				let result='';
+				for(let r=0;r<5;r++) result+=rows.map(ch=>(ch[r]||'   ').replace(/#/g,style==='shadow'?'█':'#')).join(' ')+'\n';
+				out.textContent=result;
+			});
+			document.getElementById('tool-ascii-copy')?.addEventListener('click', ()=>{
+				const out=document.getElementById('tool-ascii-out');
+				if(out) navigator.clipboard.writeText(out.textContent);
+			});
+		})();
+
+		// Sidebar preview: add preview spans to doc-items when mode is on
+		(function(){
+			const origNowPlaying = typeof renderDocList === 'function' ? renderDocList : null;
+			// We'll rely on mutation observer to add previews
+			const observer = new MutationObserver(() => {
+				if (!document.body.classList.contains('sidebar-preview')) return;
+				document.querySelectorAll('[data-note-id]').forEach(item => {
+					if (item.querySelector('.doc-item-preview')) return;
+					const noteId = item.dataset.noteId;
+					const note = allNotes().find(n=>n.id===noteId);
+					if (!note) return;
+					const preview = document.createElement('div');
+					preview.className = 'doc-item-preview';
+					preview.textContent = (note.body||'').split('\n').find(l=>l.trim())||'';
+					item.appendChild(preview);
+				});
+			});
+			const docList = document.querySelector('.doc-list, #doc-list, [id*="doc-list"]');
+			if (docList) observer.observe(docList, { childList:true, subtree:true });
+		})();
+
 		</script>
 
 	<!-- ══ PRESENTATION OVERLAY ══════════════════════════════════════ -->
@@ -13189,5 +16122,20 @@ body {
 	<!-- ══ HIDDEN .MD IMPORT INPUT ────────────────────────────────── -->
 	<input type="file" id="md-import-input" accept=".md,.txt" multiple hidden />
 
+
+<script>
+	if ('serviceWorker' in navigator) {
+		window.addEventListener('load', () => {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		});
+	}
+	const _pwaParams = new URLSearchParams(window.location.search);
+	if (_pwaParams.get('action')=='capture') {
+		window.addEventListener('DOMContentLoaded', () => setTimeout(() => document.getElementById('btn-qc-open')?.click(), 400));
+	}
+	if (_pwaParams.get('action')=='new') {
+		window.addEventListener('DOMContentLoaded', () => setTimeout(() => document.getElementById('btn-new-note')?.click(), 400));
+	}
+</script>
 </body>
 </html>
