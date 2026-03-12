@@ -3431,6 +3431,8 @@
 						<button class="tab" id="tab-reports" type="button" role="tab" aria-controls="panel-reports" aria-selected="false">Reports</button>
 							<button class="tab" id="tab-snippets" type="button" role="tab" aria-controls="panel-snippets" aria-selected="false">Snippets</button>
 							<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
+							<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
+							<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
 							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>👤 Accounts</button>
 							<span class="tab-indicator" id="app-tab-indicator"></span>
 						</div>
@@ -3516,6 +3518,16 @@
 						<p class="settings-section-title" style="margin-top:18px;margin-bottom:0">Recent Files</p>
 						<div class="recent-files-list" id="recent-files-list"></div>
 					</div>
+
+					<!-- Monthly calendar -->
+					<div id="home-calendar" hidden>
+						<p class="settings-section-title" style="margin-top:18px;margin-bottom:6px;display:flex;align-items:center;gap:8px">📅 <span id="cal-month-label"></span>
+							<button class="btn btn-small" id="btn-cal-prev" type="button" style="padding:0 6px" aria-label="Previous month">‹</button>
+							<button class="btn btn-small" id="btn-cal-next" type="button" style="padding:0 6px" aria-label="Next month">›</button>
+							<button class="btn btn-small" id="btn-cal-today" type="button" style="padding:0 6px">Today</button>
+						</p>
+						<div id="cal-grid" class="cal-grid"></div>
+					</div>
 				</section>
 
 				<section class="panel" id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
@@ -3533,6 +3545,11 @@
 									<button class="template-option" data-template="meeting" type="button" role="menuitem">💼 Meeting notes<span class="template-option-sub">Agenda · notes · actions</span></button>
 									<button class="template-option" data-template="todo" type="button" role="menuitem">✅ To-do list<span class="template-option-sub">Checklist with sections</span></button>
 									<button class="template-option" data-template="journal" type="button" role="menuitem">📖 Journal entry<span class="template-option-sub">Date · mood · reflection</span></button>
+								<button class="template-option" data-template="bugreport" type="button" role="menuitem">🐛 Bug report<span class="template-option-sub">Steps · expected · actual</span></button>
+								<button class="template-option" data-template="retro" type="button" role="menuitem">🔄 Retrospective<span class="template-option-sub">Went well · improve · actions</span></button>
+								<button class="template-option" data-template="standup" type="button" role="menuitem">🗣 Standup<span class="template-option-sub">Yesterday · today · blockers</span></button>
+								<button class="template-option" data-template="brainstorm" type="button" role="menuitem">💡 Brainstorm<span class="template-option-sub">Topic · ideas · clusters</span></button>
+								<button class="template-option" data-template="weeklyreview" type="button" role="menuitem">📊 Weekly review<span class="template-option-sub">Wins · learnings · next week</span></button>
 								</div>
 							</div>
 							<button class="btn btn-small" id="btn-dl-all" type="button" title="Download all as zip">⤓ All</button>
@@ -3563,6 +3580,7 @@
 								<button class="color-filter-btn" data-color="blue"   type="button" title="Blue"   aria-label="Blue"></button>
 								<button class="color-filter-btn" data-color="purple" type="button" title="Purple" aria-label="Purple"></button>
 							</div>
+							<div class="tag-filter-row" id="note-tag-filter-row" hidden></div>
 							<div class="notes-sidebar" id="doc-list" role="list" aria-label="Documents"></div>
 						</div>
 
@@ -3607,7 +3625,9 @@
 								</div>
 								<button class="btn btn-small" id="btn-delete-doc" type="button" title="Delete document">🗑</button>
 							</div>
-							<!-- Find & Replace bar -->
+							<!-- Note tabs bar (multiple open notes) -->
+						<div id="note-tabs-bar" class="note-tabs-bar" hidden></div>
+						<!-- Find & Replace bar -->
 							<div id="find-replace-bar" hidden role="search" aria-label="Find and replace">
 								<input class="input" id="find-input" type="search" placeholder="Find…" autocomplete="off" />
 								<span class="fnr-count" id="fnr-count"></span>
@@ -3620,7 +3640,7 @@
 								<span class="fnr-divider"></span>
 								<button class="btn btn-small" id="fnr-close" type="button" aria-label="Close">✕</button>
 							</div>
-							<textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea>
+							<div id="note-line-wrap" class="note-line-wrap"><div id="note-gutter" class="note-gutter"></div><textarea id="notes" name="notes" placeholder="Sign in to write notes" disabled></textarea></div>
 							<!-- Markdown preview pane -->
 							<div class="md-preview-pane" id="md-preview-pane" hidden aria-label="Markdown preview"></div>
 							<span class="notes-char-warning" id="notes-char-warning"></span>
@@ -3899,6 +3919,14 @@
 							<button class="chip" data-val="on"  type="button">On</button>
 						</div>
 						<p class="hint" style="margin-top:6px;font-size:0.78rem">Browser spell-check underlines in the notes editor.</p>
+					</div>
+
+					<div class="settings-section">
+						<p class="settings-section-title">Line numbers in editor</p>
+						<div class="chip-row" id="chips-linenums" role="radiogroup" aria-label="Line numbers">
+							<button class="chip" data-val="off" type="button">Off</button>
+							<button class="chip" data-val="on"  type="button">On</button>
+						</div>
 					</div>
 
 					<div class="settings-section">
@@ -4357,6 +4385,153 @@
 						</div>
 					</div>
 
+					<!-- Hash Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔏 Hash Generator</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-hash-input" rows="3" placeholder="Text to hash…" style="resize:vertical" spellcheck="false"></textarea>
+							<div class="tool-row" style="gap:8px;margin-top:6px">
+								<select class="tool-select" id="tool-hash-algo">
+									<option value="SHA-256">SHA-256</option>
+									<option value="SHA-512">SHA-512</option>
+									<option value="SHA-384">SHA-384</option>
+									<option value="SHA-1">SHA-1</option>
+								</select>
+								<button class="btn btn-small btn-accent" id="tool-hash-gen" type="button">Hash</button>
+								<button class="btn btn-small" id="tool-hash-copy" type="button" style="display:none">Copy</button>
+							</div>
+							<div id="tool-hash-out" style="margin-top:8px;font-family:monospace;font-size:0.75rem;word-break:break-all;min-height:18px;color:var(--muted)"></div>
+						</div>
+					</div>
+
+					<!-- Unit Converter -->
+					<div class="tool-card">
+						<div class="tool-card-header">📐 Unit Converter</div>
+						<div class="tool-card-body">
+							<select class="tool-select" id="tool-unit-cat" style="width:100%;margin-bottom:6px">
+								<option value="temp">Temperature</option>
+								<option value="length">Length</option>
+								<option value="weight">Weight / Mass</option>
+								<option value="volume">Volume</option>
+								<option value="speed">Speed</option>
+								<option value="area">Area</option>
+							</select>
+							<div class="tool-row" style="gap:8px">
+								<input class="input" id="tool-unit-val" type="number" placeholder="Value" style="flex:1;min-width:70px" />
+								<select class="tool-select" id="tool-unit-from" style="flex:1"></select>
+								<span style="align-self:center;opacity:0.45;font-size:1.1rem">→</span>
+								<select class="tool-select" id="tool-unit-to" style="flex:1"></select>
+							</div>
+							<div id="tool-unit-out" style="margin-top:8px;font-size:0.9rem;font-weight:600;min-height:20px"></div>
+						</div>
+					</div>
+
+					<!-- Line Tools -->
+					<div class="tool-card">
+						<div class="tool-card-header">↕ Line Tools</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="tool-line-input" rows="4" placeholder="Paste lines here…" style="resize:vertical" spellcheck="false"></textarea>
+							<div class="tool-row" style="gap:5px;flex-wrap:wrap;margin-top:6px">
+								<button class="btn btn-small" data-line="sort-az" type="button">A–Z</button>
+								<button class="btn btn-small" data-line="sort-za" type="button">Z–A</button>
+								<button class="btn btn-small" data-line="dedupe" type="button">Dedupe</button>
+								<button class="btn btn-small" data-line="reverse" type="button">Reverse</button>
+								<button class="btn btn-small" data-line="trim" type="button">Trim</button>
+								<button class="btn btn-small" data-line="shuffle" type="button">Shuffle</button>
+								<button class="btn btn-small" data-line="upper" type="button">UPPER</button>
+								<button class="btn btn-small" data-line="lower" type="button">lower</button>
+								<button class="btn btn-small btn-accent" data-line="copy" type="button">Copy</button>
+							</div>
+							<div id="tool-line-count" style="margin-top:4px;font-size:0.75rem;color:var(--muted)"></div>
+						</div>
+					</div>
+
+					<!-- CSS Gradient Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🌈 CSS Gradient</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:8px;flex-wrap:wrap">
+								<select class="tool-select" id="tool-grad-type">
+									<option value="linear">Linear</option>
+									<option value="radial">Radial</option>
+									<option value="conic">Conic</option>
+								</select>
+								<input type="range" id="tool-grad-angle" min="0" max="360" value="135" style="flex:1" />
+								<span id="tool-grad-angle-val" style="min-width:34px;font-size:0.8rem;opacity:0.65">135°</span>
+							</div>
+							<div class="tool-row" style="gap:10px;margin-top:6px;align-items:center">
+								<label style="font-size:0.78rem;opacity:0.6">C1</label>
+								<input type="color" id="tool-grad-c1" value="#6366f1" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
+								<label style="font-size:0.78rem;opacity:0.6">C2</label>
+								<input type="color" id="tool-grad-c2" value="#a855f7" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
+								<label style="font-size:0.78rem;opacity:0.6">C3</label>
+								<input type="color" id="tool-grad-c3" value="#ec4899" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
+							</div>
+							<div id="tool-grad-preview" style="margin-top:8px;height:44px;border-radius:8px"></div>
+							<div class="tool-row" style="margin-top:8px;gap:6px">
+								<input class="input" id="tool-grad-out" type="text" readonly style="flex:1;font-size:0.75rem;font-family:monospace" />
+								<button class="btn btn-small btn-accent" id="tool-grad-copy" type="button">Copy</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Slug Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🔗 Slug Generator</div>
+						<div class="tool-card-body">
+							<input class="input" id="tool-slug-input" type="text" placeholder="My Blog Post Title!" />
+							<div id="tool-slug-out" style="margin-top:8px;display:flex;flex-direction:column;gap:5px"></div>
+						</div>
+					</div>
+
+					<!-- Aspect Ratio Calculator -->
+					<div class="tool-card">
+						<div class="tool-card-header">⬜ Aspect Ratio</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:8px;flex-wrap:wrap">
+								<input class="input" id="tool-ar-w" type="number" placeholder="Width" style="flex:1;min-width:80px" />
+								<span style="align-self:center;opacity:0.45">×</span>
+								<input class="input" id="tool-ar-h" type="number" placeholder="Height" style="flex:1;min-width:80px" />
+								<button class="btn btn-small btn-accent" id="tool-ar-calc" type="button">Calculate</button>
+							</div>
+							<div id="tool-ar-out" style="margin-top:10px;font-size:0.82rem;line-height:1.8"></div>
+						</div>
+					</div>
+
+					<!-- Stopwatch -->
+					<div class="tool-card">
+						<div class="tool-card-header">⏱ Stopwatch</div>
+						<div class="tool-card-body" style="text-align:center">
+							<div id="tool-sw-display" style="font-size:2rem;font-family:ui-monospace,monospace;letter-spacing:0.06em;margin-bottom:10px">00:00.000</div>
+							<div class="tool-row" style="gap:8px;justify-content:center">
+								<button class="btn btn-accent" id="tool-sw-start" type="button">▶ Start</button>
+								<button class="btn btn-small" id="tool-sw-lap" type="button" disabled>⬤ Lap</button>
+								<button class="btn btn-small" id="tool-sw-reset" type="button">↺ Reset</button>
+							</div>
+							<div id="tool-sw-laps" style="margin-top:8px;max-height:100px;overflow-y:auto;font-size:0.78rem;font-family:monospace;text-align:left"></div>
+						</div>
+					</div>
+
+					<!-- Color Palette Generator -->
+					<div class="tool-card">
+						<div class="tool-card-header">🎨 Color Palette</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:8px">
+								<input type="color" id="tool-pal-base" value="#6366f1" style="width:40px;height:32px;cursor:pointer;border:none;background:none;flex-shrink:0" />
+								<select class="tool-select" id="tool-pal-mode" style="flex:1">
+									<option value="complementary">Complementary</option>
+									<option value="triadic">Triadic</option>
+									<option value="analogous">Analogous</option>
+									<option value="split">Split-complementary</option>
+									<option value="tetradic">Tetradic</option>
+									<option value="mono">Monochromatic</option>
+								</select>
+								<button class="btn btn-small btn-accent" id="tool-pal-gen" type="button">Go</button>
+							</div>
+							<div id="tool-pal-out" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"></div>
+						</div>
+					</div>
+
 				</section>
 
 				<!-- ── Work panel ── -->
@@ -4665,6 +4840,53 @@
 					</div>
 				</section>
 
+				<!-- Bookmarks panel -->
+				<section class="panel" id="panel-bookmarks" role="tabpanel" aria-labelledby="tab-bookmarks" hidden>
+					<div class="snip-toolbar">
+						<input class="input snip-search" id="bm-search" type="search" placeholder="Search bookmarks…" autocomplete="off" />
+						<button class="btn btn-accent btn-small" id="btn-bm-new" type="button">＋ Add</button>
+					</div>
+					<div id="bm-add-form" hidden style="padding:10px 0 8px;display:flex;flex-direction:column;gap:7px">
+						<input class="input" id="bm-form-url" type="url" placeholder="https://…" autocomplete="off" />
+						<input class="input" id="bm-form-title" type="text" placeholder="Title (optional)" autocomplete="off" />
+						<input class="input" id="bm-form-desc" type="text" placeholder="Description (optional)" autocomplete="off" />
+						<div style="display:flex;gap:6px">
+							<button class="btn btn-small btn-accent" id="btn-bm-save" type="button">Save</button>
+							<button class="btn btn-small" id="btn-bm-cancel" type="button">Cancel</button>
+						</div>
+					</div>
+					<div id="bm-list" class="snip-list"></div>
+				</section>
+
+				<!-- Flashcards panel -->
+				<section class="panel" id="panel-flash" role="tabpanel" aria-labelledby="tab-flash" hidden>
+					<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+						<div style="display:flex;gap:6px;flex-wrap:wrap">
+							<button class="btn btn-accent btn-small" id="btn-flash-new" type="button">＋ New card</button>
+							<button class="btn btn-small" id="btn-flash-study" type="button">▶ Study</button>
+						</div>
+						<span id="flash-count" style="font-size:0.82rem;color:var(--muted)">0 cards</span>
+					</div>
+					<!-- Study mode -->
+					<div id="flash-study-area" hidden>
+						<div class="flashcard" id="flashcard-item">
+							<div class="flashcard-inner" id="flashcard-inner">
+								<div class="flashcard-front" id="flashcard-front"></div>
+								<div class="flashcard-back" id="flashcard-back"></div>
+							</div>
+						</div>
+						<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+							<button class="btn btn-small" id="btn-flash-flip" type="button">Flip</button>
+							<button class="btn btn-small" id="btn-flash-prev" type="button">← Prev</button>
+							<button class="btn btn-small btn-accent" id="btn-flash-next" type="button">Next →</button>
+							<button class="btn btn-small" id="btn-flash-end" type="button">✕ Exit</button>
+						</div>
+						<div id="flash-progress" style="text-align:center;font-size:0.82rem;color:var(--muted);margin-top:8px"></div>
+					</div>
+					<!-- Card list -->
+					<div id="flash-list" class="snip-list"></div>
+				</section>
+
 				<!-- Account Manager panel -->
 				<section class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin" hidden>
 					<div class="tools-grid">
@@ -4858,6 +5080,8 @@
 				{ tab: document.getElementById('tab-reports'),  panel: document.getElementById('panel-reports') },
 				{ tab: document.getElementById('tab-snippets'), panel: document.getElementById('panel-snippets') },
 				{ tab: document.getElementById('tab-canvas'),   panel: document.getElementById('panel-canvas') },
+				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
+				{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
 				{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
@@ -5875,6 +6099,7 @@
 				// In-memory store: [{ id, title, content, updated_at }]
 				let noteDocs = [];
 				let activeDocId = null;
+				let openTabs = []; // [{id, title}] — currently open note tabs
 				let docSaveTimer = null;
 
 				const docListEl      = document.getElementById('doc-list');
@@ -5917,6 +6142,7 @@
 
 				let noteSearchQuery = '';
 				let noteColorFilter = 'all'; // 'all' | 'red' | 'yellow' | 'green' | 'blue' | 'purple'
+				let noteTagFilter = null;  // null = all tags
 				let noteSortOrder = 'updated'; // 'updated' | 'created' | 'az' | 'za' | 'words'
 
 				let _dragSrcDocId = null;
@@ -6014,6 +6240,21 @@
 					if (noteColorFilter !== 'all') {
 						visible = visible.filter(d => (d.color || 'none') === noteColorFilter);
 					}
+					// Tag filter — extract #tags from all docs and render filter bar
+					const allTags = new Set();
+					noteDocs.forEach(d => { const m = (d.content || '').match(/#[\w-]+/g); if (m) m.forEach(t => allTags.add(t)); });
+					const tagBar = document.getElementById('note-tag-filter-row');
+					if (tagBar) {
+						if (allTags.size) {
+							tagBar.hidden = false;
+							tagBar.innerHTML = [...allTags].sort().map(t =>
+								`<button class="tag-filter-chip${noteTagFilter === t ? ' active' : ''}" data-tag="${escHtml(t)}" type="button">${escHtml(t)}</button>`
+							).join('');
+						} else { tagBar.hidden = true; }
+					}
+					if (noteTagFilter) {
+						visible = visible.filter(d => (d.content || '').includes(noteTagFilter));
+					}
 					// Sort
 					if (!q || noteSortOrder !== 'updated') {
 						visible.sort((a, b) => {
@@ -6074,7 +6315,7 @@
 						<span class="doc-item-left">${dotHtml}<span class="doc-item-name">${escHtml(doc.title || 'Untitled')}</span>${snippetHtml}</span>
 						<span style="display:flex;align-items:center;gap:4px;flex-shrink:0">${_cbHtml}${doc.pinned ? '<span class="doc-item-pin-badge" aria-label="Pinned" title="Pinned">📌</span>' : ''}<span class="doc-item-date" title="${escHtml(updatedFull)}">${fmtDate(doc.updated_at)}</span></span>
 						`;
-						btn.addEventListener('click', () => switchDoc(doc.id));
+						btn.addEventListener('click', (ev) => switchDoc(doc.id, ev.ctrlKey || ev.metaKey));
 
 						// ── Drag-to-reorder ──
 						btn.addEventListener('dragstart', (e) => {
@@ -6223,7 +6464,7 @@
 					});
 				}
 
-				function switchDoc(id) {
+				function switchDoc(id, newTab) {
 					// Save snapshot of current content before switching
 					if (activeDocId && notesEl) pushSnapshot(activeDocId, notesEl.value);
 					// Flush any pending save to the old doc first
@@ -6238,6 +6479,18 @@
 					if (notesEl)    { notesEl.value = doc.content ?? ''; }
 					if (docTitleEl) { docTitleEl.value = doc.title ?? ''; }
 					notesEl?.focus();
+					// ── Tab tracking ──
+					if (newTab && !openTabs.find(t => t.id === id)) {
+						openTabs.push({ id, title: doc.title || 'Untitled' });
+					} else if (!openTabs.length || (openTabs.length === 1 && !newTab)) {
+						openTabs = [{ id, title: doc.title || 'Untitled' }];
+					} else if (!openTabs.find(t => t.id === id)) {
+						openTabs = [{ id, title: doc.title || 'Untitled' }];
+					}
+					// Always keep active tab title in sync
+					const tabEntry = openTabs.find(t => t.id === id);
+					if (tabEntry) tabEntry.title = doc.title || 'Untitled';
+					renderNoteTabs();
 					renderDocList();
 					refreshMdPreview();
 				}
@@ -8610,6 +8863,15 @@ body {
 					renderDocList();
 				});
 
+				// Tag filter chip click
+				document.getElementById('note-tag-filter-row')?.addEventListener('click', (e) => {
+					const chip = e.target.closest('.tag-filter-chip');
+					if (!chip) return;
+					const tag = chip.dataset.tag;
+					noteTagFilter = noteTagFilter === tag ? null : tag;
+					renderDocList();
+				});
+
 				// ── Focus / writing mode ─────────────────────────────────────
 				function toggleFocusMode(forceOff) {
 					const on = forceOff === true ? false : !document.body.classList.contains('focus-mode');
@@ -9346,23 +9608,27 @@ body {
 						title: `Journal – ${new Date().toLocaleDateString()}`,
 						content: (d => `## ${d}\n\n**Mood:** \n\n**Today:**\n\n\n**Grateful for:**\n\n\n**Tomorrow:**\n\n`)(new Date().toLocaleDateString()),
 					},
-				};
-
-				function createDocFromTemplate(tplKey) {
-					const tpl = NOTE_TEMPLATES[tplKey] ?? NOTE_TEMPLATES.blank;
-					// Refresh date-sensitive templates each time
-					const dateStr = new Date().toLocaleDateString();
-					const content = tpl.content.replaceAll('DATE', dateStr);
-					const title   = tpl.title.replaceAll('DATE', dateStr);
-					const doc = createDoc(title, content);
-					noteDocs.unshift(doc);
-					renderDocList();
-					switchDoc(doc.id);
-					if (activeUserId) saveDocsLocally(activeUserId);
-					if (activeUserId && activeAccessToken) {
-						restUpsertDoc(activeUserId, doc, activeAccessToken).catch(e => console.warn('New doc cloud save:', e?.message));
-					}
-				}
+				bugreport: {
+					title: 'Bug Report',
+					content: `## Bug Report – ${new Date().toLocaleDateString()}\n\n**Summary:**\n\n**Steps to reproduce:**\n1. \n2. \n3. \n\n**Expected:**\n\n**Actual:**\n\n**Environment:**\n- OS: \n- Browser/App: \n- Version: \n\n**Attachments:**\n`,
+				},
+				retro: {
+					title: 'Retrospective',
+					content: `## Retrospective – ${new Date().toLocaleDateString()}\n\n### ✅ What went well\n- \n\n### 🔧 What to improve\n- \n\n### 🚀 Action items\n- [ ] \n`,
+				},
+				standup: {
+					title: `Standup – ${new Date().toLocaleDateString()}`,
+					content: `## Standup – ${new Date().toLocaleDateString()}\n\n**Yesterday:**\n- \n\n**Today:**\n- \n\n**Blockers:**\n- None\n`,
+				},
+				brainstorm: {
+					title: 'Brainstorm',
+					content: `## 💡 Brainstorm – ${new Date().toLocaleDateString()}\n\n**Topic:**\n\n---\n\n**Ideas:**\n- \n- \n- \n\n**Clusters / themes:**\n\n**Next steps:**\n`,
+				},
+				weeklyreview: {
+					title: `Weekly Review – ${new Date().toLocaleDateString()}`,
+					content: `## Weekly Review – ${new Date().toLocaleDateString()}\n\n**Wins this week:**\n- \n\n**Learnings:**\n- \n\n**Next week priorities:**\n- [ ] \n- [ ] \n\n**Energy / focus:**\n`,
+				},
+			};
 
 				// ── New doc button → toggle template picker ──
 				const templatePicker = document.getElementById('template-picker');
@@ -10416,6 +10682,7 @@ body {
 					editorFont:   'mono',
 					spellCheck:   'off',
 					noteListView: 'list',
+					lineNums:     'off',
 					customCss:    '',
 				};
 
@@ -10507,6 +10774,8 @@ body {
 					// Note list view
 					document.body.classList.remove('notelist-compact','notelist-cards');
 					if(currentPrefs.noteListView&&currentPrefs.noteListView!=='list')document.body.classList.add('notelist-'+currentPrefs.noteListView);
+					// Line numbers
+					if(currentPrefs.lineNums==='on'){document.body.classList.add('linenums-on');updateLineGutter();}else{document.body.classList.remove('linenums-on');}
 					// Custom CSS
 					(function(){let cEl=document.getElementById('user-custom-css');if(!cEl){cEl=document.createElement('style');cEl.id='user-custom-css';document.head.appendChild(cEl);}cEl.textContent=currentPrefs.customCss||'';const ta=document.getElementById('pref-custom-css');if(ta)ta.value=currentPrefs.customCss||'';})();
 					// Custom app title / subtitle
@@ -10674,7 +10943,7 @@ body {
 				}
 
 				// Wire chip clicks
-				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock','chips-lineheight','chips-editorfont','chips-spellcheck','chips-notelistview'].forEach(id => {
+				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock','chips-lineheight','chips-editorfont','chips-spellcheck','chips-notelistview','chips-linenums'].forEach(id => {
 					const container = document.getElementById(id);
 					if (!container) return;
 					const key = id === 'chips-fontsize'  ? 'fontSize'
@@ -10692,6 +10961,7 @@ body {
 					          : id === 'chips-editorfont'   ? 'editorFont'
 					          : id === 'chips-spellcheck'   ? 'spellCheck'
 					          : id === 'chips-notelistview' ? 'noteListView'
+					          : id === 'chips-linenums'    ? 'lineNums'
 					          : 'bgStyle';
 					container.addEventListener('click', e => {
 						const chip = e.target.closest('.chip');
@@ -11709,6 +11979,442 @@ body {
 
 				document.getElementById('tab-canvas')?.addEventListener('click', () => setTimeout(renderCanvas, 0));
 				renderCanvas();
+
+				// ══════════════════════════════════════════════════════════════
+				// NOTE TABS
+				// ══════════════════════════════════════════════════════════════
+				function renderNoteTabs() {
+					const bar = document.getElementById('note-tabs-bar');
+					if (!bar) return;
+					if (openTabs.length <= 1) { bar.hidden = true; return; }
+					bar.hidden = false;
+					bar.innerHTML = openTabs.map(t => {
+						const doc = noteDocs.find(d => d.id === t.id);
+						const title = doc?.title || t.title || 'Untitled';
+						const active = t.id === activeDocId;
+						return `<button class="note-tab${active ? ' active' : ''}" data-tab-id="${t.id}" type="button">
+							<span class="note-tab-title" title="${escHtml(title)}">${escHtml(title)}</span>
+							<span class="note-tab-x" data-close-tab="${t.id}" title="Close tab">✕</span>
+						</button>`;
+					}).join('');
+					bar.querySelectorAll('.note-tab').forEach(btn => {
+						btn.addEventListener('click', e => {
+							if (e.target.closest('.note-tab-x')) {
+								const id = e.target.closest('.note-tab-x').dataset.closeTab;
+								openTabs = openTabs.filter(t => t.id !== id);
+								if (activeDocId === id && openTabs.length) switchDoc(openTabs[openTabs.length - 1].id);
+								else renderNoteTabs();
+							} else {
+								switchDoc(btn.dataset.tabId);
+							}
+						});
+					});
+				}
+
+				// ══════════════════════════════════════════════════════════════
+				// LINE NUMBERS GUTTER
+				// ══════════════════════════════════════════════════════════════
+				function updateLineGutter() {
+					const ta = document.getElementById('notes');
+					const gutter = document.getElementById('note-gutter');
+					if (!ta || !gutter || !document.body.classList.contains('linenums-on')) return;
+					const lines = ta.value ? ta.value.split('\n').length : 1;
+					gutter.textContent = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+					gutter.scrollTop = ta.scrollTop;
+					// match font-size and line-height of textarea
+					const cs = getComputedStyle(ta);
+					gutter.style.fontSize = cs.fontSize;
+					gutter.style.lineHeight = cs.lineHeight;
+					gutter.style.paddingTop = cs.paddingTop;
+					gutter.style.paddingBottom = cs.paddingBottom;
+				}
+				document.getElementById('notes')?.addEventListener('input', updateLineGutter);
+				document.getElementById('notes')?.addEventListener('scroll', () => {
+					const gutter = document.getElementById('note-gutter');
+					const ta = document.getElementById('notes');
+					if (gutter && ta) gutter.scrollTop = ta.scrollTop;
+				});
+
+				// ══════════════════════════════════════════════════════════════
+				// CALENDAR
+				// ══════════════════════════════════════════════════════════════
+				let calDate = new Date();
+				function renderCalendar() {
+					const grid = document.getElementById('cal-grid');
+					const label = document.getElementById('cal-month-label');
+					if (!grid) return;
+					const year = calDate.getFullYear(), month = calDate.getMonth();
+					if (label) label.textContent = new Date(year, month, 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+					const firstDay = new Date(year, month, 1).getDay();
+					const daysInMonth = new Date(year, month + 1, 0).getDate();
+					const today = new Date();
+					const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+					const noteDates = new Set();
+					if (typeof noteDocs !== 'undefined') {
+						noteDocs.forEach(doc => {
+							const d = new Date(doc.updated_at || doc.created_at);
+							if (!isNaN(d)) noteDates.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+						});
+					}
+					const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+					let html = days.map(d => `<div class="cal-hdr">${d}</div>`).join('');
+					for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell empty"></div>`;
+					for (let d = 1; d <= daysInMonth; d++) {
+						const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+						const isToday = ds === todayStr, has = noteDates.has(ds);
+						html += `<div class="cal-cell${isToday?' cal-today':''}${has?' cal-has-notes':''}" data-cal-date="${ds}">${d}${has?'<span class="cal-dot"></span>':''}</div>`;
+					}
+					grid.innerHTML = html;
+					grid.querySelectorAll('[data-cal-date]').forEach(cell => {
+						cell.addEventListener('click', () => {
+							const date = cell.dataset.calDate;
+							document.getElementById('tab-notes')?.click();
+							const search = document.getElementById('notes-search');
+							if (search) { search.value = date; search.dispatchEvent(new Event('input')); }
+						});
+					});
+				}
+				document.getElementById('btn-cal-prev')?.addEventListener('click', () => { calDate = new Date(calDate.getFullYear(), calDate.getMonth()-1, 1); renderCalendar(); });
+				document.getElementById('btn-cal-next')?.addEventListener('click', () => { calDate = new Date(calDate.getFullYear(), calDate.getMonth()+1, 1); renderCalendar(); });
+				document.getElementById('btn-cal-today')?.addEventListener('click', () => { calDate = new Date(); renderCalendar(); });
+				document.getElementById('tab-home')?.addEventListener('click', () => setTimeout(() => {
+					const cal = document.getElementById('home-calendar');
+					if (cal) { cal.hidden = false; renderCalendar(); }
+				}, 50));
+
+				// ══════════════════════════════════════════════════════════════
+				// HASH GENERATOR
+				// ══════════════════════════════════════════════════════════════
+				document.getElementById('tool-hash-gen')?.addEventListener('click', async () => {
+					const text = document.getElementById('tool-hash-input')?.value || '';
+					const algo = document.getElementById('tool-hash-algo')?.value || 'SHA-256';
+					const out = document.getElementById('tool-hash-out');
+					const copyBtn = document.getElementById('tool-hash-copy');
+					if (!out) return;
+					out.textContent = 'Hashing…';
+					try {
+						const buf = await crypto.subtle.digest(algo, new TextEncoder().encode(text));
+						const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+						out.textContent = hex;
+						if (copyBtn) { copyBtn.style.display = ''; copyBtn.onclick = () => { navigator.clipboard.writeText(hex); showToast(`${algo} hash copied`, 'success'); }; }
+					} catch(e) { out.textContent = 'Error: ' + (e?.message || e); }
+				});
+				document.getElementById('tool-hash-input')?.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey) document.getElementById('tool-hash-gen')?.click(); });
+
+				// ══════════════════════════════════════════════════════════════
+				// UNIT CONVERTER
+				// ══════════════════════════════════════════════════════════════
+				(function() {
+					const UD = {
+						temp:   { units:['°C','°F','K'], convert:(v,f,t)=>{ const c=f==='°C'?v:f==='°F'?(v-32)*5/9:v-273.15; return t==='°C'?c:t==='°F'?c*9/5+32:c+273.15; } },
+						length: { units:['mm','cm','m','km','in','ft','yd','mi'], base:{mm:0.001,cm:0.01,m:1,km:1000,in:0.0254,ft:0.3048,yd:0.9144,mi:1609.344} },
+						weight: { units:['mg','g','kg','t','oz','lb','st'], base:{mg:1e-6,g:0.001,kg:1,t:1000,oz:0.0283495,lb:0.453592,st:6.35029} },
+						volume: { units:['ml','cl','dl','L','tsp','tbsp','fl oz','cup','pt','qt','gal'], base:{ml:0.001,cl:0.01,dl:0.1,L:1,tsp:0.00492892,tbsp:0.0147868,'fl oz':0.0295735,cup:0.236588,pt:0.473176,qt:0.946353,gal:3.78541} },
+						speed:  { units:['m/s','km/h','mph','knot','ft/s'], base:{'m/s':1,'km/h':1/3.6,mph:0.44704,knot:0.514444,'ft/s':0.3048} },
+						area:   { units:['mm²','cm²','m²','km²','in²','ft²','yd²','acre','ha'], base:{'mm²':1e-6,'cm²':1e-4,'m²':1,'km²':1e6,'in²':6.4516e-4,'ft²':0.0929,'yd²':0.8361,acre:4046.86,ha:1e4} },
+					};
+					function populate() {
+						const cat = document.getElementById('tool-unit-cat')?.value||'temp';
+						const d = UD[cat]; if(!d) return;
+						['tool-unit-from','tool-unit-to'].forEach((id,i) => {
+							const s = document.getElementById(id); if(!s) return;
+							s.innerHTML = d.units.map(u=>`<option value="${u}">${u}</option>`).join('');
+							if(i===1&&d.units.length>1) s.selectedIndex=1;
+						});
+						convert();
+					}
+					function convert() {
+						const cat=document.getElementById('tool-unit-cat')?.value||'temp';
+						const v=parseFloat(document.getElementById('tool-unit-val')?.value);
+						const from=document.getElementById('tool-unit-from')?.value;
+						const to=document.getElementById('tool-unit-to')?.value;
+						const out=document.getElementById('tool-unit-out'); if(!out) return;
+						if(isNaN(v)){out.textContent='';return;}
+						const d=UD[cat]; let r;
+						if(cat==='temp'){r=d.convert(v,from,to);}
+						else{r=v*d.base[from]/d.base[to];}
+						out.textContent=`${v} ${from} = ${+r.toPrecision(7)} ${to}`;
+					}
+					document.getElementById('tool-unit-cat')?.addEventListener('change',populate);
+					document.getElementById('tool-unit-from')?.addEventListener('change',convert);
+					document.getElementById('tool-unit-to')?.addEventListener('change',convert);
+					document.getElementById('tool-unit-val')?.addEventListener('input',convert);
+					populate();
+				})();
+
+				// ══════════════════════════════════════════════════════════════
+				// LINE TOOLS
+				// ══════════════════════════════════════════════════════════════
+				document.querySelector('#panel-tools')?.addEventListener('click', e => {
+					const btn = e.target.closest('[data-line]');
+					if (!btn) return;
+					const ta = document.getElementById('tool-line-input');
+					const countEl = document.getElementById('tool-line-count');
+					if (!ta) return;
+					const action = btn.dataset.line;
+					if (action === 'copy') { navigator.clipboard.writeText(ta.value); showToast('Copied', 'success'); return; }
+					let lines = ta.value.split('\n');
+					if      (action==='sort-az') lines.sort((a,b)=>a.localeCompare(b));
+					else if (action==='sort-za') lines.sort((a,b)=>b.localeCompare(a));
+					else if (action==='dedupe')  lines=[...new Set(lines)];
+					else if (action==='reverse') lines.reverse();
+					else if (action==='trim')    lines=lines.map(l=>l.trim()).filter(l=>l);
+					else if (action==='shuffle') { for(let i=lines.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[lines[i],lines[j]]=[lines[j],lines[i]];} }
+					else if (action==='upper')   lines=lines.map(l=>l.toUpperCase());
+					else if (action==='lower')   lines=lines.map(l=>l.toLowerCase());
+					ta.value = lines.join('\n');
+					if (countEl) countEl.textContent = `${lines.length} line${lines.length!==1?'s':''}`;
+				});
+				document.getElementById('tool-line-input')?.addEventListener('input', () => {
+					const ta=document.getElementById('tool-line-input'), el=document.getElementById('tool-line-count');
+					if(!ta||!el) return; const n=ta.value?ta.value.split('\n').length:0;
+					el.textContent=n?`${n} line${n!==1?'s':''}`:'' ;
+				});
+
+				// ══════════════════════════════════════════════════════════════
+				// CSS GRADIENT GENERATOR
+				// ══════════════════════════════════════════════════════════════
+				function updateGradient() {
+					const type=document.getElementById('tool-grad-type')?.value||'linear';
+					const angle=document.getElementById('tool-grad-angle')?.value||135;
+					const c1=document.getElementById('tool-grad-c1')?.value||'#6366f1';
+					const c2=document.getElementById('tool-grad-c2')?.value||'#a855f7';
+					const c3=document.getElementById('tool-grad-c3')?.value||'#ec4899';
+					const preview=document.getElementById('tool-grad-preview');
+					const out=document.getElementById('tool-grad-out');
+					const angleVal=document.getElementById('tool-grad-angle-val');
+					if(angleVal) angleVal.textContent=`${angle}°`;
+					const css = type==='linear' ? `linear-gradient(${angle}deg,${c1},${c2},${c3})`
+					           : type==='radial' ? `radial-gradient(circle,${c1},${c2},${c3})`
+					           : `conic-gradient(from ${angle}deg,${c1},${c2},${c3})`;
+					if(preview) preview.style.background=css;
+					if(out) out.value=`background: ${css};`;
+				}
+				['tool-grad-type','tool-grad-angle','tool-grad-c1','tool-grad-c2','tool-grad-c3'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateGradient));
+				document.getElementById('tool-grad-copy')?.addEventListener('click',()=>{const o=document.getElementById('tool-grad-out');if(o){navigator.clipboard.writeText(o.value);showToast('CSS copied','success');}});
+				updateGradient();
+
+				// ══════════════════════════════════════════════════════════════
+				// SLUG GENERATOR
+				// ══════════════════════════════════════════════════════════════
+				document.getElementById('tool-slug-input')?.addEventListener('input', () => {
+					const val = document.getElementById('tool-slug-input')?.value || '';
+					const out = document.getElementById('tool-slug-out');
+					if (!out) return;
+					if (!val.trim()) { out.innerHTML = ''; return; }
+					const norm = val.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+					const kebab = norm.replace(/[^\w\s-]/g,'').trim().toLowerCase().replace(/[\s_]+/g,'-').replace(/-+/g,'-');
+					const snake = kebab.replace(/-/g,'_');
+					const title = val.replace(/[^\w\s]/g,'').trim().replace(/(?:^|\s)\w/g,c=>c.toUpperCase()).replace(/\s+/g,'');
+					const variants = [['kebab-case', kebab], ['snake_case', snake], ['PascalCase', title]];
+					out.innerHTML = variants.map(([label, v]) =>
+						`<div class="tool-row" style="gap:6px;align-items:center">
+							<span style="font-size:0.73rem;opacity:0.5;width:82px;flex-shrink:0">${label}</span>
+							<code style="flex:1;font-size:0.8rem;background:var(--panel-bg);padding:2px 8px;border-radius:4px;word-break:break-all">${escHtml(v)}</code>
+							<button class="btn btn-small" type="button" onclick="navigator.clipboard.writeText(${JSON.stringify(v)});showToast('Copied','success')">Copy</button>
+						</div>`
+					).join('');
+				});
+
+				// ══════════════════════════════════════════════════════════════
+				// ASPECT RATIO CALCULATOR
+				// ══════════════════════════════════════════════════════════════
+				document.getElementById('tool-ar-calc')?.addEventListener('click', () => {
+					const w = parseFloat(document.getElementById('tool-ar-w')?.value);
+					const h = parseFloat(document.getElementById('tool-ar-h')?.value);
+					const out = document.getElementById('tool-ar-out');
+					if (!out) return;
+					if (!w || !h || w<=0 || h<=0) { out.innerHTML = '<span style="color:#dc2626">Enter valid width × height</span>'; return; }
+					const gcd = (a,b) => b ? gcd(b, a%b) : a;
+					const g = gcd(Math.round(w), Math.round(h));
+					const rw = Math.round(w)/g, rh = Math.round(h)/g;
+					const pct = (h/w*100).toFixed(4);
+					const scales = [320,640,768,1024,1280,1920].map(bw => `${bw}×${Math.round(bw*h/w)}`);
+					out.innerHTML = `<strong>${rw}:${rh}</strong> &nbsp;·&nbsp; padding-top: ${pct}%<br><span style="opacity:0.6;font-size:0.77rem">${scales.join(' &nbsp;·&nbsp; ')}</span>`;
+				});
+				['tool-ar-w','tool-ar-h'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('tool-ar-calc')?.click(); }));
+
+				// ══════════════════════════════════════════════════════════════
+				// STOPWATCH
+				// ══════════════════════════════════════════════════════════════
+				(function() {
+					let running=false, startTime=0, elapsed=0, rafId=null, laps=[];
+					const fmt = ms => `${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms%60000/1000)).padStart(2,'0')}.${String(ms%1000).padStart(3,'0')}`;
+					function tick() { if(!running) return; document.getElementById('tool-sw-display').textContent=fmt(elapsed+(Date.now()-startTime)); rafId=requestAnimationFrame(tick); }
+					document.getElementById('tool-sw-start')?.addEventListener('click', () => {
+						const btn=document.getElementById('tool-sw-start');
+						const lap=document.getElementById('tool-sw-lap');
+						if (!running) { startTime=Date.now(); running=true; if(btn)btn.textContent='⏸ Pause'; if(lap)lap.disabled=false; tick(); }
+						else { elapsed+=Date.now()-startTime; running=false; cancelAnimationFrame(rafId); if(btn)btn.textContent='▶ Resume'; }
+					});
+					document.getElementById('tool-sw-lap')?.addEventListener('click', () => {
+						const now=elapsed+(Date.now()-startTime); laps.push(now);
+						const list=document.getElementById('tool-sw-laps');
+						if(list) list.innerHTML=laps.map((t,i)=>`<div>Lap ${i+1}: ${fmt(t)}</div>`).join('');
+					});
+					document.getElementById('tool-sw-reset')?.addEventListener('click', () => {
+						running=false; elapsed=0; laps=[]; cancelAnimationFrame(rafId);
+						const d=document.getElementById('tool-sw-display'); if(d)d.textContent='00:00.000';
+						const btn=document.getElementById('tool-sw-start'); if(btn)btn.textContent='▶ Start';
+						const lap=document.getElementById('tool-sw-lap'); if(lap)lap.disabled=true;
+						const list=document.getElementById('tool-sw-laps'); if(list)list.innerHTML='';
+					});
+				})();
+
+				// ══════════════════════════════════════════════════════════════
+				// COLOR PALETTE GENERATOR
+				// ══════════════════════════════════════════════════════════════
+				(function() {
+					function hsl(hex) {
+						let r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
+						const mx=Math.max(r,g,b), mn=Math.min(r,g,b); let h,s,l=(mx+mn)/2;
+						if(mx===mn){h=s=0;}else{const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h/=6;}
+						return[Math.round(h*360),Math.round(s*100),Math.round(l*100)];
+					}
+					function hex(h,s,l) {
+						h/=360;s/=100;l/=100;const a=s*Math.min(l,1-l);
+						const f=n=>{const k=(n+h*12)%12;return Math.round(255*(l-a*Math.max(Math.min(k-3,9-k,1),-1))).toString(16).padStart(2,'0');};
+						return '#'+f(0)+f(8)+f(4);
+					}
+					function palette(base, mode) {
+						const [h,s,l]=hsl(base), c=v=>Math.max(0,Math.min(100,v));
+						switch(mode){
+							case 'complementary': return [base,hex((h+180)%360,s,l)];
+							case 'triadic':       return [base,hex((h+120)%360,s,l),hex((h+240)%360,s,l)];
+							case 'analogous':     return [hex((h-30+360)%360,s,l),base,hex((h+30)%360,s,l)];
+							case 'split':         return [base,hex((h+150)%360,s,l),hex((h+210)%360,s,l)];
+							case 'tetradic':      return [base,hex((h+90)%360,s,l),hex((h+180)%360,s,l),hex((h+270)%360,s,l)];
+							case 'mono':          return [hex(h,s,c(l-30)),hex(h,s,c(l-15)),base,hex(h,s,c(l+15)),hex(h,s,c(l+30))];
+							default: return [base];
+						}
+					}
+					function render() {
+						const base=document.getElementById('tool-pal-base')?.value||'#6366f1';
+						const mode=document.getElementById('tool-pal-mode')?.value||'complementary';
+						const out=document.getElementById('tool-pal-out'); if(!out) return;
+						out.innerHTML=palette(base,mode).map(c=>
+							`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer" title="Click to copy ${c}" onclick="navigator.clipboard.writeText('${c}');showToast('${c} copied','success')">
+								<div style="width:44px;height:44px;border-radius:8px;background:${c};box-shadow:0 2px 10px ${c}55"></div>
+								<span style="font-size:0.69rem;font-family:monospace">${c}</span>
+							</div>`
+						).join('');
+					}
+					document.getElementById('tool-pal-gen')?.addEventListener('click',render);
+					document.getElementById('tool-pal-base')?.addEventListener('input',render);
+					document.getElementById('tool-pal-mode')?.addEventListener('change',render);
+					render();
+				})();
+
+				// ══════════════════════════════════════════════════════════════
+				// BOOKMARKS
+				// ══════════════════════════════════════════════════════════════
+				(function() {
+					const KEY = 'ectl_bookmarks';
+					let bms = [];
+					function load() { try { bms=JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { bms=[]; } }
+					function save() { localStorage.setItem(KEY, JSON.stringify(bms)); }
+					function render() {
+						const list=document.getElementById('bm-list');
+						const q=(document.getElementById('bm-search')?.value||'').toLowerCase();
+						if(!list) return;
+						const filtered=bms.filter(b=>!q||(b.title+b.url+(b.desc||'')).toLowerCase().includes(q));
+						list.innerHTML=filtered.length ? filtered.map(b=>`
+							<div class="snip-item" style="cursor:default">
+								<div class="snip-item-main">
+									<div class="snip-item-title"><a href="${escHtml(b.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none">${escHtml(b.title||b.url)}</a></div>
+									${b.desc?`<div class="snip-item-preview"><div style="color:var(--muted);font-size:0.78rem">${escHtml(b.desc)}</div></div>`:''}
+									<div style="font-size:0.72rem;color:var(--muted);margin-top:1px;word-break:break-all">${escHtml(b.url)}</div>
+								</div>
+								<button class="btn btn-small" style="flex-shrink:0" data-bm-del="${b.id}" type="button">✕</button>
+							</div>`).join('')
+						: `<p style="padding:20px;text-align:center;color:var(--muted);font-size:0.85rem">${q?'No results':'No bookmarks yet — click ＋ Add.'}</p>`;
+					}
+					load(); render();
+					document.getElementById('bm-list')?.addEventListener('click', e => {
+						const del=e.target.closest('[data-bm-del]');
+						if(del){bms=bms.filter(b=>b.id!==del.dataset.bmDel);save();render();}
+					});
+					document.getElementById('bm-search')?.addEventListener('input', render);
+					document.getElementById('btn-bm-new')?.addEventListener('click', () => {
+						const f=document.getElementById('bm-add-form'); if(f){f.hidden=!f.hidden;if(!f.hidden)document.getElementById('bm-form-url')?.focus();}
+					});
+					document.getElementById('btn-bm-cancel')?.addEventListener('click', () => { const f=document.getElementById('bm-add-form');if(f)f.hidden=true; });
+					document.getElementById('btn-bm-save')?.addEventListener('click', () => {
+						const url=(document.getElementById('bm-form-url')?.value||'').trim();
+						if(!url){showToast('Enter a URL','error');return;}
+						bms.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2),url,title:(document.getElementById('bm-form-title')?.value||'').trim()||url,desc:(document.getElementById('bm-form-desc')?.value||'').trim()});
+						save(); render();
+						['bm-form-url','bm-form-title','bm-form-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+						const f=document.getElementById('bm-add-form');if(f)f.hidden=true;
+						showToast('Bookmark saved','success');
+					});
+					document.getElementById('bm-form-url')?.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('btn-bm-save')?.click(); });
+					document.getElementById('tab-bookmarks')?.addEventListener('click', ()=>setTimeout(render,0));
+				})();
+
+				// ══════════════════════════════════════════════════════════════
+				// FLASHCARDS
+				// ══════════════════════════════════════════════════════════════
+				(function() {
+					const KEY = 'ectl_flashcards';
+					let cards=[], idx=0, flipped=false;
+					function load(){try{cards=JSON.parse(localStorage.getItem(KEY)||'[]');}catch{cards=[];}}
+					function save(){localStorage.setItem(KEY,JSON.stringify(cards));}
+					function renderList(){
+						const list=document.getElementById('flash-list');
+						const countEl=document.getElementById('flash-count');
+						if(countEl) countEl.textContent=`${cards.length} card${cards.length!==1?'s':''}`;
+						if(!list) return;
+						list.innerHTML=cards.length?cards.map((c,i)=>`
+							<div class="snip-item">
+								<div class="snip-item-main">
+									<div class="snip-item-title">${escHtml(c.q)}</div>
+									<div class="snip-item-preview"><div style="color:var(--muted)">${escHtml(c.a)}</div></div>
+								</div>
+								<button class="btn btn-small" data-fc-del="${i}" style="flex-shrink:0" type="button">✕</button>
+							</div>`).join('')
+						:'<p style="padding:20px;text-align:center;color:var(--muted);font-size:0.85rem">No cards yet — click ＋ New card.</p>';
+					}
+					function showCard(){
+						const c=cards[idx];
+						const front=document.getElementById('flashcard-front');
+						const back=document.getElementById('flashcard-back');
+						const inner=document.getElementById('flashcard-inner');
+						const prog=document.getElementById('flash-progress');
+						if(front) front.textContent=c?.q||'';
+						if(back)  back.textContent =c?.a||'';
+						if(inner) inner.classList.toggle('flipped',flipped);
+						if(prog)  prog.textContent=`${idx+1} / ${cards.length}`;
+					}
+					load(); renderList();
+					document.getElementById('flash-list')?.addEventListener('click', e=>{
+						const del=e.target.closest('[data-fc-del]');
+						if(del){cards.splice(Number(del.dataset.fcDel),1);save();renderList();}
+					});
+					document.getElementById('btn-flash-new')?.addEventListener('click', ()=>{
+						const q=prompt('Question:'); if(!q?.trim()) return;
+						const a=prompt('Answer:');   if(!a?.trim()) return;
+						cards.push({q:q.trim(),a:a.trim()}); save(); renderList(); showToast('Card added','success');
+					});
+					document.getElementById('btn-flash-study')?.addEventListener('click',()=>{
+						if(!cards.length){showToast('Add some cards first','info');return;}
+						idx=0; flipped=false;
+						const area=document.getElementById('flash-study-area');
+						const list=document.getElementById('flash-list');
+						if(area)area.hidden=false; if(list)list.hidden=true;
+						showCard();
+					});
+					document.getElementById('btn-flash-end')?.addEventListener('click',()=>{
+						const area=document.getElementById('flash-study-area');
+						const list=document.getElementById('flash-list');
+						if(area)area.hidden=true; if(list)list.hidden=false;
+					});
+					document.getElementById('btn-flash-flip')?.addEventListener('click',()=>{flipped=!flipped;showCard();});
+					document.getElementById('btn-flash-next')?.addEventListener('click',()=>{idx=(idx+1)%cards.length;flipped=false;showCard();});
+					document.getElementById('btn-flash-prev')?.addEventListener('click',()=>{idx=(idx-1+cards.length)%cards.length;flipped=false;showCard();});
+					document.getElementById('flashcard-item')?.addEventListener('click',()=>{flipped=!flipped;showCard();});
+					document.getElementById('tab-flash')?.addEventListener('click',()=>setTimeout(renderList,0));
+				})();
 
 		</script>
 	
