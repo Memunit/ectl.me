@@ -5816,16 +5816,7 @@
 				{ tab: document.getElementById('tab-canvas'),   panel: document.getElementById('panel-canvas') },
 				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
 				{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
-				{ tab: document.getElementById('tab-admin'),       panel: document.getElementById('panel-admin') },
-			{ tab: document.getElementById('tab-dashboard'),   panel: document.getElementById('panel-dashboard') },
-			{ tab: document.getElementById('tab-kanban'),      panel: document.getElementById('panel-kanban') },
-			{ tab: document.getElementById('tab-advsearch'),   panel: document.getElementById('panel-advsearch') },
-			{ tab: document.getElementById('tab-timetrack'),   panel: document.getElementById('panel-timetrack') },
-			{ tab: document.getElementById('tab-goals'),       panel: document.getElementById('panel-goals') },
-			{ tab: document.getElementById('tab-passwords'),   panel: document.getElementById('panel-passwords') },
-			{ tab: document.getElementById('tab-sheet'),       panel: document.getElementById('panel-sheet') },
-			{ tab: document.getElementById('tab-clipboard'),   panel: document.getElementById('panel-clipboard') },
-			{ tab: document.getElementById('tab-worldclock'),  panel: document.getElementById('panel-worldclock') },
+				{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
 			const authTabs = [
@@ -6267,27 +6258,18 @@
 				}				function selectTab(selectedId) {
 					if (!selectedId) return;
 					animateAppLayoutChange(() => {
-						// tabs array includes both regular and More-dropdown items — one loop handles all
 						for (const { tab, panel } of tabs) {
 							if (!tab || !panel) continue;
 							const selected = tab.id === selectedId;
 							tab.setAttribute('aria-selected', String(selected));
 							panel.hidden = !selected;
-							if (selected) {
-								replayPanelAnimation(panel);
-								// trigger panel-specific renders
-								const pid = panel.id;
-								if (pid === 'panel-dashboard')  { setTimeout(renderDashboard, 40); }
-								if (pid === 'panel-kanban')     { setTimeout(renderKanban, 40); }
-								if (pid === 'panel-clipboard')  { setTimeout(renderClipboard, 40); }
-								if (pid === 'panel-worldclock') { setTimeout(() => { renderWorldClocks(); initTZConv(); }, 40); }
-								if (pid === 'panel-goals')      { setTimeout(renderGoals, 40); }
-								if (pid === 'panel-passwords')  { setTimeout(checkVaultState, 40); }
-								if (pid === 'panel-sheet')      { setTimeout(() => { if (!sheetInit) initSheet(); }, 40); }
-								if (pid === 'panel-timetrack')  { setTimeout(renderTimerLog, 40); }
-								if (pid === 'panel-advsearch')  { setTimeout(() => document.getElementById('adv-q')?.focus(), 60); }
-							}
+							if (selected) replayPanelAnimation(panel);
 						}
+						// Hide all More-dropdown panels and deselect their buttons
+						['panel-dashboard','panel-kanban','panel-advsearch','panel-timetrack','panel-goals','panel-passwords','panel-sheet','panel-clipboard','panel-worldclock'].forEach(id => {
+							const p = document.getElementById(id); if (p) p.hidden = true;
+						});
+						document.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
 					});
 					// Update "More" trigger highlight and close dropdown
 					const _moreTabs = ['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-worldclock'];
@@ -6351,9 +6333,40 @@
 						trigger.focus();
 					}
 				});
-				// Add click listeners so selecting an item routes through selectTab
+				// Direct click handler: deselect all regular tabs, show the target dropdown panel
 				menu.querySelectorAll('.tab-more-item').forEach(item => {
-					item.addEventListener('click', () => selectTab(item.id));
+					item.addEventListener('click', () => {
+						const panelId = item.getAttribute('aria-controls');
+						const panel = panelId ? document.getElementById(panelId) : null;
+						if (!panel) return;
+						// Deselect all regular tabs and hide their panels
+						for (const { tab: t, panel: p } of tabs) {
+							if (t) t.setAttribute('aria-selected', 'false');
+							if (p) p.hidden = true;
+						}
+						// Deselect all dropdown items, select this one
+						menu.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
+						item.setAttribute('aria-selected', 'true');
+						// Show target panel with animation
+						panel.hidden = false;
+						replayPanelAnimation(panel);
+						// Render callbacks
+						const pid = panel.id;
+						if (pid === 'panel-dashboard')  { setTimeout(renderDashboard, 40); }
+						if (pid === 'panel-kanban')     { setTimeout(renderKanban, 40); }
+						if (pid === 'panel-clipboard')  { setTimeout(renderClipboard, 40); }
+						if (pid === 'panel-worldclock') { setTimeout(() => { renderWorldClocks(); initTZConv(); }, 40); }
+						if (pid === 'panel-goals')      { setTimeout(renderGoals, 40); }
+						if (pid === 'panel-passwords')  { setTimeout(checkVaultState, 40); }
+						if (pid === 'panel-sheet')      { setTimeout(() => { if (!sheetInit) initSheet(); }, 40); }
+						if (pid === 'panel-timetrack')  { setTimeout(renderTimerLog, 40); }
+						if (pid === 'panel-advsearch')  { setTimeout(() => document.getElementById('adv-q')?.focus(), 60); }
+						// Highlight trigger, close menu, update indicator
+						trigger.classList.add('has-active');
+						trigger.setAttribute('aria-expanded', 'false');
+						menu.hidden = true;
+						requestAnimationFrame(() => updateTabIndicator('app-tab-indicator', trigger));
+					});
 				});
 			})();
 
