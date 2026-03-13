@@ -5758,12 +5758,16 @@
 				if (!splash) return;
 				// Hide splash once the page is interactive (after bootstrap completes).
 				// We expose a function so bootstrap() can call it.
+				let splashGone = false;
 				window.__hideSplash = function() {
-					if (!splash) return;
+					if (splashGone) return;
+					splashGone = true;
 					splash.classList.add('splash-out');
 					splash.addEventListener('transitionend', () => splash.remove(), { once: true });
-					setTimeout(() => splash.remove(), 600); // fallback
+					setTimeout(() => { if (splash.parentNode) splash.remove(); }, 600); // fallback
 				};
+				// Hard failsafe: always remove splash after 5 s no matter what
+				setTimeout(() => { if (window.__hideSplash) window.__hideSplash(); }, 5000);
 			})();
 
 			// ── Dark/light theme toggle ──────────────────────────────
@@ -12092,7 +12096,7 @@ body {
 					if (window.__hideSplash) window.__hideSplash();
 
 				} else {
-					bootstrap();
+					try { bootstrap(); } catch(e) { if (window.__hideSplash) window.__hideSplash(); }
 				}
 
 				// Init auth tab indicator on first paint
