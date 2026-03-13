@@ -14831,7 +14831,7 @@ body {
 				for(let c=0;c<sheetCols;c++){
 					const key=r+'_'+c, raw=sheetData[key]||'';
 					const disp=raw.startsWith('=')?evalSheetFormula(raw):raw;
-					html+=`<td><input class="sh-cell${raw.startsWith('=')?'formula':''??' sh-cell formula':''}" type="text" value="${escapedHtml(disp)}" data-r="${r}" data-c="${c}" /></td>`;
+					html+=`<td><input class="sh-cell${raw.startsWith('=')?' formula':''}" type="text" value="${escapedHtml(disp)}" data-r="${r}" data-c="${c}" /></td>`;
 				}
 				html+='</tr>';
 			}
