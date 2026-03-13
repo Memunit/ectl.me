@@ -5952,6 +5952,45 @@
 		</script>
 		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 		<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+	<!-- ══ PRESENTATION OVERLAY ══════════════════════════════════════ -->
+	<div id="present-overlay" hidden role="dialog" aria-modal="true" aria-label="Presentation">
+		<div id="present-slide-content"></div>
+		<div class="present-controls">
+			<button class="present-nav-btn" id="btn-present-prev" type="button">&#8249; Prev</button>
+			<span id="present-slide-num">1 / 1</span>
+			<button class="present-nav-btn" id="btn-present-next" type="button">Next &#8250;</button>
+		</div>
+		<button id="present-close-btn" type="button" aria-label="Exit presentation">&#x2715; Exit</button>
+	</div>
+
+	<!-- ══ ENCRYPT NOTE MODAL ════════════════════════════════════════ -->
+	<div id="encrypt-modal-overlay" hidden role="dialog" aria-modal="true">
+		<div id="encrypt-modal">
+			<h3 id="encrypt-modal-title">&#128272; Encrypt Note</h3>
+			<p class="hint" id="encrypt-modal-desc" style="margin:0">Enter a password to encrypt or decrypt this note.</p>
+			<input class="input" id="encrypt-password-input" type="password" placeholder="Password&#8230;" autocomplete="new-password" />
+			<div style="display:flex;gap:8px">
+				<button class="btn btn-accent" id="btn-encrypt-confirm" type="button">Confirm</button>
+				<button class="btn btn-small" id="btn-encrypt-cancel" type="button">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══ REMINDER MODAL ════════════════════════════════════════════ -->
+	<div id="remind-modal-overlay" hidden role="dialog" aria-modal="true">
+		<div id="remind-modal">
+			<h3>&#9200; Set Reminder</h3>
+			<p class="hint" style="margin:0" id="remind-note-title-label"></p>
+			<input class="input" id="remind-datetime-input" type="datetime-local" />
+			<input class="input" id="remind-message-input" type="text" placeholder="Reminder message (optional)&#8230;" />
+			<div style="display:flex;gap:8px">
+				<button class="btn btn-accent" id="btn-remind-save" type="button">Set reminder</button>
+				<button class="btn btn-small" id="btn-remind-cancel" type="button">Cancel</button>
+			</div>
+		</div>
+	</div>
+
 		<script>
 			const SUPABASE_URL = 'https://oxgaltttggmxukslgjxn.supabase.co';
 			const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94Z2FsdHR0Z2dteHVrc2xnanhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxOTA0NDYsImV4cCI6MjA4Nzc2NjQ0Nn0.Q8X_MQs_nFuhtGpY4K-KzvsaXT419Sc2Vx6slXi6Rdw';
@@ -16445,44 +16484,6 @@ body {
 		})();
 
 		</script>
-
-	<!-- ══ PRESENTATION OVERLAY ══════════════════════════════════════ -->
-	<div id="present-overlay" hidden role="dialog" aria-modal="true" aria-label="Presentation">
-		<div id="present-slide-content"></div>
-		<div class="present-controls">
-			<button class="present-nav-btn" id="btn-present-prev" type="button">&#8249; Prev</button>
-			<span id="present-slide-num">1 / 1</span>
-			<button class="present-nav-btn" id="btn-present-next" type="button">Next &#8250;</button>
-		</div>
-		<button id="present-close-btn" type="button" aria-label="Exit presentation">&#x2715; Exit</button>
-	</div>
-
-	<!-- ══ ENCRYPT NOTE MODAL ════════════════════════════════════════ -->
-	<div id="encrypt-modal-overlay" hidden role="dialog" aria-modal="true">
-		<div id="encrypt-modal">
-			<h3 id="encrypt-modal-title">&#128272; Encrypt Note</h3>
-			<p class="hint" id="encrypt-modal-desc" style="margin:0">Enter a password to encrypt or decrypt this note.</p>
-			<input class="input" id="encrypt-password-input" type="password" placeholder="Password&#8230;" autocomplete="new-password" />
-			<div style="display:flex;gap:8px">
-				<button class="btn btn-accent" id="btn-encrypt-confirm" type="button">Confirm</button>
-				<button class="btn btn-small" id="btn-encrypt-cancel" type="button">Cancel</button>
-			</div>
-		</div>
-	</div>
-
-	<!-- ══ REMINDER MODAL ════════════════════════════════════════════ -->
-	<div id="remind-modal-overlay" hidden role="dialog" aria-modal="true">
-		<div id="remind-modal">
-			<h3>&#9200; Set Reminder</h3>
-			<p class="hint" style="margin:0" id="remind-note-title-label"></p>
-			<input class="input" id="remind-datetime-input" type="datetime-local" />
-			<input class="input" id="remind-message-input" type="text" placeholder="Reminder message (optional)&#8230;" />
-			<div style="display:flex;gap:8px">
-				<button class="btn btn-accent" id="btn-remind-save" type="button">Set reminder</button>
-				<button class="btn btn-small" id="btn-remind-cancel" type="button">Cancel</button>
-			</div>
-		</div>
-	</div>
 
 	<!-- ══ HIDDEN .MD IMPORT INPUT ────────────────────────────────── -->
 	<input type="file" id="md-import-input" accept=".md,.txt" multiple hidden />

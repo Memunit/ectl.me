@@ -1,7 +1,7 @@
 // ectl Service Worker — v4
 // index.html is network-first so deployments are always picked up immediately.
 // Static assets use cache-first for performance.
-const CACHE = 'ectl-v12';
+const CACHE = 'ectl-v13';
 const SHELL = ['/manifest.json'];
 
 self.addEventListener('install', e => {
