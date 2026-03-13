@@ -1212,6 +1212,59 @@
 			}
 			.tab-indicator.visible { opacity: 1; }
 
+			/* ── More tabs dropdown ───────────────────────────────── */
+			.tab-more-wrap {
+				position: relative;
+				flex-shrink: 0;
+				display: flex;
+				align-items: center;
+			}
+			.tab-more-trigger.has-active {
+				color: var(--accent);
+				background: var(--card-bg);
+				border-color: var(--ring);
+				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
+			}
+			.tab-more-menu {
+				position: absolute;
+				top: calc(100% + 8px);
+				right: 0;
+				z-index: 200;
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+				padding: 6px;
+				min-width: 150px;
+				background: var(--card-bg);
+				border: 1px solid var(--card-border);
+				border-radius: 14px;
+				box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+				backdrop-filter: blur(calc(var(--blur) * 0.8));
+				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.8));
+			}
+			.tab-more-item {
+				appearance: none;
+				border: 1px solid transparent;
+				background: transparent;
+				color: var(--muted);
+				padding: 7px 14px;
+				border-radius: 999px;
+				font-size: 0.88rem;
+				font-weight: 600;
+				text-align: left;
+				white-space: nowrap;
+				cursor: pointer;
+				transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+			}
+			.tab-more-item:hover {
+				color: var(--text);
+				background: rgba(128,128,128,0.12);
+			}
+			.tab-more-item[aria-selected='true'] {
+				color: var(--accent);
+				background: rgba(128,128,128,0.15);
+			}
+
 			/* ── Splash screen ─────────────────────────────────── */
 			#splash {
 				position: fixed;
@@ -6219,7 +6272,17 @@
 							}
 						}
 					});
-					const activeTab = tabs.find(t => t.tab?.id === selectedId)?.tab;
+					// Update "More" trigger highlight and close dropdown
+					const _moreTabs = ['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-worldclock'];
+					const _moreTrigger = document.getElementById('tab-more-trigger');
+					const _moreMenu   = document.getElementById('tab-more-menu');
+					const _isMoreTab  = _moreTabs.includes(selectedId);
+					if (_moreTrigger) {
+						_moreTrigger.classList.toggle('has-active', _isMoreTab);
+						_moreTrigger.setAttribute('aria-expanded', 'false');
+					}
+					if (_moreMenu) _moreMenu.hidden = true;
+					const activeTab = _isMoreTab ? _moreTrigger : tabs.find(t => t.tab?.id === selectedId)?.tab;
 					requestAnimationFrame(() => updateTabIndicator('app-tab-indicator', activeTab));
 				}				function selectAuthTab(selectedId) {
 					if (!selectedId) return;
@@ -6247,6 +6310,36 @@
 				});
 			}
 
+			// ── More-tabs dropdown ────────────────────────────────────────
+			(function initMoreDropdown() {
+				const trigger = document.getElementById('tab-more-trigger');
+				const menu    = document.getElementById('tab-more-menu');
+				if (!trigger || !menu) return;
+				trigger.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const nowOpen = menu.hidden;
+					menu.hidden = !nowOpen;
+					trigger.setAttribute('aria-expanded', String(nowOpen));
+				});
+				document.addEventListener('click', (e) => {
+					if (!menu.hidden && !document.getElementById('tab-more-wrap')?.contains(e.target)) {
+						menu.hidden = true;
+						trigger.setAttribute('aria-expanded', 'false');
+					}
+				}, true);
+				menu.addEventListener('keydown', (e) => {
+					if (e.key === 'Escape') {
+						menu.hidden = true;
+						trigger.setAttribute('aria-expanded', 'false');
+						trigger.focus();
+					}
+				});
+				// Add click listeners so selecting an item routes through selectTab
+				menu.querySelectorAll('.tab-more-item').forEach(item => {
+					item.addEventListener('click', () => selectTab(item.id));
+				});
+			})();
+
 			// ── Tab drag-to-reorder ─────────────────────────────────────
 			(function initTabDrag() {
 				const TAB_ORDER_KEY = 'ectl_tab_order';
@@ -6260,13 +6353,15 @@
 					const adminBtn = document.getElementById(ADMIN_ID);
 					order.forEach(id => {
 						const btn = document.getElementById(id);
-						if (btn && btn.id !== ADMIN_ID) tabsEl.insertBefore(btn, adminBtn || indicator);
+						if (btn && btn.id !== ADMIN_ID && !btn.closest('.tab-more-menu')) tabsEl.insertBefore(btn, adminBtn || indicator);
 					});
 					if (adminBtn) tabsEl.insertBefore(adminBtn, indicator);
 					// Re-sort the tabs array so ArrowLeft/Right keyboard nav stays correct
 					tabs.sort((a, b) => {
 						if (!a.tab || !b.tab) return 0;
-						return Array.from(tabsEl.children).indexOf(a.tab) - Array.from(tabsEl.children).indexOf(b.tab);
+						const aEl = a.tab.closest('.tab-more-wrap') || a.tab;
+						const bEl = b.tab.closest('.tab-more-wrap') || b.tab;
+						return Array.from(tabsEl.children).indexOf(aEl) - Array.from(tabsEl.children).indexOf(bEl);
 					});
 				}
 
@@ -6276,16 +6371,16 @@
 					if (Array.isArray(saved) && saved.length) applyOrder(saved);
 				} catch {}
 
-				// Mark non-admin tabs as draggable
+				// Mark non-admin, non-more-trigger tabs as draggable
 				Array.from(tabsEl.querySelectorAll('.tab')).forEach(btn => {
-					if (btn.id !== ADMIN_ID) btn.draggable = true;
+					if (btn.id !== ADMIN_ID && btn.id !== 'tab-more-trigger') btn.draggable = true;
 				});
 
 				let dragSrcId = null;
 
 				tabsEl.addEventListener('dragstart', e => {
 					const btn = e.target.closest('.tab');
-					if (!btn || btn.id === ADMIN_ID) { e.preventDefault(); return; }
+					if (!btn || btn.id === ADMIN_ID || btn.id === 'tab-more-trigger') { e.preventDefault(); return; }
 					dragSrcId = btn.id;
 					btn.classList.add('tab-drag-src');
 					e.dataTransfer.effectAllowed = 'move';
@@ -6297,7 +6392,7 @@
 					e.dataTransfer.dropEffect = 'move';
 					const btn = e.target.closest('.tab');
 					tabsEl.querySelectorAll('.tab-drag-over').forEach(el => el.classList.remove('tab-drag-over'));
-					if (btn && btn.id !== ADMIN_ID && btn.id !== dragSrcId) btn.classList.add('tab-drag-over');
+					if (btn && btn.id !== ADMIN_ID && btn.id !== 'tab-more-trigger' && btn.id !== dragSrcId) btn.classList.add('tab-drag-over');
 				});
 
 				tabsEl.addEventListener('dragleave', e => {
@@ -6309,7 +6404,7 @@
 					e.preventDefault();
 					const targetBtn = e.target.closest('.tab');
 					tabsEl.querySelectorAll('.tab-drag-over, .tab-drag-src').forEach(el => el.classList.remove('tab-drag-over', 'tab-drag-src'));
-					if (!targetBtn || !dragSrcId || targetBtn.id === dragSrcId || targetBtn.id === ADMIN_ID) { dragSrcId = null; return; }
+					if (!targetBtn || !dragSrcId || targetBtn.id === dragSrcId || targetBtn.id === ADMIN_ID || targetBtn.id === 'tab-more-trigger') { dragSrcId = null; return; }
 					const srcBtn = document.getElementById(dragSrcId);
 					if (!srcBtn) { dragSrcId = null; return; }
 					// Determine drop position: insert before or after target based on mouse X
@@ -6325,7 +6420,7 @@
 					if (adminBtn) tabsEl.insertBefore(adminBtn, indicator);
 					// Save new order and re-sort tabs array
 					const newOrder = Array.from(tabsEl.querySelectorAll('.tab'))
-						.filter(b => b.id !== ADMIN_ID).map(b => b.id);
+						.filter(b => b.id !== ADMIN_ID && b.id !== 'tab-more-trigger').map(b => b.id);
 					localStorage.setItem(TAB_ORDER_KEY, JSON.stringify(newOrder));
 					applyOrder(newOrder);
 					// Refresh indicator position
