@@ -293,13 +293,21 @@
 			header {
 				display: flex;
 				align-items: flex-start;
-				gap: 12px;
+				column-gap: 12px;
+				row-gap: 0;
 				flex-wrap: wrap;
 			}
 
-			/* Middle column (title + tabs) fills space so tabs aren't left-aligned */
-			header > div:not(.mark):not(.header-actions) {
+			/* Middle column (title only) fills space */
+			header > div:not(.mark):not(.header-actions):not(.header-tabs-row) {
 				flex: 1;
+			}
+
+			/* Tabs row: full-width, centered */
+			.header-tabs-row {
+				flex: 0 0 100%;
+				display: flex;
+				justify-content: center;
 			}
 
 			.header-actions {
@@ -307,7 +315,7 @@
 				flex-shrink: 0;
 			}
 			@media (max-width: 480px) {
-				header { gap: 10px; }
+				header { column-gap: 8px; }
 				.header-actions { order: 3; margin-left: 0; width: 100%; }
 				#btn-signout { width: 100%; }
 			}
@@ -405,10 +413,8 @@
 			}
 			/* Center only the main app tab bar, not the login tab bar */
 			#app .tabs {
-				margin-left: auto;
-				margin-right: auto;
 				width: fit-content;
-				overflow: visible; /* let the More dropdown escape the scroll container */
+				overflow: visible; /* let the More modal overlay escape the scroll container */
 			}
 			.tabs::-webkit-scrollbar { display: none; }
 
@@ -3561,25 +3567,6 @@
 					<div>
 						<h1>ectl.me</h1>
 						<p class="subtitle">A small tools site.</p>
-
-						<div class="tabs" role="tablist" aria-label="Page tabs">
-							<button class="tab" id="tab-home" type="button" role="tab" aria-controls="panel-home" aria-selected="true">Home</button>
-							<button class="tab" id="tab-notes" type="button" role="tab" aria-controls="panel-notes" aria-selected="false">Notes</button>
-							<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">Settings</button>
-							<button class="tab" id="tab-files" type="button" role="tab" aria-controls="panel-files" aria-selected="false">Files</button>
-							<button class="tab" id="tab-tools" type="button" role="tab" aria-controls="panel-tools" aria-selected="false">Tools</button>
-							<button class="tab" id="tab-work" type="button" role="tab" aria-controls="panel-work" aria-selected="false">Work</button>
-						<button class="tab" id="tab-reports" type="button" role="tab" aria-controls="panel-reports" aria-selected="false">Reports</button>
-							<button class="tab" id="tab-snippets" type="button" role="tab" aria-controls="panel-snippets" aria-selected="false">Snippets</button>
-							<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
-							<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
-							<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
-							<div class="tab-more-wrap" id="tab-more-wrap">
-								<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
-							</div>
-							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
-							<span class="tab-indicator" id="app-tab-indicator"></span>
-						</div>
 					</div>
 						<div class="header-actions" style="display:flex;gap:8px;align-items:center;">
 							<button class="btn btn-small" id="btn-cmdk-open" type="button" aria-label="Search (⌘K)" title="Search & commands (⌘K)" style="font-size:0.82rem">⌘K</button>
@@ -3591,9 +3578,27 @@
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
 							<button class="btn" id="btn-signout" type="button" hidden>Sign out</button>
 						</div>
-				</header>
-
-				<section class="panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+				<div class="header-tabs-row">
+					<div class="tabs" role="tablist" aria-label="Page tabs">
+						<button class="tab" id="tab-home" type="button" role="tab" aria-controls="panel-home" aria-selected="true">Home</button>
+						<button class="tab" id="tab-notes" type="button" role="tab" aria-controls="panel-notes" aria-selected="false">Notes</button>
+						<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">Settings</button>
+						<button class="tab" id="tab-files" type="button" role="tab" aria-controls="panel-files" aria-selected="false">Files</button>
+						<button class="tab" id="tab-tools" type="button" role="tab" aria-controls="panel-tools" aria-selected="false">Tools</button>
+						<button class="tab" id="tab-work" type="button" role="tab" aria-controls="panel-work" aria-selected="false">Work</button>
+						<button class="tab" id="tab-reports" type="button" role="tab" aria-controls="panel-reports" aria-selected="false">Reports</button>
+						<button class="tab" id="tab-snippets" type="button" role="tab" aria-controls="panel-snippets" aria-selected="false">Snippets</button>
+						<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
+						<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
+						<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
+						<div class="tab-more-wrap" id="tab-more-wrap">
+							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
+						</div>
+						<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
+						<span class="tab-indicator" id="app-tab-indicator"></span>
+					</div>
+				</div>
+			</header>
 
 					<!-- Greeting (logged-in) -->
 					<div id="home-greeting" hidden>
