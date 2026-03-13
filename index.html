@@ -10983,6 +10983,20 @@ body {
 				},
 			};
 
+				function createDocFromTemplate(templateKey) {
+					const tpl = NOTE_TEMPLATES[templateKey] || NOTE_TEMPLATES.blank;
+					const doc = createDoc(tpl.title, tpl.content);
+					noteDocs.unshift(doc);
+					renderDocList();
+					switchDoc(doc.id);
+					selectTab?.('tab-notes');
+					if (activeUserId) saveDocsLocally(activeUserId);
+					if (activeUserId && activeAccessToken) {
+						restUpsertDoc(activeUserId, doc, activeAccessToken).catch(() => {});
+					}
+					showToast?.(`New note created`, 'success');
+				}
+
 				// ── New doc button → toggle template picker ──
 				const templatePicker = document.getElementById('template-picker');
 				if (newDocBtn && templatePicker) {
