@@ -6356,10 +6356,14 @@
 
 				function applyOrder(order) {
 					const adminBtn = document.getElementById(ADMIN_ID);
+					const anchor = adminBtn || indicator;
 					order.forEach(id => {
 						const btn = document.getElementById(id);
-						if (btn && btn.id !== ADMIN_ID && !btn.closest('.tab-more-menu')) tabsEl.insertBefore(btn, adminBtn || indicator);
+						if (btn && btn.id !== ADMIN_ID && !btn.closest('.tab-more-menu')) tabsEl.insertBefore(btn, anchor);
 					});
+					// Always place the More dropdown wrapper right before admin/indicator
+					const moreWrap = document.getElementById('tab-more-wrap');
+					if (moreWrap) tabsEl.insertBefore(moreWrap, anchor);
 					if (adminBtn) tabsEl.insertBefore(adminBtn, indicator);
 					// Re-sort the tabs array so ArrowLeft/Right keyboard nav stays correct
 					tabs.sort((a, b) => {
@@ -6370,10 +6374,16 @@
 					});
 				}
 
-				// Restore saved order on load
+				// Restore saved order on load — discard any order that contains
+				// now-removed top-level tab IDs (they're in the dropdown now)
+				const _dropdownIds = new Set(['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-worldclock']);
 				try {
 					const saved = JSON.parse(localStorage.getItem(TAB_ORDER_KEY));
-					if (Array.isArray(saved) && saved.length) applyOrder(saved);
+					if (Array.isArray(saved) && saved.length) {
+						const filtered = saved.filter(id => !_dropdownIds.has(id));
+						if (filtered.length) applyOrder(filtered);
+						else localStorage.removeItem(TAB_ORDER_KEY);
+					}
 				} catch {}
 
 				// Mark non-admin, non-more-trigger tabs as draggable
