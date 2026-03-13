@@ -5991,6 +5991,121 @@
 		</div>
 	</div>
 
+	<!-- ══ QUICK CAPTURE OVERLAY ════════════════════════════════════ -->
+	<div id="quick-capture-overlay" hidden role="dialog" aria-modal="true" aria-label="Quick capture">
+		<div id="quick-capture-box">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+				<h3 style="margin:0;font-size:0.95rem;flex:1">&#9998; Quick Capture</h3>
+				<kbd style="font-size:0.7rem;color:var(--muted);background:var(--panel-bg);padding:2px 6px;border-radius:4px">Esc to cancel</kbd>
+			</div>
+			<input class="input" id="qc-title" type="text" placeholder="Title (optional)…" style="font-size:0.9rem" />
+			<textarea class="input" id="qc-body" rows="6" placeholder="Start writing… Ctrl+Enter or Cmd+Enter to save" style="font-family:ui-monospace,monospace;font-size:0.8rem;resize:none"></textarea>
+			<div style="display:flex;gap:8px;justify-content:flex-end">
+				<button class="btn btn-small" id="btn-qc-cancel" type="button">Cancel</button>
+				<button class="btn btn-accent" id="btn-qc-save" type="button">Save note</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══ APP LOCK OVERLAY ══════════════════════════════════════════ -->
+	<div id="app-lock-overlay" hidden role="dialog" aria-modal="true" aria-label="App locked">
+		<div id="app-lock-box">
+			<div style="font-size:2.5rem" aria-hidden="true">&#128274;</div>
+			<h2 style="margin:0;font-size:1rem">App is locked</h2>
+			<input class="input" id="lock-pin-input" type="password" placeholder="PIN" maxlength="8" inputmode="numeric"
+				style="font-size:1.6rem;letter-spacing:8px;text-align:center;font-family:ui-monospace,monospace;width:190px" autocomplete="off" />
+			<p id="lock-pin-err" style="font-size:0.8rem;color:var(--error,#dc2626);min-height:20px;margin:0"></p>
+			<button class="btn btn-accent" id="btn-lock-submit" type="button" style="width:100%">Unlock</button>
+		</div>
+	</div>
+
+	<!-- ══ AI ASSISTANT MODAL ════════════════════════════════════════ -->
+	<div id="ai-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="AI writing assistant">
+		<div id="ai-modal">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#129302; AI Writing Assistant</h3>
+				<button class="btn btn-small" id="btn-ai-modal-close" type="button" aria-label="Close">&#10005;</button>
+			</div>
+			<p style="font-size:0.78rem;color:var(--muted);margin:0 0 10px">Uses your saved API key from Settings. The current note content is sent as context.</p>
+			<textarea class="input" id="ai-prompt-input" rows="3"
+				placeholder="Instruction (e.g. Summarize this note, Continue writing, Fix grammar, Translate to French)…"
+				style="font-size:0.84rem;resize:none"></textarea>
+			<div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0">
+				<button class="btn btn-small ai-preset" data-p="Summarize this note in 3 bullet points" type="button">Summarize</button>
+				<button class="btn btn-small ai-preset" data-p="Continue writing this note naturally" type="button">Continue writing</button>
+				<button class="btn btn-small ai-preset" data-p="Fix grammar and improve clarity" type="button">Fix grammar</button>
+				<button class="btn btn-small ai-preset" data-p="Rewrite more concisely" type="button">Shorten</button>
+				<button class="btn btn-small ai-preset" data-p="Expand with more detail and examples" type="button">Expand</button>
+				<button class="btn btn-small ai-preset" data-p="Extract action items as a checklist" type="button">Action items</button>
+			</div>
+			<button class="btn btn-accent" id="btn-ai-run" type="button">Run &#10024;</button>
+			<div id="ai-response-box" style="display:none;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:8px;padding:12px;font-size:0.84rem;line-height:1.65;white-space:pre-wrap;max-height:320px;overflow-y:auto;margin-top:4px"></div>
+			<div id="ai-action-row" style="display:none;gap:8px;flex-wrap:wrap;margin-top:4px">
+				<button class="btn btn-small" id="btn-ai-insert"  type="button">Insert after cursor</button>
+				<button class="btn btn-small" id="btn-ai-replace" type="button">Replace note body</button>
+				<button class="btn btn-small" id="btn-ai-copy"    type="button">Copy to clipboard</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══ PASSWORD VAULT: ADD ENTRY DIALOG ══════════════════════════ -->
+	<div id="vault-add-overlay" hidden role="dialog" aria-modal="true" aria-label="Add vault entry">
+		<div id="vault-add-box" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:20px;width:min(420px,92vw);display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+			<div style="display:flex;align-items:center;gap:8px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#128273; Add / Edit Entry</h3>
+				<button class="btn btn-small" id="btn-vault-add-close" type="button">&#10005;</button>
+			</div>
+			<input class="input" id="vault-site-in"  type="text" placeholder="Site / Service name…" />
+			<input class="input" id="vault-user-in"  type="text" placeholder="Username / Email…" autocomplete="off" />
+			<input class="input" id="vault-pass-in"  type="password" placeholder="Password…" style="font-family:ui-monospace,monospace" autocomplete="new-password" />
+			<input class="input" id="vault-url-in"   type="url"  placeholder="URL (optional)…" />
+			<textarea class="input" id="vault-notes-in" rows="2" placeholder="Notes (optional)…"></textarea>
+			<input type="hidden" id="vault-edit-id" />
+			<div style="display:flex;gap:8px;justify-content:flex-end">
+				<button class="btn btn-small" id="btn-vault-add-cancel" type="button">Cancel</button>
+				<button class="btn btn-accent" id="btn-vault-add-save"  type="button">Save entry</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ══ NOTE DIFF / REVISION MODAL ════════════════════════════════ -->
+	<div id="diff-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Note diff">
+		<div id="diff-modal" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:20px;width:min(700px,94vw);max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+			<div style="display:flex;align-items:center;gap:8px">
+				<h3 style="margin:0;flex:1;font-size:0.95rem">&#128208; Note Revision Diff</h3>
+				<button class="btn btn-small" id="btn-diff-close" type="button">&#10005;</button>
+			</div>
+			<div style="display:flex;gap:8px;flex-wrap:wrap">
+				<select class="input" id="diff-select-a" style="flex:1;font-size:0.8rem"></select>
+				<span style="color:var(--muted)">vs</span>
+				<select class="input" id="diff-select-b" style="flex:1;font-size:0.8rem"></select>
+				<button class="btn btn-small" id="btn-diff-run" type="button">Compare</button>
+			</div>
+			<div id="diff-output" style="font-family:ui-monospace,monospace;font-size:0.8rem;line-height:1.6;background:var(--panel-bg);padding:12px;border-radius:8px;overflow-x:auto;white-space:pre-wrap"></div>
+		</div>
+	</div>
+
+	<!-- ══ CONTEXT MENU ══════════════════════════════════════════════ -->
+	<div id="note-ctx-menu" hidden role="menu">
+		<div class="ctx-item" data-ctx="open"      role="menuitem" tabindex="-1">&#128196; Open note</div>
+		<div class="ctx-item" data-ctx="split"     role="menuitem" tabindex="-1">&#9711; Open in split</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="pin"       role="menuitem" tabindex="-1">&#128204; Pin / Unpin</div>
+		<div class="ctx-item" data-ctx="lock"      role="menuitem" tabindex="-1">&#128274; Lock / Unlock</div>
+		<div class="ctx-item" data-ctx="duplicate" role="menuitem" tabindex="-1">&#10064; Duplicate</div>
+		<div class="ctx-item" data-ctx="color"     role="menuitem" tabindex="-1">&#127912; Set note color</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="archive"   role="menuitem" tabindex="-1">&#128230; Archive</div>
+		<div class="ctx-item" data-ctx="trash"     role="menuitem" tabindex="-1" style="color:var(--error,#dc2626)">&#128465; Move to trash</div>
+		<div class="ctx-sep"  role="separator"></div>
+		<div class="ctx-item" data-ctx="export-md" role="menuitem" tabindex="-1">&#8659; Export as .md</div>
+		<div class="ctx-item" data-ctx="diff"      role="menuitem" tabindex="-1">&#128211; View revisions</div>
+		<div class="ctx-item" data-ctx="copy-id"   role="menuitem" tabindex="-1">&#128273; Copy note ID</div>
+	</div>
+
+	<!-- ══ CONFETTI CANVAS ═══════════════════════════════════════════ -->
+	<canvas id="confetti-canvas" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:99999;display:none"></canvas>
+
 		<script>
 			const SUPABASE_URL = 'https://oxgaltttggmxukslgjxn.supabase.co';
 			const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94Z2FsdHR0Z2dteHVrc2xnanhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxOTA0NDYsImV4cCI6MjA4Nzc2NjQ0Nn0.Q8X_MQs_nFuhtGpY4K-KzvsaXT419Sc2Vx6slXi6Rdw';
