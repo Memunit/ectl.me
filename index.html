@@ -7942,6 +7942,9 @@
 					// Show quick actions
 					const qa = document.getElementById('home-quick-actions');
 					if (qa) qa.hidden = false;
+					// Show calendar unless user has dismissed it
+					const cal = document.getElementById('home-calendar');
+					if (cal && localStorage.getItem('calHidden') !== '1') { cal.hidden = false; renderCalendar(); }
 				}
 
 				// ── Dashboard stats ───────────────────────────────────
