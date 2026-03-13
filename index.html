@@ -297,6 +297,12 @@
 				flex-wrap: wrap;
 			}
 
+			/* Middle column (title + tabs) grows to fill space between logo and actions */
+			header > div:not(.mark):not(.header-actions) {
+				flex: 1;
+				min-width: 0;
+			}
+
 			.header-actions {
 				margin-left: auto;
 				flex-shrink: 0;
