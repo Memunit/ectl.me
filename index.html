@@ -5663,6 +5663,21 @@
 					</div>
 				</div>
 			</div>
+		<script>
+			// Pre-CDN splash failsafe — runs before any blocking external script.
+			// Guarantees the splash is removed even if jsDelivr CDN is slow or blocked.
+			(function() {
+				var _splashTimer = setTimeout(function() {
+					var s = document.getElementById('splash');
+					if (!s) return;
+					s.style.transition = 'opacity 0.3s';
+					s.style.opacity = '0';
+					setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 350);
+				}, 4000);
+				// Let the normal __hideSplash cancel this if it fires first
+				window.__splashTimer = _splashTimer;
+			})();
+		</script>
 		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 		<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
 		<script>
@@ -5762,6 +5777,8 @@
 				window.__hideSplash = function() {
 					if (splashGone) return;
 					splashGone = true;
+					// Cancel the pre-CDN timer if it's still pending
+					if (window.__splashTimer) { clearTimeout(window.__splashTimer); window.__splashTimer = null; }
 					splash.classList.add('splash-out');
 					splash.addEventListener('transitionend', () => splash.remove(), { once: true });
 					setTimeout(() => { if (splash.parentNode) splash.remove(); }, 600); // fallback
@@ -5870,6 +5887,8 @@
 
 			function showLogin(message) {
 				inApp = false;
+				// Always dismiss the splash screen when navigating to login
+				if (window.__hideSplash) window.__hideSplash();
 				if (loginScreenEl) loginScreenEl.hidden = false;
 				if (appEl) appEl.hidden = true;
 				if (loginScreenEl) loginScreenEl.style.display = '';
