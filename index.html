@@ -15720,12 +15720,13 @@ body {
 				if (overlay) overlay.hidden = false;
 				document.getElementById('ai-prompt-input')?.focus();
 			}
-			function closeAIModal() { if (overlay) overlay.hidden = false; overlay.hidden = true; }
+			function closeAIModal() { if (overlay) overlay.hidden = true; }
 
 			document.getElementById('btn-ai-open')?.addEventListener('click', openAIModal);
 			document.getElementById('btn-ai-assist')?.addEventListener('click', openAIModal);
 			document.getElementById('btn-ai-modal-close')?.addEventListener('click', closeAIModal);
 			overlay?.addEventListener('click', e => { if(e.target===overlay) closeAIModal(); });
+			document.addEventListener('keydown', e => { if (e.key==='Escape' && overlay && !overlay.hidden) closeAIModal(); });
 
 			document.getElementById('btn-ai-save-key')?.addEventListener('click', () => {
 				const k = document.getElementById('ai-key-input')?.value.trim();
