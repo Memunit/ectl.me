@@ -3563,16 +3563,21 @@
 							<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
 							<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
 							<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
-							<button class="tab" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">&#128202; Dash</button>
-							<button class="tab" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">&#128193; Kanban</button>
-							<button class="tab" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">&#128269; Search</button>
-							<button class="tab" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">&#9201; Timer</button>
-							<button class="tab" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">&#127919; Goals</button>
-							<button class="tab" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">&#128273; Vault</button>
-							<button class="tab" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">&#128208; Sheet</button>
-							<button class="tab" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">&#128203; Clips</button>
-							<button class="tab" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">&#127758; Clocks</button>
-							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>👤 Accounts</button>
+							<div class="tab-more-wrap" id="tab-more-wrap">
+								<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="true" aria-expanded="false">More ▾</button>
+								<div class="tab-more-menu" id="tab-more-menu" hidden>
+									<button class="tab-more-item" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">Dash</button>
+									<button class="tab-more-item" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">Kanban</button>
+									<button class="tab-more-item" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">Search</button>
+									<button class="tab-more-item" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">Timer</button>
+									<button class="tab-more-item" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">Goals</button>
+									<button class="tab-more-item" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">Vault</button>
+									<button class="tab-more-item" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">Sheet</button>
+									<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
+									<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
+								</div>
+							</div>
+							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
 							<span class="tab-indicator" id="app-tab-indicator"></span>
 						</div>
 					</div>
