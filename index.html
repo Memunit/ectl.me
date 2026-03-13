@@ -388,7 +388,7 @@
 			}
 
 			.tabs {
-				margin: 16px auto 0;
+				margin-top: 16px;
 				display: flex;
 				gap: 4px;
 				padding: 4px;
@@ -401,8 +401,13 @@
 				overflow-x: auto;
 				-webkit-overflow-scrolling: touch;
 				scrollbar-width: none;
-				width: fit-content;
 				max-width: 100%;
+			}
+			/* Center only the main app tab bar, not the login tab bar */
+			#app .tabs {
+				margin-left: auto;
+				margin-right: auto;
+				width: fit-content;
 			}
 			.tabs::-webkit-scrollbar { display: none; }
 
