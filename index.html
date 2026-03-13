@@ -1224,57 +1224,56 @@
 			}
 			.tab-indicator.visible { opacity: 1; }
 
-			/* ── More tabs dropdown ───────────────────────────────── */
-			.tab-more-wrap {
-				position: relative;
-				flex-shrink: 0;
-				display: flex;
-				align-items: center;
-			}
+			/* ── More tabs modal ─────────────────────────────────── */
+			.tab-more-wrap { flex-shrink: 0; display: flex; align-items: center; }
 			.tab-more-trigger.has-active {
 				color: var(--accent);
 				background: var(--card-bg);
 				border-color: var(--ring);
 				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
 			}
-			.tab-more-menu {
-				position: absolute;
-				top: calc(100% + 8px);
-				right: 0;
-				z-index: 200;
-				display: flex;
-				flex-direction: column;
-				gap: 2px;
-				padding: 6px;
-				min-width: 150px;
-				background: var(--card-bg);
-				border: 1px solid var(--card-border);
-				border-radius: 14px;
-				box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
-				backdrop-filter: blur(calc(var(--blur) * 0.8));
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.8));
+			.tab-more-overlay {
+				position: fixed; inset: 0; z-index: 9800;
+				background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+				display: flex; align-items: center; justify-content: center;
+				padding: 24px;
+				animation: lb-in 0.18s var(--ease) both;
+			}
+			.tab-more-overlay[hidden] { display: none !important; }
+			.tab-more-modal {
+				background: var(--card-bg); border: 1px solid var(--card-border);
+				border-radius: var(--radius-lg); box-shadow: var(--card-shadow);
+				backdrop-filter: blur(var(--blur)) saturate(160%);
+				-webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+				padding: 28px 28px 20px; width: 100%; max-width: 420px;
+				animation: panel-in 0.2s var(--ease) both;
+			}
+			.tab-more-modal h2 { font-size: 0.95rem; font-weight: 700; margin: 0 0 16px; }
+			.tab-more-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 8px;
+				margin-bottom: 16px;
 			}
 			.tab-more-item {
 				appearance: none;
-				border: 1px solid transparent;
-				background: transparent;
-				color: var(--muted);
-				padding: 7px 14px;
-				border-radius: 999px;
+				border: 1px solid var(--card-border);
+				background: var(--btn-bg);
+				color: var(--text);
+				padding: 14px 10px;
+				border-radius: 12px;
 				font-size: 0.88rem;
 				font-weight: 600;
-				text-align: left;
-				white-space: nowrap;
+				text-align: center;
 				cursor: pointer;
-				transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+				transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 			}
-			.tab-more-item:hover {
-				color: var(--text);
-				background: rgba(128,128,128,0.12);
-			}
+			.tab-more-item:hover { background: rgba(128,128,128,0.15); border-color: var(--ring); }
 			.tab-more-item[aria-selected='true'] {
 				color: var(--accent);
 				background: rgba(128,128,128,0.15);
+				border-color: var(--ring);
+				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
 			}
 
 			/* ── Splash screen ─────────────────────────────────── */
@@ -3576,18 +3575,7 @@
 							<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
 							<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
 							<div class="tab-more-wrap" id="tab-more-wrap">
-								<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="true" aria-expanded="false">More ▾</button>
-								<div class="tab-more-menu" id="tab-more-menu" hidden>
-									<button class="tab-more-item" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">Dash</button>
-									<button class="tab-more-item" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">Kanban</button>
-									<button class="tab-more-item" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">Search</button>
-									<button class="tab-more-item" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">Timer</button>
-									<button class="tab-more-item" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">Goals</button>
-									<button class="tab-more-item" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">Vault</button>
-									<button class="tab-more-item" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">Sheet</button>
-									<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
-									<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
-								</div>
+								<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
 							</div>
 							<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
 							<span class="tab-indicator" id="app-tab-indicator"></span>
@@ -5686,6 +5674,25 @@
 	</div>
 
 	<!-- Keyboard shortcuts modal -->
+	<!-- More tabs modal -->
+	<div class="tab-more-overlay" id="tab-more-overlay" hidden role="dialog" aria-modal="true" aria-label="More tabs">
+		<div class="tab-more-modal">
+			<h2>More tabs</h2>
+			<div class="tab-more-grid">
+				<button class="tab-more-item" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">Dash</button>
+				<button class="tab-more-item" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">Kanban</button>
+				<button class="tab-more-item" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">Search</button>
+				<button class="tab-more-item" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">Timer</button>
+				<button class="tab-more-item" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">Goals</button>
+				<button class="tab-more-item" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">Vault</button>
+				<button class="tab-more-item" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">Sheet</button>
+				<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
+				<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
+			</div>
+			<div style="text-align:right"><button class="btn btn-small" id="btn-more-close" type="button">Close</button></div>
+		</div>
+	</div>
+
 	<div class="kb-modal-overlay" id="kb-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
 		<div class="kb-modal" id="kb-modal">
 						<h2>⌨ Keyboard Shortcuts</h2>
@@ -6272,16 +6279,16 @@
 						});
 						document.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
 					});
-					// Update "More" trigger highlight and close dropdown
+					// Update "More" trigger highlight and close modal
 					const _moreTabs = ['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-worldclock'];
 					const _moreTrigger = document.getElementById('tab-more-trigger');
-					const _moreMenu   = document.getElementById('tab-more-menu');
+					const _moreOverlay = document.getElementById('tab-more-overlay');
 					const _isMoreTab  = _moreTabs.includes(selectedId);
 					if (_moreTrigger) {
 						_moreTrigger.classList.toggle('has-active', _isMoreTab);
 						_moreTrigger.setAttribute('aria-expanded', 'false');
 					}
-					if (_moreMenu) _moreMenu.hidden = true;
+					if (_moreOverlay) _moreOverlay.hidden = true;
 					const activeTab = _isMoreTab ? _moreTrigger : tabs.find(t => t.tab?.id === selectedId)?.tab;
 					requestAnimationFrame(() => updateTabIndicator('app-tab-indicator', activeTab));
 				}				function selectAuthTab(selectedId) {
@@ -6310,32 +6317,29 @@
 				});
 			}
 
-			// ── More-tabs dropdown ────────────────────────────────────────
+			// ── More-tabs modal ──────────────────────────────────────────
 			(function initMoreDropdown() {
 				const trigger = document.getElementById('tab-more-trigger');
-				const menu    = document.getElementById('tab-more-menu');
-				if (!trigger || !menu) return;
-				trigger.addEventListener('click', (e) => {
-					e.stopPropagation();
-					const nowOpen = menu.hidden;
-					menu.hidden = !nowOpen;
-					trigger.setAttribute('aria-expanded', String(nowOpen));
-				});
-				document.addEventListener('click', (e) => {
-					if (!menu.hidden && !document.getElementById('tab-more-wrap')?.contains(e.target)) {
-						menu.hidden = true;
-						trigger.setAttribute('aria-expanded', 'false');
-					}
-				}, true);
-				menu.addEventListener('keydown', (e) => {
-					if (e.key === 'Escape') {
-						menu.hidden = true;
-						trigger.setAttribute('aria-expanded', 'false');
-						trigger.focus();
-					}
-				});
-				// Direct click handler: deselect all regular tabs, show the target dropdown panel
-				menu.querySelectorAll('.tab-more-item').forEach(item => {
+				const overlay = document.getElementById('tab-more-overlay');
+				if (!trigger || !overlay) return;
+
+				function openModal() {
+					overlay.hidden = false;
+					trigger.setAttribute('aria-expanded', 'true');
+					overlay.querySelector('.tab-more-item')?.focus();
+				}
+				function closeModal() {
+					overlay.hidden = true;
+					trigger.setAttribute('aria-expanded', 'false');
+					trigger.focus();
+				}
+
+				trigger.addEventListener('click', openModal);
+				document.getElementById('btn-more-close')?.addEventListener('click', closeModal);
+				overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+				overlay.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+				overlay.querySelectorAll('.tab-more-item').forEach(item => {
 					item.addEventListener('click', () => {
 						const panelId = item.getAttribute('aria-controls');
 						const panel = panelId ? document.getElementById(panelId) : null;
@@ -6345,10 +6349,10 @@
 							if (t) t.setAttribute('aria-selected', 'false');
 							if (p) p.hidden = true;
 						}
-						// Deselect all dropdown items, select this one
-						menu.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
+						// Deselect all items, select this one
+						overlay.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
 						item.setAttribute('aria-selected', 'true');
-						// Show target panel with animation
+						// Show target panel
 						panel.hidden = false;
 						replayPanelAnimation(panel);
 						// Render callbacks
@@ -6362,10 +6366,9 @@
 						if (pid === 'panel-sheet')      { setTimeout(() => { if (!sheetInit) initSheet(); }, 40); }
 						if (pid === 'panel-timetrack')  { setTimeout(renderTimerLog, 40); }
 						if (pid === 'panel-advsearch')  { setTimeout(() => document.getElementById('adv-q')?.focus(), 60); }
-						// Highlight trigger, close menu, update indicator
+						// Highlight trigger, close modal, update indicator
 						trigger.classList.add('has-active');
-						trigger.setAttribute('aria-expanded', 'false');
-						menu.hidden = true;
+						closeModal();
 						requestAnimationFrame(() => updateTabIndicator('app-tab-indicator', trigger));
 					});
 				});
@@ -6385,7 +6388,7 @@
 					const anchor = adminBtn || indicator;
 					order.forEach(id => {
 						const btn = document.getElementById(id);
-						if (btn && btn.id !== ADMIN_ID && !btn.closest('.tab-more-menu')) tabsEl.insertBefore(btn, anchor);
+						if (btn && btn.id !== ADMIN_ID && !btn.closest('.tab-more-wrap')) tabsEl.insertBefore(btn, anchor);
 					});
 					// Always place the More dropdown wrapper right before admin/indicator
 					const moreWrap = document.getElementById('tab-more-wrap');
