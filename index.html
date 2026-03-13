@@ -5987,9 +5987,11 @@
 			}
 
 			window.addEventListener('error', (e) => {
+				if (inApp) return; // don't log out on runtime errors after login
 				setFatalError(e?.error || e?.message || 'Unknown error');
 			});
 			window.addEventListener('unhandledrejection', (e) => {
+				if (inApp) return; // don't log out on runtime errors after login
 				setFatalError(e?.reason || 'Unhandled rejection');
 			});
 
@@ -6611,6 +6613,11 @@
 				SUPABASE_URL.startsWith('YOUR_') ||
 				SUPABASE_ANON_KEY.startsWith('YOUR_');
 
+			// Declared here so all branches (including code outside the else block) can access them
+			let noteDocs = [];
+			let activeDocId = null;
+			let openTabs = []; // [{id, title}] — currently open note tabs
+
 			if (!IS_ELECTRON && missingConfig) {
 				showLogin('Missing Supabase config (edit index.html).');
 				setButtonsDisabled(true);
@@ -6792,9 +6799,9 @@
 				// ── Multi-doc notes ──────────────────────────────────────
 
 				// In-memory store: [{ id, title, content, updated_at }]
-				let noteDocs = [];
-				let activeDocId = null;
-				let openTabs = []; // [{id, title}] — currently open note tabs
+				noteDocs = [];
+				activeDocId = null;
+				openTabs = []; // [{id, title}] — currently open note tabs
 				let docSaveTimer = null;
 
 				const docListEl      = document.getElementById('doc-list');
