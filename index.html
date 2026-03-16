@@ -1136,6 +1136,26 @@
 				--radius-md: 3px;
 			}
 
+			/* ── Grain texture toggle ─────────────────────────────────────────── */
+			body.grain-off::before { opacity: 0 !important; }
+
+			/* ── Letter spacing ───────────────────────────────────────────────── */
+			body.ls-tight  { letter-spacing: -0.02em; }
+			body.ls-wide   { letter-spacing:  0.03em; }
+			body.ls-wider  { letter-spacing:  0.06em; }
+
+			/* ── Shadow depth overrides ───────────────────────────────────────── */
+			body.shadow-none     .card { box-shadow: none !important; }
+			body.shadow-subtle   .card { box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important; }
+			body.shadow-dramatic .card { box-shadow: 0 48px 120px rgba(0,0,0,0.28), 0 12px 40px rgba(0,0,0,0.14) !important; }
+
+			/* ── Card top stripe style ────────────────────────────────────────── */
+			body.stripe-solid .card::before { background: var(--accent) !important; }
+			body.stripe-off   .card::before { opacity: 0 !important; }
+
+			/* ── Settings-panel range sliders ─────────────────────────────────── */
+			.pref-slider { width: 100%; accent-color: var(--accent); cursor: pointer; display: block; }
+
 			/* ── Glass blur: off ─────────────────────────────────────────────── */
 			body.hblur-off .tabs {
 				backdrop-filter: none;
@@ -4176,8 +4196,25 @@
 									<button class="chip" data-val="aurora"  type="button">Aurora</button>
 									<button class="chip" data-val="subtle"  type="button">Subtle</button>
 									<button class="chip" data-val="mesh"    type="button">Mesh</button>
+									<button class="chip" data-val="dots"    type="button">Dots</button>
+									<button class="chip" data-val="lines"   type="button">Lines</button>
 									<button class="chip" data-val="glass"   type="button">Glass</button>
 									<button class="chip" data-val="minimal" type="button">Minimal</button>
+									<button class="chip" data-val="solid"   type="button">Solid</button>
+								</div>
+							</div>
+							<!-- BG intensity -->
+							<div class="field" style="margin-bottom:18px">
+								<label style="margin-bottom:8px">Background intensity <span id="bg-vibrance-val" style="float:right;color:var(--muted);font-size:0.78rem">75%</span></label>
+								<input type="range" class="pref-slider" id="pref-bg-vibrance" min="0" max="100" value="75" step="1" />
+								<p class="hint" style="margin-top:4px;font-size:0.78rem">How vivid the colour gradient is. 0 = plain base, 100 = full aurora.</p>
+							</div>
+							<!-- Grain texture -->
+							<div class="field" style="margin-bottom:18px">
+								<label style="margin-bottom:8px">Noise / grain texture</label>
+								<div class="chip-row" id="chips-grain" role="radiogroup" aria-label="Grain texture">
+									<button class="chip" data-val="on"  type="button">On</button>
+									<button class="chip" data-val="off" type="button">Off</button>
 								</div>
 							</div>
 
@@ -4222,11 +4259,9 @@
 
 <!-- Glass blur -->
 							<div class="field" style="margin-top:18px">
-								<label style="margin-bottom:10px">Glass blur</label>
-								<div class="chip-row" id="chips-hblur" role="radiogroup" aria-label="Glass blur">
-									<button class="chip" data-val="on"  type="button">On</button>
-									<button class="chip" data-val="off" type="button">Off</button>
-								</div>
+								<label style="margin-bottom:8px">Glass blur <span id="blur-amount-val" style="float:right;color:var(--muted);font-size:0.78rem">22px</span></label>
+								<input type="range" class="pref-slider" id="pref-blur-amount" min="0" max="50" value="22" step="1" />
+								<p class="hint" style="margin-top:4px;font-size:0.78rem">Frosted-glass blur on cards &amp; tabs. 0 = no blur.</p>
 							</div>
 
 							<!-- Animation speed -->
@@ -4385,6 +4420,74 @@
 						<button class="btn btn-small" id="btn-accent-reset" type="button">Reset</button>
 					</div>
 					<p class="hint" style="margin-top:6px;font-size:0.78rem">Override the accent colour for all UI elements.</p>
+				</div>
+
+				<!-- Secondary accent colour -->
+				<div class="settings-section">
+					<p class="settings-section-title">Secondary accent colour</p>
+					<div style="display:flex;gap:8px;align-items:center">
+						<input type="color" id="pref-accent2-custom" value="#a855f7" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-accent2-hex" type="text" placeholder="#a855f7" style="width:100px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-accent2-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-accent2-reset" type="button">Reset</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">The second hue used in the gradient stripe, bg blooms, and glow effects.</p>
+				</div>
+
+				<!-- Background base colour -->
+				<div class="settings-section">
+					<p class="settings-section-title">Background base colour</p>
+					<div style="display:flex;gap:8px;align-items:center">
+						<input type="color" id="pref-bg-color" value="#f0f2f8" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-bg-hex" type="text" placeholder="#f0f2f8" style="width:100px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-bg-color-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-bg-color-reset" type="button">Reset</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">The flat base tint behind the aurora gradient. Dark mode shows a dark default.</p>
+				</div>
+
+				<!-- Card glass opacity -->
+				<div class="settings-section">
+					<p class="settings-section-title">Card glass opacity</p>
+					<label style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px">
+						<span>Transparency</span><span id="card-opacity-val" style="color:var(--muted)">68%</span>
+					</label>
+					<input type="range" class="pref-slider" id="pref-card-opacity" min="10" max="100" value="68" step="1" />
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">How opaque or glassy the cards look.</p>
+				</div>
+
+				<!-- Card accent stripe -->
+				<div class="settings-section">
+					<p class="settings-section-title">Card accent stripe</p>
+					<div class="chip-row" id="chips-stripe" role="radiogroup" aria-label="Card accent stripe">
+						<button class="chip" data-val="gradient" type="button">Gradient</button>
+						<button class="chip" data-val="solid"    type="button">Solid</button>
+						<button class="chip" data-val="off"      type="button">Off</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">The thin coloured line at the top of each card.</p>
+				</div>
+
+				<!-- Shadow depth -->
+				<div class="settings-section">
+					<p class="settings-section-title">Shadow depth</p>
+					<div class="chip-row" id="chips-shadow" role="radiogroup" aria-label="Shadow depth">
+						<button class="chip" data-val="none"     type="button">None</button>
+						<button class="chip" data-val="subtle"   type="button">Subtle</button>
+						<button class="chip" data-val="normal"   type="button">Normal</button>
+						<button class="chip" data-val="dramatic" type="button">Dramatic</button>
+					</div>
+					<p class="hint" style="margin-top:6px;font-size:0.78rem">Depth of the drop shadow on cards.</p>
+				</div>
+
+				<!-- Letter spacing -->
+				<div class="settings-section">
+					<p class="settings-section-title">Letter spacing</p>
+					<div class="chip-row" id="chips-letterspacing" role="radiogroup" aria-label="Letter spacing">
+						<button class="chip" data-val="tight"  type="button">Tight</button>
+						<button class="chip" data-val="normal" type="button">Normal</button>
+						<button class="chip" data-val="wide"   type="button">Wide</button>
+						<button class="chip" data-val="wider"  type="button">Wider</button>
+					</div>
 				</div>
 
 				<div class="settings-section">
@@ -12176,8 +12279,7 @@ body {
 
 				function applyBgStyle(style) {
 					const body = document.body;
-					// Remove any previously set custom bg class
-					body.classList.remove('bg-aurora', 'bg-subtle', 'bg-minimal', 'bg-mesh', 'bg-glass');
+					body.classList.remove('bg-aurora', 'bg-subtle', 'bg-minimal', 'bg-mesh', 'bg-glass', 'bg-dots', 'bg-lines', 'bg-solid');
 					body.classList.add(`bg-${style}`);
 				}
 
@@ -12211,6 +12313,24 @@ body {
 								color-mix(in srgb, var(--accent-2) 8%, var(--bg)) 100%) !important;
 						}
 						body.bg-glass::after { display: none !important; }
+						body.bg-dots { background: var(--bg) !important; }
+						body.bg-dots::after {
+							opacity: 1 !important;
+							animation: none !important;
+							background-image: radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent) 1.5px, transparent 1.5px) !important;
+							background-size: 28px 28px !important;
+							background-color: var(--bg) !important;
+						}
+						body.bg-lines { background: var(--bg) !important; }
+						body.bg-lines::after {
+							opacity: 1 !important;
+							animation: none !important;
+							background-image: linear-gradient(0deg, color-mix(in srgb, var(--accent) 25%, transparent) 1px, transparent 1px) !important;
+							background-size: 100% 36px !important;
+							background-color: var(--bg) !important;
+						}
+						body.bg-solid { background: var(--bg) !important; }
+						body.bg-solid::after { display: none !important; }
 					`;
 					document.head.appendChild(s);
 				})();
@@ -16341,20 +16461,232 @@ body {
 					document.body.classList.toggle('minimap-on',v==='on');
 				});
 			}
+
+		// ── BG vibrance slider ────────────────────────────────────────────
+		(function() {
+			function applyBgVibrance(v) {
+				const s = v / 100;
+				let sEl = document.getElementById('bg-vibrance-style');
+				if (!sEl) { sEl = document.createElement('style'); sEl.id = 'bg-vibrance-style'; document.head.appendChild(sEl); }
+				sEl.textContent =
+					'body:not(.bg-minimal):not(.bg-mesh):not(.bg-glass):not(.bg-dots):not(.bg-lines):not(.bg-solid){' +
+					'background:' +
+					'radial-gradient(ellipse 70% 60% at 5% 0%,color-mix(in srgb,var(--accent) ' + Math.round(62*s) + '%,transparent),transparent),' +
+					'radial-gradient(ellipse 55% 50% at 95% 5%,color-mix(in srgb,var(--accent-2) ' + Math.round(48*s) + '%,transparent),transparent),' +
+					'radial-gradient(ellipse 80% 55% at 50% 46%,color-mix(in srgb,var(--accent) ' + Math.round(18*s) + '%,transparent),transparent),' +
+					'radial-gradient(ellipse 90% 55% at 25% 100%,color-mix(in srgb,var(--accent-2) ' + Math.round(28*s) + '%,transparent),transparent),' +
+					'linear-gradient(135deg,color-mix(in srgb,var(--accent) ' + Math.round(12*s) + '%,transparent) 0%,transparent 45%,color-mix(in srgb,var(--accent-2) ' + Math.round(10*s) + '%,transparent) 100%),' +
+					'var(--bg)!important}' +
+					'body:not(.bg-minimal):not(.bg-mesh):not(.bg-glass):not(.bg-dots):not(.bg-lines):not(.bg-solid)::after{opacity:' + s.toFixed(2) + '!important}';
+				const valEl = document.getElementById('bg-vibrance-val');
+				if (valEl) valEl.textContent = v + '%';
+			}
+			const slider = document.getElementById('pref-bg-vibrance');
+			if (slider) {
+				const saved = parseInt(localStorage.getItem('ectl_bg_vibrance') ?? '75');
+				slider.value = saved;
+				applyBgVibrance(saved);
+				slider.addEventListener('input', e => {
+					const v = parseInt(e.target.value);
+					applyBgVibrance(v);
+					localStorage.setItem('ectl_bg_vibrance', String(v));
+				});
+			}
 		})();
 
-		// ── TOOL CARDS — JS implementations ──────────────────────────────
+		// ── Glass blur amount slider ──────────────────────────────────────
+		(function() {
+			const slider = document.getElementById('pref-blur-amount');
+			const valEl  = document.getElementById('blur-amount-val');
+			if (!slider) return;
+			const savedBlur = localStorage.getItem('ectl_blur_amount');
+			let initial;
+			if (savedBlur !== null) {
+				initial = parseInt(savedBlur);
+			} else if (typeof currentPrefs !== 'undefined' && currentPrefs.hblur === 'off') {
+				initial = 0;
+			} else {
+				initial = 22;
+			}
+			slider.value = initial;
+			if (valEl) valEl.textContent = initial + 'px';
+			document.documentElement.style.setProperty('--blur', initial + 'px');
+			document.body.classList.toggle('hblur-off', initial === 0);
+			slider.addEventListener('input', e => {
+				const v = parseInt(e.target.value);
+				if (valEl) valEl.textContent = v + 'px';
+				document.documentElement.style.setProperty('--blur', v + 'px');
+				document.body.classList.toggle('hblur-off', v === 0);
+				localStorage.setItem('ectl_blur_amount', String(v));
+			});
+		})();
 
-		// JSON → Table
-		document.getElementById('tool-jsontbl-in')?.addEventListener('input', function() {
-			const out = document.getElementById('tool-jsontbl-out');
-			if (!out) return;
-			try {
-				const data = JSON.parse(this.value);
-				const rows = Array.isArray(data) ? data : [data];
-				if (!rows.length || typeof rows[0]!=='object') { out.innerHTML='<span style="color:var(--error)">Expected array of objects</span>'; return; }
-				const keys = [...new Set(rows.flatMap(r=>Object.keys(r)))];
-				const html = `<table style="border-collapse:collapse;font-size:0.78rem;width:100%">
+		// ── Grain texture toggle ──────────────────────────────────────────
+		(function() {
+			const chips = document.getElementById('chips-grain');
+			if (!chips) return;
+			const saved = localStorage.getItem('ectl_grain') || 'on';
+			chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.val === saved));
+			document.body.classList.toggle('grain-off', saved === 'off');
+			chips.addEventListener('click', e => {
+				const chip = e.target.closest('.chip'); if (!chip) return;
+				chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+				chip.classList.add('active');
+				const v = chip.dataset.val;
+				localStorage.setItem('ectl_grain', v);
+				document.body.classList.toggle('grain-off', v === 'off');
+			});
+		})();
+
+		// ── Card glass opacity slider ─────────────────────────────────────
+		(function() {
+			const slider = document.getElementById('pref-card-opacity');
+			const valEl  = document.getElementById('card-opacity-val');
+			if (!slider) return;
+			const isDark = () => document.body.classList.contains('theme-dark') ||
+				(!document.body.classList.contains('theme-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+			function applyCardOpacity(v) {
+				const a  = (v / 100).toFixed(2);
+				const ab = Math.min(v / 100 + 0.15, 1).toFixed(2);
+				const dark = isDark();
+				document.documentElement.style.setProperty('--card-bg',
+					dark ? 'rgba(17,19,35,' + a + ')' : 'rgba(255,255,255,' + a + ')');
+				document.documentElement.style.setProperty('--card-border',
+					dark ? 'rgba(129,140,248,' + ab + ')' : 'rgba(255,255,255,' + ab + ')');
+				if (valEl) valEl.textContent = v + '%';
+			}
+			const saved = parseInt(localStorage.getItem('ectl_card_opacity') ?? (isDark() ? '78' : '68'));
+			slider.value = saved;
+			applyCardOpacity(saved);
+			slider.addEventListener('input', e => {
+				const v = parseInt(e.target.value);
+				applyCardOpacity(v);
+				localStorage.setItem('ectl_card_opacity', String(v));
+			});
+		})();
+
+		// ── Card top stripe style ─────────────────────────────────────────
+		(function() {
+			const chips = document.getElementById('chips-stripe');
+			if (!chips) return;
+			const saved = localStorage.getItem('ectl_stripe') || 'gradient';
+			chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.val === saved));
+			document.body.classList.remove('stripe-solid', 'stripe-off');
+			if (saved !== 'gradient') document.body.classList.add('stripe-' + saved);
+			chips.addEventListener('click', e => {
+				const chip = e.target.closest('.chip'); if (!chip) return;
+				chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+				chip.classList.add('active');
+				const v = chip.dataset.val;
+				localStorage.setItem('ectl_stripe', v);
+				document.body.classList.remove('stripe-solid', 'stripe-off');
+				if (v !== 'gradient') document.body.classList.add('stripe-' + v);
+			});
+		})();
+
+		// ── Letter spacing ────────────────────────────────────────────────
+		(function() {
+			const chips = document.getElementById('chips-letterspacing');
+			if (!chips) return;
+			const saved = localStorage.getItem('ectl_ls') || 'normal';
+			chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.val === saved));
+			document.body.classList.remove('ls-tight', 'ls-wide', 'ls-wider');
+			if (saved !== 'normal') document.body.classList.add('ls-' + saved);
+			chips.addEventListener('click', e => {
+				const chip = e.target.closest('.chip'); if (!chip) return;
+				chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+				chip.classList.add('active');
+				const v = chip.dataset.val;
+				localStorage.setItem('ectl_ls', v);
+				document.body.classList.remove('ls-tight', 'ls-wide', 'ls-wider');
+				if (v !== 'normal') document.body.classList.add('ls-' + v);
+			});
+		})();
+
+		// ── Shadow depth ──────────────────────────────────────────────────
+		(function() {
+			const chips = document.getElementById('chips-shadow');
+			if (!chips) return;
+			const saved = localStorage.getItem('ectl_shadow') || 'normal';
+			chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.val === saved));
+			document.body.classList.remove('shadow-none', 'shadow-subtle', 'shadow-dramatic');
+			if (saved !== 'normal') document.body.classList.add('shadow-' + saved);
+			chips.addEventListener('click', e => {
+				const chip = e.target.closest('.chip'); if (!chip) return;
+				chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+				chip.classList.add('active');
+				const v = chip.dataset.val;
+				localStorage.setItem('ectl_shadow', v);
+				document.body.classList.remove('shadow-none', 'shadow-subtle', 'shadow-dramatic');
+				if (v !== 'normal') document.body.classList.add('shadow-' + v);
+			});
+		})();
+
+		// ── Background base colour picker ─────────────────────────────────
+		(function() {
+			const picker = document.getElementById('pref-bg-color');
+			const hexInp = document.getElementById('pref-bg-hex');
+			if (!picker) return;
+			const saved = localStorage.getItem('ectl_bg_color');
+			if (saved) {
+				document.documentElement.style.setProperty('--bg', saved);
+				picker.value = saved;
+				if (hexInp) hexInp.value = saved;
+			}
+			picker.addEventListener('input', e => { if (hexInp) hexInp.value = e.target.value; });
+			hexInp?.addEventListener('input', e => {
+				if (/^#[0-9a-f]{6}$/i.test(e.target.value)) picker.value = e.target.value;
+			});
+			document.getElementById('btn-bg-color-apply')?.addEventListener('click', () => {
+				const val = hexInp?.value || picker.value; if (!val) return;
+				document.documentElement.style.setProperty('--bg', val);
+				localStorage.setItem('ectl_bg_color', val);
+				showToast?.('Background colour applied', 'success');
+			});
+			document.getElementById('btn-bg-color-reset')?.addEventListener('click', () => {
+				document.documentElement.style.removeProperty('--bg');
+				localStorage.removeItem('ectl_bg_color');
+				const def = window.matchMedia('(prefers-color-scheme: dark)').matches ? '#0b0d14' : '#f0f2f8';
+				picker.value = def;
+				if (hexInp) hexInp.value = def;
+				showToast?.('Background colour reset', 'success');
+			});
+		})();
+
+		// ── Second accent colour picker ────────────────────────────────────
+		(function() {
+			const picker = document.getElementById('pref-accent2-custom');
+			const hexInp = document.getElementById('pref-accent2-hex');
+			if (!picker) return;
+			function applyA2(hex) {
+				if (!/^#[0-9a-f]{6}$/i.test(hex)) return;
+				const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+				const isDark = document.body.classList.contains('theme-dark') ||
+					(!document.body.classList.contains('theme-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+				document.documentElement.style.setProperty('--accent-2', hex);
+				document.documentElement.style.setProperty('--accent-glow-2',
+					'rgba(' + r + ',' + g + ',' + b + ',' + (isDark ? 0.16 : 0.14) + ')');
+			}
+			const saved = localStorage.getItem('ectl_custom_accent2');
+			if (saved) { applyA2(saved); picker.value = saved; if (hexInp) hexInp.value = saved; }
+			picker.addEventListener('input', e => { if (hexInp) hexInp.value = e.target.value; });
+			hexInp?.addEventListener('input', e => {
+				if (/^#[0-9a-f]{6}$/i.test(e.target.value)) picker.value = e.target.value;
+			});
+			document.getElementById('btn-accent2-apply')?.addEventListener('click', () => {
+				const val = hexInp?.value || picker.value; if (!val) return;
+				applyA2(val);
+				localStorage.setItem('ectl_custom_accent2', val);
+			});
+			document.getElementById('btn-accent2-reset')?.addEventListener('click', () => {
+				['--accent-2', '--accent-glow-2'].forEach(v => document.documentElement.style.removeProperty(v));
+				localStorage.removeItem('ectl_custom_accent2');
+				if (typeof applyPrefs === 'function') applyPrefs(currentPrefs);
+				const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				picker.value = isDark ? '#c084fc' : '#a855f7';
+				if (hexInp) hexInp.value = isDark ? '#c084fc' : '#a855f7';
+			});
+		})();
 					<thead><tr>${keys.map(k=>`<th style="border:1px solid var(--panel-border);padding:4px 8px;background:var(--panel-bg);white-space:nowrap">${escapedHtml(k)}</th>`).join('')}</tr></thead>
 					<tbody>${rows.slice(0,200).map(r=>`<tr>${keys.map(k=>`<td style="border:1px solid var(--panel-border);padding:3px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapedHtml(String(r[k]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
 				</table>`;
