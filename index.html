@@ -16505,6 +16505,7 @@ body {
 					document.body.classList.toggle('minimap-on',v==='on');
 				});
 			}
+		})();
 
 		// ── BG vibrance slider ────────────────────────────────────────────
 		(function() {
@@ -16731,6 +16732,17 @@ body {
 				if (hexInp) hexInp.value = isDark ? '#c084fc' : '#a855f7';
 			});
 		})();
+
+		// JSON → Table
+		document.getElementById('tool-jsontbl-in')?.addEventListener('input', function() {
+			const out = document.getElementById('tool-jsontbl-out');
+			if (!out) return;
+			try {
+				const data = JSON.parse(this.value);
+				const rows = Array.isArray(data) ? data : [data];
+				if (!rows.length || typeof rows[0]!=='object') { out.innerHTML='<span style="color:var(--error)">Expected array of objects</span>'; return; }
+				const keys = [...new Set(rows.flatMap(r=>Object.keys(r)))];
+				const html = `<table style="border-collapse:collapse;font-size:0.78rem;width:100%">
 					<thead><tr>${keys.map(k=>`<th style="border:1px solid var(--panel-border);padding:4px 8px;background:var(--panel-bg);white-space:nowrap">${escapedHtml(k)}</th>`).join('')}</tr></thead>
 					<tbody>${rows.slice(0,200).map(r=>`<tr>${keys.map(k=>`<td style="border:1px solid var(--panel-border);padding:3px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapedHtml(String(r[k]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
 				</table>`;
