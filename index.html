@@ -2083,6 +2083,30 @@
 			}
 			.kb-modal-close-row { text-align: right; margin-top: 14px; }
 
+			/* ── Customize modal ──────────────────────────────────── */
+			.customize-modal {
+				max-width: 780px;
+			}
+			.customize-modal h2 { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+			.customize-modal .cz-subtitle {
+				font-size: 0.78rem; color: var(--muted); margin: 0 0 22px;
+			}
+			.cz-section { margin-bottom: 28px; }
+			.cz-section h3 {
+				font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+				letter-spacing: 0.07em; color: var(--muted); margin: 0 0 14px;
+				padding-bottom: 6px; border-bottom: 1px solid var(--panel-border);
+			}
+			.cz-row { margin-bottom: 16px; }
+			.cz-row label {
+				display: flex; justify-content: space-between; align-items: center;
+				font-size: 0.83rem; font-weight: 600; margin-bottom: 7px;
+			}
+			.cz-row .cz-val { font-weight: 400; color: var(--muted); }
+			.cz-row .hint { margin: 4px 0 0; font-size: 0.75rem; color: var(--muted); }
+			.cz-color-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+			.cz-divider { border: none; border-top: 1px solid var(--panel-border); margin: 28px 0; }
+
 			/* ── Undo toast button ──────────────────────────────────── */
 			.toast-undo-btn {
 				appearance: none;
@@ -3826,6 +3850,7 @@
 							<button class="btn btn-small" id="btn-app-lock" type="button" title="Lock app" aria-label="Lock app" hidden>&#128274;</button>
 							<button class="btn btn-small" id="btn-quick-capture" type="button" title="Quick capture (Alt+Space)" aria-label="Quick capture">&#9998;</button>
 							<button class="btn btn-small" id="btn-ai-assist" type="button" title="AI writing assistant" aria-label="AI assistant">&#129302;</button>
+							<button class="btn btn-small" id="btn-open-customize-hdr" type="button" aria-label="Customize appearance" title="Customize appearance">&#127912;</button>
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
 							<button class="btn" id="btn-signout" type="button" hidden>Sign out</button>
 						</div>
@@ -4147,350 +4172,54 @@
 							<button class="btn btn-small" id="btn-refresh-session" type="button">↻ Refresh session</button>
 						</div>
 
-					<!-- Customization -->
-					<div class="settings-section">
-						<p class="settings-section-title">Customization</p>
-
-						<!-- Theme presets -->
-						<div class="field" style="margin-bottom:22px">
-							<label style="margin-bottom:8px">Theme presets</label>
-							<div class="theme-presets-grid" id="theme-presets-grid"></div>
-							<p class="hint" style="margin-top:6px;font-size:0.78rem">One-click theme combos.</p>
-						</div>
-
-						<!-- Accent colour -->
-						<div class="field" style="margin-bottom:18px">
-							<label style="margin-bottom:10px">Accent colour</label>
-							<div class="swatch-row" id="swatch-row" role="radiogroup" aria-label="Accent colour"></div>
-						</div>
-
-						<!-- Font size -->
-						<div class="field" style="margin-bottom:18px">
-							<label style="margin-bottom:10px">Font size</label>
-							<div class="chip-row" id="chips-fontsize" role="radiogroup" aria-label="Font size">
-									<button class="chip" data-val="xs"     type="button">XS</button>
-									<button class="chip" data-val="small"  type="button">S</button>
-									<button class="chip" data-val="medium" type="button">M</button>
-									<button class="chip" data-val="large"  type="button">L</button>
-									<button class="chip" data-val="xl"     type="button">XL</button>
-								</div>
-							</div>
-
-							<!-- Card width -->
-							<div class="field" style="margin-bottom:18px">
-								<label style="margin-bottom:10px">Card width</label>
-								<div class="chip-row" id="chips-cardwidth" role="radiogroup" aria-label="Card width">
-									<button class="chip" data-val="xs"      type="button">XS</button>
-									<button class="chip" data-val="compact" type="button">S</button>
-									<button class="chip" data-val="regular" type="button">M</button>
-									<button class="chip" data-val="wide"    type="button">L</button>
-									<button class="chip" data-val="xl"      type="button">XL</button>
-									<button class="chip" data-val="full"    type="button">Full</button>
-								</div>
-							</div>
-
-							<!-- Background -->
-							<div class="field" style="margin-bottom:18px">
-								<label style="margin-bottom:10px">Background</label>
-								<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
-									<button class="chip" data-val="aurora"  type="button">Aurora</button>
-									<button class="chip" data-val="subtle"  type="button">Subtle</button>
-									<button class="chip" data-val="mesh"    type="button">Mesh</button>
-									<button class="chip" data-val="dots"    type="button">Dots</button>
-									<button class="chip" data-val="lines"   type="button">Lines</button>
-									<button class="chip" data-val="glass"   type="button">Glass</button>
-									<button class="chip" data-val="minimal" type="button">Minimal</button>
-									<button class="chip" data-val="solid"   type="button">Solid</button>
-								</div>
-							</div>
-							<!-- BG intensity -->
-							<div class="field" style="margin-bottom:18px">
-								<label style="margin-bottom:8px">Background intensity <span id="bg-vibrance-val" style="float:right;color:var(--muted);font-size:0.78rem">75%</span></label>
-								<input type="range" class="pref-slider" id="pref-bg-vibrance" min="0" max="100" value="75" step="1" />
-								<p class="hint" style="margin-top:4px;font-size:0.78rem">How vivid the colour gradient is. 0 = plain base, 100 = full aurora.</p>
-							</div>
-							<!-- Grain texture -->
-							<div class="field" style="margin-bottom:18px">
-								<label style="margin-bottom:8px">Noise / grain texture</label>
-								<div class="chip-row" id="chips-grain" role="radiogroup" aria-label="Grain texture">
-									<button class="chip" data-val="on"  type="button">On</button>
-									<button class="chip" data-val="off" type="button">Off</button>
-								</div>
-							</div>
-
-							<!-- Note density -->
-							<div class="field" style="margin-bottom:18px">
-								<label style="margin-bottom:10px">Note density</label>
-								<div class="chip-row" id="chips-density" role="radiogroup" aria-label="Note density">
-									<button class="chip" data-val="compact"     type="button">Compact</button>
-									<button class="chip" data-val="normal"      type="button">Normal</button>
-									<button class="chip" data-val="comfortable" type="button">Comfortable</button>
-								</div>
-							</div>
-						<!-- Layout -->
-						<div class="field" style="margin-top:18px">
-							<label style="margin-bottom:10px">Layout</label>
-							<div class="chip-row" id="chips-layout" role="radiogroup" aria-label="Layout">
-								<button class="chip" data-val="windowed" type="button">Windowed</button>
-								<button class="chip" data-val="edge"     type="button">Edge-to-edge</button>
-							</div>
-							<p class="hint" style="margin-top:6px;font-size:0.78rem">Edge-to-edge stretches the app to fill the full window width.</p>
-						</div>
-
-						<!-- Tab style -->
-						<div class="field" style="margin-top:18px">
-							<label style="margin-bottom:10px">Tab style</label>
-							<div class="chip-row" id="chips-tabstyle" role="radiogroup" aria-label="Tab style">
-								<button class="chip" data-val="pill"      type="button">Pill</button>
-								<button class="chip" data-val="underline" type="button">Underline</button>
-								<button class="chip" data-val="boxed"     type="button">Boxed</button>
-							</div>
-						</div>
-
-						<!-- Corners -->
-						<div class="field" style="margin-top:18px">
-							<label style="margin-bottom:10px">Corners</label>
-							<div class="chip-row" id="chips-corners" role="radiogroup" aria-label="Corners">
-								<button class="chip" data-val="round" type="button">Round</button>
-								<button class="chip" data-val="soft"  type="button">Soft</button>
-								<button class="chip" data-val="sharp" type="button">Sharp</button>
-							</div>
-						</div>
-
-<!-- Glass blur -->
-							<div class="field" style="margin-top:18px">
-								<label style="margin-bottom:8px">Glass blur <span id="blur-amount-val" style="float:right;color:var(--muted);font-size:0.78rem">22px</span></label>
-								<input type="range" class="pref-slider" id="pref-blur-amount" min="0" max="50" value="22" step="1" />
-								<p class="hint" style="margin-top:4px;font-size:0.78rem">Frosted-glass blur on cards &amp; tabs. 0 = no blur.</p>
-							</div>
-
-							<!-- Animation speed -->
-							<div class="field" style="margin-top:18px">
-								<label style="margin-bottom:10px">Animations</label>
-								<div class="chip-row" id="chips-animspeed" role="radiogroup" aria-label="Animation speed">
-									<button class="chip" data-val="off"    type="button">Off</button>
-									<button class="chip" data-val="slow"   type="button">Slow</button>
-									<button class="chip" data-val="normal" type="button">Normal</button>
-									<button class="chip" data-val="fast"   type="button">Fast</button>
-								</div>
-							</div>
-
-							<!-- Card padding -->
-							<div class="field" style="margin-top:18px">
-								<label style="margin-bottom:10px">Card padding</label>
-								<div class="chip-row" id="chips-cpad" role="radiogroup" aria-label="Card padding">
-									<button class="chip" data-val="tight"    type="button">Tight</button>
-									<button class="chip" data-val="normal"   type="button">Normal</button>
-									<button class="chip" data-val="spacious" type="button">Spacious</button>
-								</div>
-							</div>
-
-							<!-- Sidebar position -->
-							<div class="field" style="margin-top:18px">
-								<label style="margin-bottom:10px">Notes sidebar</label>
-								<div class="chip-row" id="chips-sidebar" role="radiogroup" aria-label="Notes sidebar position">
-									<button class="chip" data-val="left"  type="button">Left</button>
-									<button class="chip" data-val="right" type="button">Right</button>
-							</div>
-						</div>
-
-						<div class="prefs-save-row">
+					<!-- Open Customizer -->
+					<div class="settings-section" style="padding:20px 0 20px;text-align:center">
+						<p style="font-size:0.84rem;color:var(--muted);margin:0 0 14px">Themes, colours, backgrounds, layout, effects &amp; typography.</p>
+						<button class="btn btn-accent" id="btn-open-customize" type="button" style="font-size:0.95rem;padding:10px 30px">&#127912; Open Customizer</button>
+						<div class="prefs-save-row" style="justify-content:center;margin-top:14px">
 							<button class="btn btn-accent" id="btn-save-prefs" type="button">Save preferences</button>
 							<span id="prefs-status"></span>
 						</div>
-
-						<!-- Backup & Restore -->
-						<div class="settings-section">
-							<p class="settings-section-title">Backup &amp; Restore</p>
-							<p class="hint" style="margin:0 0 4px">Export all your notes as a JSON file you can restore later. Essential for the desktop app.</p>
-							<div class="backup-row">
-								<button class="btn btn-small" id="btn-export-backup" type="button" title="Download all notes as JSON">&#10599; Export JSON</button>
-								<button class="btn btn-small" id="btn-import-backup" type="button" title="Restore notes from JSON backup">&#10514; Import JSON</button>
-								<button class="btn btn-small" id="btn-export-csv" type="button" title="Export all notes as CSV spreadsheet">&#8615; Export CSV</button>
-								<button class="btn btn-small" id="btn-import-md-files" type="button" title="Import .md text files as notes">&#8679; Import .md</button>
-								<input type="file" id="backup-file-input" accept=".json" hidden />
-							</div>
-							<p class="hint" id="backup-status" style="margin-top:6px;font-size:0.78rem"></p>
-						</div>
-
-						<!-- Custom app title -->
-						<div class="settings-section">
-							<p class="settings-section-title">App title &amp; subtitle</p>
-							<div class="app-title-edit">
-								<input class="input" id="pref-app-title" type="text" placeholder="ectl.me" maxlength="40" style="flex:1;min-width:100px" />
-								<input class="input" id="pref-app-subtitle" type="text" placeholder="A small static site…" maxlength="80" style="flex:2;min-width:140px" />
-								<button class="btn btn-small" id="btn-apply-title" type="button">Apply</button>
-							</div>
-							<p class="hint" style="margin-top:6px;font-size:0.78rem">Shown in the app header. Saved with your preferences.</p>
-						</div>
-
-						<!-- Auto-lock -->
-						<div class="settings-section">
-							<p class="settings-section-title">Auto-lock (sign out after idle)</p>
-							<div class="chip-row" id="chips-autolock" role="radiogroup" aria-label="Auto-lock timeout">
-								<button class="chip" data-val="off" type="button">Off</button>
-								<button class="chip" data-val="5"   type="button">5 min</button>
-								<button class="chip" data-val="15"  type="button">15 min</button>
-								<button class="chip" data-val="30"  type="button">30 min</button>
-							</div>
-							<p class="hint" style="margin-top:6px;font-size:0.78rem">Signs you out automatically if the tab is idle.</p>
-						</div>
 					</div>
 
-					<!-- Editor Appearance -->
+					<!-- Backup & Restore -->
 					<div class="settings-section">
-						<p class="settings-section-title">Editor line height</p>
-						<div class="chip-row" id="chips-lineheight" role="radiogroup" aria-label="Editor line height">
-							<button class="chip" data-val="tight"   type="button">Tight</button>
-							<button class="chip" data-val="normal"  type="button">Normal</button>
-							<button class="chip" data-val="relaxed" type="button">Relaxed</button>
-							<button class="chip" data-val="loose"   type="button">Loose</button>
+						<p class="settings-section-title">Backup &amp; Restore</p>
+						<p class="hint" style="margin:0 0 4px">Export all your notes as a JSON file you can restore later.</p>
+						<div class="backup-row">
+							<button class="btn btn-small" id="btn-export-backup" type="button" title="Download all notes as JSON">&#10599; Export JSON</button>
+							<button class="btn btn-small" id="btn-import-backup" type="button" title="Restore notes from JSON backup">&#10514; Import JSON</button>
+							<button class="btn btn-small" id="btn-export-csv" type="button" title="Export all notes as CSV spreadsheet">&#8615; Export CSV</button>
+							<button class="btn btn-small" id="btn-import-md-files" type="button" title="Import .md text files as notes">&#8679; Import .md</button>
+							<input type="file" id="backup-file-input" accept=".json" hidden />
 						</div>
+						<p class="hint" id="backup-status" style="margin-top:6px;font-size:0.78rem"></p>
 					</div>
 
+					<!-- Custom app title -->
 					<div class="settings-section">
-						<p class="settings-section-title">Editor font</p>
-						<div class="chip-row" id="chips-editorfont" role="radiogroup" aria-label="Editor font">
-							<button class="chip" data-val="mono"  type="button">Monospace</button>
-							<button class="chip" data-val="sans"  type="button">Sans-serif</button>
-							<button class="chip" data-val="serif" type="button">Serif</button>
+						<p class="settings-section-title">App title &amp; subtitle</p>
+						<div class="app-title-edit">
+							<input class="input" id="pref-app-title" type="text" placeholder="ectl.me" maxlength="40" style="flex:1;min-width:100px" />
+							<input class="input" id="pref-app-subtitle" type="text" placeholder="A small static site…" maxlength="80" style="flex:2;min-width:140px" />
+							<button class="btn btn-small" id="btn-apply-title" type="button">Apply</button>
 						</div>
+						<p class="hint" style="margin-top:6px;font-size:0.78rem">Shown in the app header. Saved with your preferences.</p>
 					</div>
 
+					<!-- Auto-lock -->
 					<div class="settings-section">
-						<p class="settings-section-title">Note list style</p>
-						<div class="chip-row" id="chips-notelistview" role="radiogroup" aria-label="Note list style">
-							<button class="chip" data-val="list"    type="button">List</button>
-							<button class="chip" data-val="compact" type="button">Compact</button>
-							<button class="chip" data-val="cards"   type="button">Cards</button>
-						</div>
-					</div>
-
-					<div class="settings-section">
-						<p class="settings-section-title">Spell check in editor</p>
-						<div class="chip-row" id="chips-spellcheck" role="radiogroup" aria-label="Spell check">
+						<p class="settings-section-title">Auto-lock (sign out after idle)</p>
+						<div class="chip-row" id="chips-autolock" role="radiogroup" aria-label="Auto-lock timeout">
 							<button class="chip" data-val="off" type="button">Off</button>
-							<button class="chip" data-val="on"  type="button">On</button>
+							<button class="chip" data-val="5"   type="button">5 min</button>
+							<button class="chip" data-val="15"  type="button">15 min</button>
+							<button class="chip" data-val="30"  type="button">30 min</button>
 						</div>
-						<p class="hint" style="margin-top:6px;font-size:0.78rem">Browser spell-check underlines in the notes editor.</p>
+						<p class="hint" style="margin-top:6px;font-size:0.78rem">Signs you out automatically if the tab is idle.</p>
 					</div>
 
 					<div class="settings-section">
-						<p class="settings-section-title">Line numbers in editor</p>
-						<div class="chip-row" id="chips-linenums" role="radiogroup" aria-label="Line numbers">
-							<button class="chip" data-val="off" type="button">Off</button>
-							<button class="chip" data-val="on"  type="button">On</button>
-						</div>
-					</div>
-
-					<div class="settings-section">
-						<p class="settings-section-title">Custom CSS</p>
-						<textarea class="input" id="pref-custom-css" rows="5" placeholder="/* Your custom CSS here */" spellcheck="false"></textarea>
-						<div style="display:flex;gap:6px;margin-top:6px">
-							<button class="btn btn-small btn-accent" id="btn-apply-custom-css" type="button">Apply CSS</button>
-							<button class="btn btn-small" id="btn-clear-custom-css" type="button">Clear</button>
-						</div>
-						<p class="hint" style="margin-top:6px;font-size:0.78rem">Injected directly into the page. Tip: <code>body { --accent: #ff6b35; }</code></p>
-					</div>
-
-				<div class="settings-section">
-					<p class="settings-section-title">Sidebar note preview</p>
-					<div class="chip-row" id="chips-sidebarpreview" role="radiogroup" aria-label="Sidebar preview">
-						<button class="chip" data-val="off" type="button">Off</button>
-						<button class="chip" data-val="on"  type="button">On</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">Show first line of note content below each title in the list.</p>
-				</div>
-
-				<div class="settings-section">
-					<p class="settings-section-title">Body font family</p>
-					<div class="chip-row" id="chips-bodyfont" role="radiogroup" aria-label="Body font">
-						<button class="chip" data-val="sans"  type="button">Sans</button>
-						<button class="chip" data-val="serif" type="button">Serif</button>
-						<button class="chip" data-val="mono"  type="button">Mono</button>
-					</div>
-				</div>
-
-				<div class="settings-section">
-					<p class="settings-section-title">Custom accent colour (hex)</p>
-					<div style="display:flex;gap:8px;align-items:center">
-						<input type="color" id="pref-accent-custom" value="#6366f1" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
-						<input class="input" id="pref-accent-hex" type="text" placeholder="#6366f1" style="width:100px;font-family:monospace" />
-						<button class="btn btn-small btn-accent" id="btn-accent-apply" type="button">Apply</button>
-						<button class="btn btn-small" id="btn-accent-reset" type="button">Reset</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">Override the accent colour for all UI elements.</p>
-				</div>
-
-				<!-- Secondary accent colour -->
-				<div class="settings-section">
-					<p class="settings-section-title">Secondary accent colour</p>
-					<div style="display:flex;gap:8px;align-items:center">
-						<input type="color" id="pref-accent2-custom" value="#a855f7" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
-						<input class="input" id="pref-accent2-hex" type="text" placeholder="#a855f7" style="width:100px;font-family:monospace" />
-						<button class="btn btn-small btn-accent" id="btn-accent2-apply" type="button">Apply</button>
-						<button class="btn btn-small" id="btn-accent2-reset" type="button">Reset</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">The second hue used in the gradient stripe, bg blooms, and glow effects.</p>
-				</div>
-
-				<!-- Background base colour -->
-				<div class="settings-section">
-					<p class="settings-section-title">Background base colour</p>
-					<div style="display:flex;gap:8px;align-items:center">
-						<input type="color" id="pref-bg-color" value="#f0f2f8" style="width:48px;height:36px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
-						<input class="input" id="pref-bg-hex" type="text" placeholder="#f0f2f8" style="width:100px;font-family:monospace" />
-						<button class="btn btn-small btn-accent" id="btn-bg-color-apply" type="button">Apply</button>
-						<button class="btn btn-small" id="btn-bg-color-reset" type="button">Reset</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">The flat base tint behind the aurora gradient. Dark mode shows a dark default.</p>
-				</div>
-
-				<!-- Card glass opacity -->
-				<div class="settings-section">
-					<p class="settings-section-title">Card glass opacity</p>
-					<label style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px">
-						<span>Transparency</span><span id="card-opacity-val" style="color:var(--muted)">68%</span>
-					</label>
-					<input type="range" class="pref-slider" id="pref-card-opacity" min="10" max="100" value="68" step="1" />
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">How opaque or glassy the cards look.</p>
-				</div>
-
-				<!-- Card accent stripe -->
-				<div class="settings-section">
-					<p class="settings-section-title">Card accent stripe</p>
-					<div class="chip-row" id="chips-stripe" role="radiogroup" aria-label="Card accent stripe">
-						<button class="chip" data-val="gradient" type="button">Gradient</button>
-						<button class="chip" data-val="solid"    type="button">Solid</button>
-						<button class="chip" data-val="off"      type="button">Off</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">The thin coloured line at the top of each card.</p>
-				</div>
-
-				<!-- Shadow depth -->
-				<div class="settings-section">
-					<p class="settings-section-title">Shadow depth</p>
-					<div class="chip-row" id="chips-shadow" role="radiogroup" aria-label="Shadow depth">
-						<button class="chip" data-val="none"     type="button">None</button>
-						<button class="chip" data-val="subtle"   type="button">Subtle</button>
-						<button class="chip" data-val="normal"   type="button">Normal</button>
-						<button class="chip" data-val="dramatic" type="button">Dramatic</button>
-					</div>
-					<p class="hint" style="margin-top:6px;font-size:0.78rem">Depth of the drop shadow on cards.</p>
-				</div>
-
-				<!-- Letter spacing -->
-				<div class="settings-section">
-					<p class="settings-section-title">Letter spacing</p>
-					<div class="chip-row" id="chips-letterspacing" role="radiogroup" aria-label="Letter spacing">
-						<button class="chip" data-val="tight"  type="button">Tight</button>
-						<button class="chip" data-val="normal" type="button">Normal</button>
-						<button class="chip" data-val="wide"   type="button">Wide</button>
-						<button class="chip" data-val="wider"  type="button">Wider</button>
-					</div>
-				</div>
-
-				<div class="settings-section">
 					<p class="settings-section-title">&#129302; AI Writing Assistant</p>
 					<p class="hint" style="margin:0 0 8px;font-size:0.78rem">Provide your own API key. Key is stored locally only and never sent anywhere except the AI provider.</p>
 					<div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -6069,6 +5798,300 @@
 						</div>
 						<div class="kb-modal-close-row"><button class="btn btn-small" id="btn-kb-modal-close" type="button">Close</button></div>
 					</div>
+	</div>
+
+	<!-- Customization modal -->
+	<div class="kb-modal-overlay" id="customize-overlay" hidden role="dialog" aria-modal="true" aria-label="Customize appearance">
+		<div class="kb-modal customize-modal" id="customize-modal">
+			<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+				<h2>&#127912; Customize</h2>
+				<button class="btn btn-small" id="btn-customize-close" type="button" aria-label="Close">&#10005;</button>
+			</div>
+			<p class="cz-subtitle">All changes apply instantly. Use <em>Save preferences</em> in Settings to persist.</p>
+
+			<!-- THEMES -->
+			<div class="cz-section">
+				<h3>Themes</h3>
+				<div class="cz-row">
+					<label>Theme presets</label>
+					<div class="theme-presets-grid" id="theme-presets-grid"></div>
+					<p class="hint">One-click combos that set accent, background and style together.</p>
+				</div>
+			</div>
+
+			<!-- COLORS -->
+			<div class="cz-section">
+				<h3>Colors</h3>
+				<div class="cz-row">
+					<label>Accent preset</label>
+					<div class="swatch-row" id="swatch-row" role="radiogroup" aria-label="Accent colour"></div>
+				</div>
+				<div class="cz-row">
+					<label>Custom accent <span class="cz-val">overrides preset</span></label>
+					<div class="cz-color-row">
+						<input type="color" id="pref-accent-custom" value="#6366f1" style="width:44px;height:34px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-accent-hex" type="text" placeholder="#6366f1" style="width:96px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-accent-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-accent-reset" type="button">Reset</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Secondary accent <span class="cz-val">glow &amp; gradient</span></label>
+					<div class="cz-color-row">
+						<input type="color" id="pref-accent2-custom" value="#a855f7" style="width:44px;height:34px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-accent2-hex" type="text" placeholder="#a855f7" style="width:96px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-accent2-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-accent2-reset" type="button">Reset</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Background base colour</label>
+					<div class="cz-color-row">
+						<input type="color" id="pref-bg-color" value="#f0f2f8" style="width:44px;height:34px;padding:2px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer" />
+						<input class="input" id="pref-bg-hex" type="text" placeholder="#f0f2f8" style="width:96px;font-family:monospace" />
+						<button class="btn btn-small btn-accent" id="btn-bg-color-apply" type="button">Apply</button>
+						<button class="btn btn-small" id="btn-bg-color-reset" type="button">Reset</button>
+					</div>
+					<p class="hint">The flat base tint behind the aurora gradient.</p>
+				</div>
+			</div>
+
+			<!-- BACKGROUND -->
+			<div class="cz-section">
+				<h3>Background</h3>
+				<div class="cz-row">
+					<label>Style</label>
+					<div class="chip-row" id="chips-bgstyle" role="radiogroup" aria-label="Background style">
+						<button class="chip" data-val="aurora"  type="button">Aurora</button>
+						<button class="chip" data-val="subtle"  type="button">Subtle</button>
+						<button class="chip" data-val="mesh"    type="button">Mesh</button>
+						<button class="chip" data-val="dots"    type="button">Dots</button>
+						<button class="chip" data-val="lines"   type="button">Lines</button>
+						<button class="chip" data-val="glass"   type="button">Glass</button>
+						<button class="chip" data-val="minimal" type="button">Minimal</button>
+						<button class="chip" data-val="solid"   type="button">Solid</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Intensity <span class="cz-val" id="bg-vibrance-val">75%</span></label>
+					<input type="range" class="pref-slider" id="pref-bg-vibrance" min="0" max="100" value="75" step="1" />
+					<p class="hint">How vivid the colour gradient is. 0 = plain base, 100 = full aurora.</p>
+				</div>
+				<div class="cz-row">
+					<label>Noise / grain texture</label>
+					<div class="chip-row" id="chips-grain" role="radiogroup" aria-label="Grain texture">
+						<button class="chip" data-val="on"  type="button">On</button>
+						<button class="chip" data-val="off" type="button">Off</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- LAYOUT -->
+			<div class="cz-section">
+				<h3>Layout</h3>
+				<div class="cz-row">
+					<label>Card width</label>
+					<div class="chip-row" id="chips-cardwidth" role="radiogroup" aria-label="Card width">
+						<button class="chip" data-val="xs"      type="button">XS</button>
+						<button class="chip" data-val="compact" type="button">S</button>
+						<button class="chip" data-val="regular" type="button">M</button>
+						<button class="chip" data-val="wide"    type="button">L</button>
+						<button class="chip" data-val="xl"      type="button">XL</button>
+						<button class="chip" data-val="full"    type="button">Full</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Layout mode</label>
+					<div class="chip-row" id="chips-layout" role="radiogroup" aria-label="Layout">
+						<button class="chip" data-val="windowed" type="button">Windowed</button>
+						<button class="chip" data-val="edge"     type="button">Edge-to-edge</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Tab style</label>
+					<div class="chip-row" id="chips-tabstyle" role="radiogroup" aria-label="Tab style">
+						<button class="chip" data-val="pill"      type="button">Pill</button>
+						<button class="chip" data-val="underline" type="button">Underline</button>
+						<button class="chip" data-val="boxed"     type="button">Boxed</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Corners</label>
+					<div class="chip-row" id="chips-corners" role="radiogroup" aria-label="Corners">
+						<button class="chip" data-val="round" type="button">Round</button>
+						<button class="chip" data-val="soft"  type="button">Soft</button>
+						<button class="chip" data-val="sharp" type="button">Sharp</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Card padding</label>
+					<div class="chip-row" id="chips-cpad" role="radiogroup" aria-label="Card padding">
+						<button class="chip" data-val="tight"    type="button">Tight</button>
+						<button class="chip" data-val="normal"   type="button">Normal</button>
+						<button class="chip" data-val="spacious" type="button">Spacious</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Notes sidebar</label>
+					<div class="chip-row" id="chips-sidebar" role="radiogroup" aria-label="Notes sidebar position">
+						<button class="chip" data-val="left"  type="button">Left</button>
+						<button class="chip" data-val="right" type="button">Right</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Note density</label>
+					<div class="chip-row" id="chips-density" role="radiogroup" aria-label="Note density">
+						<button class="chip" data-val="compact"     type="button">Compact</button>
+						<button class="chip" data-val="normal"      type="button">Normal</button>
+						<button class="chip" data-val="comfortable" type="button">Comfortable</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Shadow depth</label>
+					<div class="chip-row" id="chips-shadow" role="radiogroup" aria-label="Shadow depth">
+						<button class="chip" data-val="none"     type="button">None</button>
+						<button class="chip" data-val="subtle"   type="button">Subtle</button>
+						<button class="chip" data-val="normal"   type="button">Normal</button>
+						<button class="chip" data-val="dramatic" type="button">Dramatic</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- GLASS & EFFECTS -->
+			<div class="cz-section">
+				<h3>Glass &amp; Effects</h3>
+				<div class="cz-row">
+					<label>Glass blur <span class="cz-val" id="blur-amount-val">22px</span></label>
+					<input type="range" class="pref-slider" id="pref-blur-amount" min="0" max="50" value="22" step="1" />
+					<p class="hint">Frosted-glass blur on cards &amp; tabs. 0 = no blur.</p>
+				</div>
+				<div class="cz-row">
+					<label>Card glass opacity <span class="cz-val" id="card-opacity-val">68%</span></label>
+					<input type="range" class="pref-slider" id="pref-card-opacity" min="10" max="100" value="68" step="1" />
+				</div>
+				<div class="cz-row">
+					<label>Card accent stripe</label>
+					<div class="chip-row" id="chips-stripe" role="radiogroup" aria-label="Card accent stripe">
+						<button class="chip" data-val="gradient" type="button">Gradient</button>
+						<button class="chip" data-val="solid"    type="button">Solid</button>
+						<button class="chip" data-val="off"      type="button">Off</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Animations</label>
+					<div class="chip-row" id="chips-animspeed" role="radiogroup" aria-label="Animation speed">
+						<button class="chip" data-val="off"    type="button">Off</button>
+						<button class="chip" data-val="slow"   type="button">Slow</button>
+						<button class="chip" data-val="normal" type="button">Normal</button>
+						<button class="chip" data-val="fast"   type="button">Fast</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- TYPOGRAPHY -->
+			<div class="cz-section">
+				<h3>Typography</h3>
+				<div class="cz-row">
+					<label>Font size</label>
+					<div class="chip-row" id="chips-fontsize" role="radiogroup" aria-label="Font size">
+						<button class="chip" data-val="xs"     type="button">XS</button>
+						<button class="chip" data-val="small"  type="button">S</button>
+						<button class="chip" data-val="medium" type="button">M</button>
+						<button class="chip" data-val="large"  type="button">L</button>
+						<button class="chip" data-val="xl"     type="button">XL</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Body font</label>
+					<div class="chip-row" id="chips-bodyfont" role="radiogroup" aria-label="Body font">
+						<button class="chip" data-val="sans"  type="button">Sans</button>
+						<button class="chip" data-val="serif" type="button">Serif</button>
+						<button class="chip" data-val="mono"  type="button">Mono</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Letter spacing</label>
+					<div class="chip-row" id="chips-letterspacing" role="radiogroup" aria-label="Letter spacing">
+						<button class="chip" data-val="tight"  type="button">Tight</button>
+						<button class="chip" data-val="normal" type="button">Normal</button>
+						<button class="chip" data-val="wide"   type="button">Wide</button>
+						<button class="chip" data-val="wider"  type="button">Wider</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- EDITOR -->
+			<div class="cz-section">
+				<h3>Editor</h3>
+				<div class="cz-row">
+					<label>Editor font</label>
+					<div class="chip-row" id="chips-editorfont" role="radiogroup" aria-label="Editor font">
+						<button class="chip" data-val="mono"  type="button">Monospace</button>
+						<button class="chip" data-val="sans"  type="button">Sans-serif</button>
+						<button class="chip" data-val="serif" type="button">Serif</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Editor line height</label>
+					<div class="chip-row" id="chips-lineheight" role="radiogroup" aria-label="Editor line height">
+						<button class="chip" data-val="tight"   type="button">Tight</button>
+						<button class="chip" data-val="normal"  type="button">Normal</button>
+						<button class="chip" data-val="relaxed" type="button">Relaxed</button>
+						<button class="chip" data-val="loose"   type="button">Loose</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Note list style</label>
+					<div class="chip-row" id="chips-notelistview" role="radiogroup" aria-label="Note list style">
+						<button class="chip" data-val="list"    type="button">List</button>
+						<button class="chip" data-val="compact" type="button">Compact</button>
+						<button class="chip" data-val="cards"   type="button">Cards</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Sidebar note preview</label>
+					<div class="chip-row" id="chips-sidebarpreview" role="radiogroup" aria-label="Sidebar preview">
+						<button class="chip" data-val="off" type="button">Off</button>
+						<button class="chip" data-val="on"  type="button">On</button>
+					</div>
+					<p class="hint">Show first line of note content below each title.</p>
+				</div>
+				<div class="cz-row">
+					<label>Spell check</label>
+					<div class="chip-row" id="chips-spellcheck" role="radiogroup" aria-label="Spell check">
+						<button class="chip" data-val="off" type="button">Off</button>
+						<button class="chip" data-val="on"  type="button">On</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Line numbers</label>
+					<div class="chip-row" id="chips-linenums" role="radiogroup" aria-label="Line numbers">
+						<button class="chip" data-val="off" type="button">Off</button>
+						<button class="chip" data-val="on"  type="button">On</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- ADVANCED -->
+			<div class="cz-section">
+				<h3>Advanced</h3>
+				<div class="cz-row">
+					<label>Custom CSS</label>
+					<textarea class="input" id="pref-custom-css" rows="5" placeholder="/* Your custom CSS here */" spellcheck="false" style="width:100%;margin-top:4px"></textarea>
+					<div style="display:flex;gap:6px;margin-top:6px">
+						<button class="btn btn-small btn-accent" id="btn-apply-custom-css" type="button">Apply CSS</button>
+						<button class="btn btn-small" id="btn-clear-custom-css" type="button">Clear</button>
+					</div>
+					<p class="hint" style="margin-top:4px">Injected into the page. Tip: <code>body { --accent: #ff6b35; }</code></p>
+				</div>
+			</div>
+
+			<hr class="cz-divider" />
+			<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+				<p style="font-size:0.78rem;color:var(--muted);margin:0">Changes apply live. Save in Settings &#8594; Save preferences.</p>
+				<button class="btn btn-small" id="btn-customize-close-2" type="button">Done</button>
+			</div>
+		</div>
 	</div>
 
 	<div id="cmdk-overlay" hidden role="dialog" aria-modal="true" aria-label="Search and commands" tabindex="-1">
@@ -10378,6 +10401,26 @@ body {
 					if (el) el.hidden = true;
 				}
 				document.getElementById('btn-shortcuts-help')?.addEventListener('click', openKbModal);
+
+				// ── Customise modal ─────────────────────────────────────────
+				function openCustomizeModal() {
+					const el = document.getElementById('customize-overlay');
+					if (el) { el.hidden = false; document.getElementById('btn-customize-close')?.focus(); }
+				}
+				function closeCustomizeModal() {
+					const el = document.getElementById('customize-overlay');
+					if (el) el.hidden = true;
+				}
+				['btn-customize-close','btn-customize-close-2'].forEach(id => {
+					document.getElementById(id)?.addEventListener('click', closeCustomizeModal);
+				});
+				document.getElementById('customize-overlay')?.addEventListener('click', e => {
+					if (e.target === document.getElementById('customize-overlay')) closeCustomizeModal();
+				});
+				// Both the header button and the settings panel button open the modal
+				['btn-open-customize','btn-open-customize-hdr'].forEach(id => {
+					document.getElementById(id)?.addEventListener('click', openCustomizeModal);
+				});
 				document.getElementById('btn-kb-modal-close')?.addEventListener('click', closeKbModal);
 				document.getElementById('kb-modal-overlay')?.addEventListener('click', (e) => {
 					if (e.target === document.getElementById('kb-modal-overlay')) closeKbModal();
