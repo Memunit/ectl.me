@@ -58,6 +58,7 @@
 				--card-max: 1060px;
 				--card-pad: 24px;
 				--base-font: 15px;
+				--note-font-size: var(--base-font);
 				--textarea-h: 220px;
 				--wrap-pad-x: 14px;
 				/* animation tokens */
@@ -728,6 +729,11 @@
 			#notes {
 				margin-top: 8px;
 				line-height: 1.35;
+				font-size: var(--note-font-size);
+			}
+			.md-preview-pane,
+			#notes-split-content {
+				font-size: var(--note-font-size);
 			}
 
 			/* ── Multi-doc notes layout ──────────────────────── */
@@ -822,6 +828,11 @@
 			#notes {
 				margin-top: 0;
 				flex: 1;
+				font-size: var(--note-font-size);
+			}
+			.md-preview-pane,
+			#notes-split-content {
+				font-size: var(--note-font-size);
 			}
 
 			.panel {
@@ -3904,7 +3915,7 @@
 		body.split-mode #notes-split-pane { display:flex; }
 		body.split-mode .notes-layout { grid-template-columns:220px 1fr 1fr; }
 		#notes-split-title { font-size:0.83rem; font-weight:600; padding:6px 0; color:var(--muted); border-bottom:1px solid var(--panel-border); margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-		#notes-split-content { flex:1; font-size:0.84rem; line-height:1.65; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+		#notes-split-content { flex:1; font-size: var(--note-font-size); line-height:1.65; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
 		#notes-split-content strong, #notes-split-content b { font-weight:700; }
 		#notes-split-content em, #notes-split-content i { font-style:italic; }
 		#btn-split-view.active { color:var(--accent); border-color:var(--accent); }
@@ -7370,6 +7381,16 @@
 				<div class="cz-row">
 					<label>Font size</label>
 					<div class="chip-row" id="chips-fontsize" role="radiogroup" aria-label="Font size">
+						<button class="chip" data-val="xs"     type="button">XS</button>
+						<button class="chip" data-val="small"  type="button">S</button>
+						<button class="chip" data-val="medium" type="button">M</button>
+						<button class="chip" data-val="large"  type="button">L</button>
+						<button class="chip" data-val="xl"     type="button">XL</button>
+					</div>
+				</div>
+				<div class="cz-row">
+					<label>Note text size</label>
+					<div class="chip-row" id="chips-notefontsize" role="radiogroup" aria-label="Note text size">
 						<button class="chip" data-val="xs"     type="button">XS</button>
 						<button class="chip" data-val="small"  type="button">S</button>
 						<button class="chip" data-val="medium" type="button">M</button>
@@ -13587,6 +13608,7 @@ body {
 					wordGoal:    0,
 					lineHeight:   'normal',
 					editorFont:   'mono',
+					noteFontSize: 'medium',
 					spellCheck:   'off',
 					noteListView: 'list',
 					lineNums:     'off',
@@ -13594,6 +13616,7 @@ body {
 				};
 
 				const FONT_SCALE   = { xs: 0.76, small: 0.88, medium: 1, large: 1.15, xl: 1.30 };
+				const NOTE_FONT_SCALE = { xs: 0.85, small: 0.94, medium: 1, large: 1.1, xl: 1.2 };
 				const CARD_SCALE   = { xs: 0.50, compact: 0.72, regular: 1, wide: 1.22, xl: 1.50, full: 9.0 };
 
 				// Base card-max values (read from the stylesheet's --card-max at each bp).
@@ -13623,8 +13646,8 @@ body {
 					// Font size
 					const fs = FONT_SCALE[currentPrefs.fontSize] ?? 1;
 					root.style.setProperty('--base-font',   `${Math.round(BASE_FONT.base * fs)}px`);
-
-					// Card width
+					const nfs = NOTE_FONT_SCALE[currentPrefs.noteFontSize] ?? 1;
+					root.style.setProperty('--note-font-size', `calc(var(--base-font) * ${nfs})`);
 					const cw = CARD_SCALE[currentPrefs.cardWidth] ?? 1;
 					root.style.setProperty('--card-max', `${Math.round(BASE_CARD_MAX.base * cw)}px`);
 
@@ -13840,6 +13863,7 @@ body {
 					[
 						{ id: 'chips-fontsize',  key: 'fontSize'  },
 						{ id: 'chips-cardwidth', key: 'cardWidth' },
+					{ id: 'chips-notefontsize', key: 'noteFontSize' },
 						{ id: 'chips-bgstyle',   key: 'bgStyle'   },
 						{ id: 'chips-density',   key: 'density'   },
 						{ id: 'chips-layout',    key: 'layout'    },
@@ -13867,7 +13891,7 @@ body {
 				}
 
 				// Wire chip clicks
-				['chips-fontsize','chips-cardwidth','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock','chips-lineheight','chips-editorfont','chips-spellcheck','chips-notelistview','chips-linenums'].forEach(id => {
+				['chips-fontsize','chips-cardwidth','chips-notefontsize','chips-bgstyle','chips-density','chips-layout','chips-tabstyle','chips-corners','chips-hblur','chips-animspeed','chips-cpad','chips-sidebar','chips-autolock','chips-lineheight','chips-editorfont','chips-spellcheck','chips-notelistview','chips-linenums'].forEach(id => {
 					const container = document.getElementById(id);
 					if (!container) return;
 					const key = id === 'chips-fontsize'  ? 'fontSize'
@@ -13881,6 +13905,7 @@ body {
 					          : id === 'chips-cpad'      ? 'cardPad'
 					          : id === 'chips-sidebar'   ? 'sidebar'
 					          : id === 'chips-autolock'     ? 'autoLock'
+					          : id === 'chips-notefontsize' ? 'noteFontSize'
 					          : id === 'chips-lineheight'   ? 'lineHeight'
 					          : id === 'chips-editorfont'   ? 'editorFont'
 					          : id === 'chips-spellcheck'   ? 'spellCheck'
