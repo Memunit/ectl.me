@@ -8960,6 +8960,7 @@
 					}
 					return s;
 				}
+				window.renderMarkdown = renderMarkdown;  // Expose globally for print handler
 
 				function renderDocList() {
 					if (!docListEl) return;
@@ -15539,7 +15540,7 @@ body {
 			const doc = noteDocs?.find(d => d.id === splitDocId);
 			if (!doc) return;
 			if (title) title.textContent = doc.title || 'Untitled';
-			if (typeof renderMd === 'function') pane.innerHTML = renderMd(doc.content || '');
+			if (typeof window.renderMarkdown === 'function') pane.innerHTML = window.renderMarkdown(doc.content || '');
 		}
 		// Shift+click in doc list opens split pane
 		document.getElementById('doc-list')?.addEventListener('click', (e) => {
@@ -15558,7 +15559,7 @@ body {
 			const num     = document.getElementById('present-slide-num');
 			if (!content) return;
 			const md = _slides[_slideIdx] || '';
-			content.innerHTML = typeof renderMd === 'function' ? renderMd(md) : md.replace(/</g,'&lt;');
+			content.innerHTML = typeof window.renderMarkdown === 'function' ? window.renderMarkdown(md) : md.replace(/</g,'&lt;');
 			if (num) num.textContent = `${_slideIdx + 1} / ${_slides.length}`;
 		}
 		document.getElementById('btn-present')?.addEventListener('click', () => {
@@ -15592,7 +15593,7 @@ body {
 			const ta    = document.getElementById('notes');
 			const title = document.getElementById('doc-title')?.value || 'Note';
 			if (!ta) return;
-			const mdHtml = typeof renderMd === 'function' ? renderMd(ta.value) : ta.value.replace(/</g,'&lt;');
+			const mdHtml = typeof window.renderMarkdown === 'function' ? window.renderMarkdown(ta.value) : ta.value.replace(/</g,'&lt;');
 			const safeTitle = title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			const w = window.open('', '_blank', 'width=820,height=700');
 			if (!w) { showToast?.('Pop-up blocked. Please allow pop-ups.', 'error'); return; }
@@ -15945,7 +15946,7 @@ body {
 		document.getElementById('btn-copy-html')?.addEventListener('click', () => {
 			const ta = document.getElementById('notes');
 			if (!ta) return;
-			const html = typeof renderMd === 'function' ? renderMd(ta.value) : ta.value;
+			const html = typeof window.renderMarkdown === 'function' ? window.renderMarkdown(ta.value) : ta.value;
 			navigator.clipboard.writeText(html).then(() => showToast?.('HTML copied', 'success')).catch(() => showToast?.('Could not access clipboard', 'error'));
 		});
 
