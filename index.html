@@ -57,8 +57,8 @@
 				/* fluid sizing tokens */
 				--card-max: 1060px;
 				--card-pad: 24px;
-				--base-font: 15px;
-				--note-font-size: var(--base-font);
+		--base-font: 15px;
+		--note-font-size: 12pt;
 				--textarea-h: 220px;
 				--wrap-pad-x: 14px;
 				/* animation tokens */
@@ -2846,7 +2846,7 @@
 			.doc-more-popup hr { border:none; border-top:1px solid var(--panel-border); margin:2px 0; }
 
 			/* ── PAGE VIEW ───────────────────────────────────────────────── */
-			#notes { background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(128,128,128,0.12) calc(100% - 1px), rgba(128,128,128,0.12) 100%); background-size:100% calc(25 * 1.35 * var(--base-font)); background-repeat:repeat-y; }
+			#notes { background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(128,128,128,0.12) calc(100% - 1px), rgba(128,128,128,0.12) 100%); background-size:100% calc(1.35 * var(--note-font-size)); background-repeat:repeat-y; }
 			body.page-view-active #panel-notes { background:var(--bg); }
 			body.page-view-active #notes { background:white; background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(0,0,0,0.08) calc(100% - 1px), rgba(0,0,0,0.08) 100%); background-size:100% calc(25 * 1.75 * 12pt); background-repeat:repeat-y; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:2px; box-shadow:0 1px 6px rgba(0,0,0,.2); line-height:1.75; font-size:12pt; resize:none; }
 			body.page-view-active #notes:focus { outline:none; box-shadow:0 1px 6px rgba(0,0,0,.2); }
@@ -2855,8 +2855,8 @@
 			body.page-view-active .doc-action-bar { background:var(--bg); }
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
-			@page { margin:2cm; }
-			@media print { body.page-view-active #notes { width:100%; box-shadow:none; margin:0; padding:0; } }
+		@page { margin:0; }
+		@media print { body.page-view-active #notes { box-shadow:none; } }
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
 			.zpl-body { display:flex; flex-direction:column; gap:12px; }
@@ -3431,10 +3431,10 @@
 				color:var(--muted); font-size:0.9rem; pointer-events:none;
 			}
 
-			/* ── @media print — hide UI chrome if user prints directly from main window ── */
-			@media print {
-				body > * { display: none !important; }
-			}
+		/* ── @media print — hide UI chrome if user prints directly from main window ── */
+		@media print {
+			body:not(.page-view-active) > * { display: none !important; }
+		}
 
 		/* ══════════════ ⌘K GLOBAL SEARCH PALETTE ══════════════════ */
 		#cmdk-overlay {
@@ -10484,24 +10484,27 @@ body {
 					else if (this.value === 'blockquote') document.execCommand('formatBlock', false, '<blockquote>');
 					notesEl.focus(); this.value='p';
 				});
-				document.getElementById('fmt-fontsize')?.addEventListener('change', function() {
-					const pt = this.value;
-					if (!pt) { notesEl.focus(); return; }
-					document.execCommand('fontSize', false, '7');
-					const sel = window.getSelection();
-					if (sel.rangeCount) {
-						const node = sel.anchorNode;
-						const font = node?.parentElement?.closest?.('font');
-						if (font) {
-							const span = document.createElement('span');
-							span.style.fontSize = pt + 'pt';
-							while (font.firstChild) span.appendChild(font.firstChild);
-							font.parentNode.replaceChild(span, font);
-						}
+			document.getElementById('fmt-fontsize')?.addEventListener('change', function() {
+				const pt = this.value;
+				if (!pt) { notesEl.focus(); return; }
+				const sel = window.getSelection();
+				if (sel.rangeCount && !sel.isCollapsed) {
+					const range = sel.getRangeAt(0);
+					const span = document.createElement('span');
+					span.style.fontSize = pt + 'pt';
+					try { range.surroundContents(span); } catch (e) {
+						const fragment = range.extractContents();
+						span.appendChild(fragment);
+						range.insertNode(span);
 					}
-					notesEl.dispatchEvent(new Event('input', { bubbles: true }));
-					notesEl.focus(); this.value='';
-				});
+					sel.removeAllRanges();
+					const r2 = document.createRange();
+					r2.selectNodeContents(span);
+					sel.addRange(r2);
+				}
+				notesEl.dispatchEvent(new Event('input', { bubbles: true }));
+				notesEl.focus(); this.value='';
+			});
 				// Color picker UI (wraps selection in <span style="color/highlight">)
 				['text-color-picker','highlight-picker'].forEach(pid => {
 					const picker = document.getElementById(pid);
