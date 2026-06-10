@@ -30,27 +30,27 @@
 				--muted: #697285;
 				--accent: #5b6ef5;
 				--accent-2: #a855f7;
-				--accent-glow: rgba(91,110,245,0.22);
-				--accent-glow-2: rgba(168,85,247,0.14);
+				--accent-glow: rgba(91,110,245,0.16);
+				--accent-glow-2: rgba(168,85,247,0.10);
 				--ring: rgba(91,110,245,0.35);
 				--link: var(--accent);
-				--card-bg: rgba(255,255,255,0.68);
-				--card-border: rgba(255,255,255,0.85);
+				--card-bg: #ffffff;
+				--card-border: #dde0ea;
 				--card-top-line: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-				--card-shadow: 0 32px 80px rgba(15,17,40,0.13), 0 8px 24px rgba(15,17,40,0.08);
-				--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.6) inset;
-				--panel-bg: rgba(255,255,255,0.42);
-				--panel-border: rgba(91,110,245,0.13);
+				--card-shadow: 0 2px 12px rgba(15,17,40,0.06), 0 1px 3px rgba(15,17,40,0.04);
+				--card-shadow-2: none;
+				--panel-bg: #e8ebf3;
+				--panel-border: #d0d5e5;
 				--ok-bg: rgba(91,110,245,0.08);
 				--ok-border: rgba(91,110,245,0.22);
 				--ok-text: var(--accent);
-				--btn-bg: rgba(255,255,255,0.55);
-				--btn-border: rgba(91,110,245,0.22);
-				--btn-hover: rgba(255,255,255,0.80);
+				--btn-bg: #f4f5fa;
+				--btn-border: #d5dae8;
+				--btn-hover: #e8ebf5;
 				--btn-active: rgba(91,110,245,0.12);
-				--input-bg: rgba(255,255,255,0.72);
-				--input-border: rgba(91,110,245,0.2);
-				--inset: inset 0 1px 0 rgba(255,255,255,0.7);
+				--input-bg: #ffffff;
+				--input-border: #ccd2e0;
+				--inset: none;
 				--radius-lg: 26px;
 				--radius-md: 14px;
 				--blur: 22px;
@@ -132,25 +132,25 @@
 					--muted: #7a84a8;
 					--accent: #818cf8;
 					--accent-2: #c084fc;
-					--accent-glow: rgba(129,140,248,0.25);
-					--accent-glow-2: rgba(192,132,252,0.16);
+					--accent-glow: rgba(129,140,248,0.18);
+					--accent-glow-2: rgba(192,132,252,0.12);
 					--ring: rgba(129,140,248,0.40);
-					--card-bg: rgba(17,19,35,0.78);
-					--card-border: rgba(129,140,248,0.18);
-					--card-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3);
-					--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.07) inset;
-					--panel-bg: rgba(255,255,255,0.04);
-					--panel-border: rgba(129,140,248,0.16);
+					--card-bg: #161927;
+					--card-border: #272b3d;
+					--card-shadow: 0 2px 12px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.15);
+					--card-shadow-2: none;
+					--panel-bg: #11131e;
+					--panel-border: #1f2335;
 					--ok-bg: rgba(129,140,248,0.12);
 					--ok-border: rgba(129,140,248,0.30);
 					--ok-text: var(--accent);
-					--btn-bg: rgba(255,255,255,0.06);
-					--btn-border: rgba(129,140,248,0.24);
-					--btn-hover: rgba(255,255,255,0.10);
+					--btn-bg: #1b1e2d;
+					--btn-border: #272b3d;
+					--btn-hover: #23273a;
 					--btn-active: rgba(129,140,248,0.18);
-					--input-bg: rgba(255,255,255,0.06);
-					--input-border: rgba(129,140,248,0.22);
-					--inset: inset 0 1px 0 rgba(255,255,255,0.08);
+					--input-bg: #131621;
+					--input-border: #272b3d;
+					--inset: none;
 				}
 			}
 
@@ -165,21 +165,7 @@
 				margin: 0;
 				font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 				font-size: var(--base-font);
-				background:
-					/* Top-left bloom – primary accent */
-					radial-gradient(ellipse 70% 60% at 5% 0%,   color-mix(in srgb, var(--accent)   62%, transparent), transparent),
-					/* Top-right bloom – secondary accent */
-					radial-gradient(ellipse 55% 50% at 95% 5%,  color-mix(in srgb, var(--accent-2)  48%, transparent), transparent),
-					/* Centre soft haze */
-					radial-gradient(ellipse 80% 55% at 50% 46%, color-mix(in srgb, var(--accent)   18%, transparent), transparent),
-					/* Bottom anchor */
-					radial-gradient(ellipse 90% 55% at 25% 100%,color-mix(in srgb, var(--accent-2)  28%, transparent), transparent),
-					/* Diagonal shimmer */
-					linear-gradient(135deg,
-						color-mix(in srgb, var(--accent) 12%, transparent) 0%,
-						transparent 45%,
-						color-mix(in srgb, var(--accent-2) 10%, transparent) 100%),
-					var(--bg);
+				background: var(--bg);
 				color: var(--text);
 				min-height: 100vh;
 			}
@@ -276,13 +262,13 @@
 				letter-spacing: -0.03em;
 				user-select: none;
 				background: linear-gradient(135deg, var(--accent-glow) 0%, var(--accent-glow-2) 100%);
-				box-shadow: var(--inset), 0 0 0 0 var(--accent-glow);
+				box-shadow: 0 0 0 0 var(--accent-glow);
 				color: var(--accent);
 				transition: transform var(--t-mid) var(--ease-spring), box-shadow var(--t-mid) var(--ease);
 			}
 			.mark:hover {
 				transform: scale(1.1) rotate(-4deg);
-				box-shadow: var(--inset), 0 6px 22px var(--accent-glow);
+				box-shadow: 0 6px 22px var(--accent-glow);
 			}
 
 			h1 {
@@ -346,8 +332,7 @@
 				border-radius: 999px;
 				border: 1px solid var(--card-border);
 				background: rgba(0,0,0,0.05);
-				backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(150%);
+
 				box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.06);
 				overflow-x: auto;
 				-webkit-overflow-scrolling: touch;
@@ -403,7 +388,7 @@
 				color: var(--accent);
 				background: var(--card-bg);
 				border-color: var(--ring);
-				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
+				box-shadow: 0 2px 10px var(--accent-glow);
 			}
 
 			.btn {
@@ -418,7 +403,7 @@
 				font-weight: 600;
 				letter-spacing: 0.01em;
 				cursor: pointer;
-				box-shadow: var(--inset), 0 1px 3px rgba(0,0,0,0.07);
+				box-shadow: 0 1px 3px rgba(0,0,0,0.07);
 				transition:
 					background var(--t-fast) var(--ease),
 					border-color var(--t-fast) var(--ease),
@@ -430,14 +415,13 @@
 			.btn:hover {
 				background: var(--btn-hover);
 				border-color: var(--ring);
-				box-shadow: var(--inset), 0 4px 16px var(--accent-glow);
+				box-shadow: 0 4px 16px var(--accent-glow);
 				transform: translateY(-1px);
 			}
 
 			.btn:active {
 				background: var(--btn-active);
 				transform: scale(0.95) translateY(0);
-				box-shadow: var(--inset);
 			}
 
 			.btn:disabled {
@@ -451,12 +435,12 @@
 				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
 				border-color: transparent;
 				color: #fff;
-				box-shadow: var(--inset), 0 4px 18px var(--accent-glow);
+				box-shadow: 0 4px 18px var(--accent-glow);
 			}
 			.btn-accent:hover {
 				background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 85%, #fff) 0%, color-mix(in srgb, var(--accent-2) 85%, #fff) 100%);
 				border-color: transparent;
-				box-shadow: var(--inset), 0 6px 24px var(--accent-glow);
+				box-shadow: 0 6px 24px var(--accent-glow);
 			}
 			.btn-accent:active {
 				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
@@ -471,7 +455,7 @@
 				background: var(--input-bg);
 				color: var(--text);
 				font: inherit;
-				box-shadow: var(--inset), inset 0 1px 3px rgba(0,0,0,0.04);
+				box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
 				transition:
 					border-color var(--t-fast) var(--ease),
 					box-shadow var(--t-mid) var(--ease),
@@ -481,7 +465,7 @@
 			textarea:focus {
 				outline: none;
 				border-color: var(--accent);
-				box-shadow: var(--inset), 0 0 0 3.5px var(--accent-glow);
+				box-shadow: 0 0 0 3.5px var(--accent-glow);
 			}
                     .input:hover:not(:focus),
                     textarea:hover:not(:focus) {
@@ -670,13 +654,18 @@
 				outline: none;
 				white-space: pre-wrap;
 				overflow-wrap: break-word;
-				padding: 8px 4px;
+				padding: 10px 13px;
+				background: var(--input-bg);
+				border: 1.5px solid var(--input-border);
+				border-radius: var(--radius-md);
 			}
 			#notes:empty:before {
 				content: attr(data-placeholder);
 				color: var(--muted);
 				pointer-events: none;
 			}
+			#notes:focus { border-color: var(--accent); box-shadow: 0 0 0 3.5px var(--accent-glow); }
+			#notes:hover:not(:focus) { border-color: color-mix(in srgb, var(--accent) 40%, var(--input-border)); }
 			.md-preview-pane,
 			#notes-split-content {
 				font-size: var(--note-font-size);
@@ -789,7 +778,7 @@
 				border-radius: calc(var(--radius-lg) - 4px);
 				background: var(--panel-bg);
 				border: 1px solid var(--panel-border);
-				box-shadow: var(--inset), 0 2px 12px rgba(0,0,0,0.04);
+				box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 			}
 
 			.status {
@@ -807,8 +796,7 @@
 				letter-spacing: 0.01em;
 				width: fit-content;
 				box-shadow: 0 2px 12px var(--accent-glow);
-				backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(150%);
-				-webkit-backdrop-filter: blur(calc(var(--blur) * 0.6)) saturate(150%);
+
 			}
 
 			.dot {
@@ -940,8 +928,7 @@
 				color: var(--text);
 				font-size: 0.87rem;
 				font-weight: 600;
-				backdrop-filter: blur(var(--blur)) saturate(160%);
-				-webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+
 				box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
 				animation: toast-in 0.28s var(--ease-spring) both;
 				max-width: min(340px, calc(100vw - 32px));
@@ -1042,11 +1029,11 @@
 				color: var(--accent);
 				background: var(--card-bg);
 				border-color: var(--ring);
-				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
+				box-shadow: 0 2px 10px var(--accent-glow);
 			}
 			.tab-more-overlay {
 				position: fixed; inset: 0; z-index: 9800;
-				background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+ background: rgba(0,0,0,0.55);
 				display: flex; align-items: center; justify-content: center;
 				padding: 24px;
 			}
@@ -1081,7 +1068,7 @@
 				color: var(--accent);
 				background: rgba(128,128,128,0.15);
 				border-color: var(--ring);
-				box-shadow: var(--inset), 0 2px 10px var(--accent-glow);
+				box-shadow: 0 2px 10px var(--accent-glow);
 			}
 
 			/* ── Splash screen ─────────────────────────────────── */
@@ -1156,25 +1143,25 @@
 				--muted: #7a84a8;
 				--accent: #818cf8;
 				--accent-2: #c084fc;
-				--accent-glow: rgba(129,140,248,0.25);
-				--accent-glow-2: rgba(192,132,252,0.16);
+				--accent-glow: rgba(129,140,248,0.18);
+				--accent-glow-2: rgba(192,132,252,0.12);
 				--ring: rgba(129,140,248,0.40);
-				--card-bg: rgba(17,19,35,0.78);
-				--card-border: rgba(129,140,248,0.18);
-				--card-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3);
-				--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.07) inset;
-				--panel-bg: rgba(255,255,255,0.04);
-				--panel-border: rgba(129,140,248,0.16);
+				--card-bg: #161927;
+				--card-border: #272b3d;
+				--card-shadow: 0 2px 12px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.15);
+				--card-shadow-2: none;
+				--panel-bg: #11131e;
+				--panel-border: #1f2335;
 				--ok-bg: rgba(129,140,248,0.12);
 				--ok-border: rgba(129,140,248,0.30);
 				--ok-text: var(--accent);
-				--btn-bg: rgba(255,255,255,0.06);
-				--btn-border: rgba(129,140,248,0.24);
-				--btn-hover: rgba(255,255,255,0.10);
+				--btn-bg: #1b1e2d;
+				--btn-border: #272b3d;
+				--btn-hover: #23273a;
 				--btn-active: rgba(129,140,248,0.18);
-				--input-bg: rgba(255,255,255,0.06);
-				--input-border: rgba(129,140,248,0.22);
-				--inset: inset 0 1px 0 rgba(255,255,255,0.08);
+				--input-bg: #131621;
+				--input-border: #272b3d;
+				--inset: none;
 				color-scheme: dark;
 			}
 			body.theme-light {
@@ -1183,43 +1170,29 @@
 				--muted: #697285;
 				--accent: #5b6ef5;
 				--accent-2: #a855f7;
-				--accent-glow: rgba(91,110,245,0.22);
-				--accent-glow-2: rgba(168,85,247,0.14);
+				--accent-glow: rgba(91,110,245,0.16);
+				--accent-glow-2: rgba(168,85,247,0.10);
 				--ring: rgba(91,110,245,0.35);
-				--card-bg: rgba(255,255,255,0.68);
-				--card-border: rgba(255,255,255,0.85);
-				--card-shadow: 0 32px 80px rgba(15,17,40,0.13), 0 8px 24px rgba(15,17,40,0.08);
-				--card-shadow-2: 0 0 0 1px rgba(255,255,255,0.6) inset;
-				--panel-bg: rgba(255,255,255,0.42);
-				--panel-border: rgba(91,110,245,0.13);
+				--card-bg: #ffffff;
+				--card-border: #dde0ea;
+				--card-shadow: 0 2px 12px rgba(15,17,40,0.06), 0 1px 3px rgba(15,17,40,0.04);
+				--card-shadow-2: none;
+				--panel-bg: #e8ebf3;
+				--panel-border: #d0d5e5;
 				--ok-bg: rgba(91,110,245,0.08);
 				--ok-border: rgba(91,110,245,0.22);
 				--ok-text: var(--accent);
-				--btn-bg: rgba(255,255,255,0.55);
-				--btn-border: rgba(91,110,245,0.22);
-				--btn-hover: rgba(255,255,255,0.80);
+				--btn-bg: #f4f5fa;
+				--btn-border: #d5dae8;
+				--btn-hover: #e8ebf5;
 				--btn-active: rgba(91,110,245,0.12);
-				--input-bg: rgba(255,255,255,0.72);
-				--input-border: rgba(91,110,245,0.2);
-				--inset: inset 0 1px 0 rgba(255,255,255,0.7);
+				--input-bg: #ffffff;
+				--input-border: #ccd2e0;
+				--inset: none;
 				color-scheme: light;
 			}
-			/* body.theme-dark doesn't use aurora body gradient — simpler bg */
-			body.theme-dark {
-				background: var(--bg);
-			}
-			body.theme-light {
-				background:
-					radial-gradient(ellipse 70% 60% at 5% 0%,   color-mix(in srgb, var(--accent)   62%, transparent), transparent),
-					radial-gradient(ellipse 55% 50% at 95% 5%,  color-mix(in srgb, var(--accent-2)  48%, transparent), transparent),
-					radial-gradient(ellipse 80% 55% at 50% 46%, color-mix(in srgb, var(--accent)   18%, transparent), transparent),
-					radial-gradient(ellipse 90% 55% at 25% 100%,color-mix(in srgb, var(--accent-2)  28%, transparent), transparent),
-					linear-gradient(135deg,
-						color-mix(in srgb, var(--accent) 12%, transparent) 0%,
-						transparent 45%,
-						color-mix(in srgb, var(--accent-2) 10%, transparent) 100%),
-	var(--bg);
-	}
+			body.theme-dark { background: var(--bg); }
+			body.theme-light { background: var(--bg); }
 
 	/* ── Note density removed ──
 
@@ -1296,7 +1269,6 @@
 				font-weight: 600;
 				cursor: pointer;
 				transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
-				backdrop-filter: blur(4px);
 			}
 			.home-qa-btn:hover {
 				background: var(--accent-glow);
@@ -1536,11 +1508,11 @@
 			.notes-char-warning.visible { display: block; }
 			textarea.char-limit-near {
 				border-color: #d97706 !important;
-				box-shadow: var(--inset), 0 0 0 3px rgba(217,119,6,0.18) !important;
+				box-shadow: 0 0 0 3px rgba(217,119,6,0.18) !important;
 			}
 			textarea.char-limit-at {
 				border-color: #ef4444 !important;
-				box-shadow: var(--inset), 0 0 0 3px rgba(239,68,68,0.18) !important;
+				box-shadow: 0 0 0 3px rgba(239,68,68,0.18) !important;
 			}
 
 			/* ── Drag-to-reorder ────────────────────────────────────── */
@@ -1605,8 +1577,7 @@
 				border: 1px solid var(--card-border);
 				border-radius: var(--radius-md);
 				box-shadow: var(--card-shadow);
-				backdrop-filter: blur(var(--blur)) saturate(160%);
-				-webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+
 				min-width: 175px;
 				animation: panel-in 0.18s var(--ease) both;
 			}
@@ -1708,7 +1679,7 @@
 				display: flex; gap: 5px; padding: 7px 9px;
 				background: var(--card-bg); border: 1px solid var(--card-border);
 				border-radius: var(--radius-md); box-shadow: var(--card-shadow);
-				backdrop-filter: blur(var(--blur)) saturate(160%);
+
 				animation: panel-in 0.15s var(--ease) both;
 			}
 			.color-picker-pop[hidden] { display: none !important; }
@@ -1755,7 +1726,7 @@
 		/* ── File preview lightbox ─────────────────────────────── */
 			.lightbox-overlay {
 				position: fixed; inset: 0; z-index: 800;
-				background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+ background: rgba(0,0,0,0.72);
 				display: flex; align-items: center; justify-content: center; flex-direction: column;
 				padding: 24px; cursor: zoom-out;
 				animation: lb-in 0.2s var(--ease) both;
@@ -1792,7 +1763,7 @@
 			/* ── Keyboard shortcut modal ───────────────────────────── */
 			.kb-modal-overlay {
 				position: fixed; inset: 0; z-index: 9800;
-				background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+ background: rgba(0,0,0,0.55);
 				display: flex; align-items: center; justify-content: center;
 				padding: 24px; overflow-y: auto;
 				animation: lb-in 0.18s var(--ease) both;
@@ -1801,7 +1772,7 @@
 			.kb-modal {
 				background: var(--card-bg); border: 1px solid var(--card-border);
 				border-radius: var(--radius-lg); box-shadow: var(--card-shadow);
-				backdrop-filter: blur(var(--blur)) saturate(160%);
+
 				padding: 28px 32px; min-width: 300px; max-width: 500px; width: 100%;
 				max-height: calc(100dvh - 48px); overflow-y: auto;
 				animation: panel-in 0.2s var(--ease) both;
@@ -2058,8 +2029,7 @@
 				border: 1.5px solid var(--input-border);
 				border-radius: var(--radius-md);
 				box-shadow: 0 12px 40px rgba(0,0,0,0.18);
-				backdrop-filter: blur(var(--blur));
-				-webkit-backdrop-filter: blur(var(--blur));
+
 				padding: 6px 0;
 				overflow-y: auto;
 				max-height: 280px;
@@ -2093,8 +2063,7 @@
 				border: 1.5px solid var(--input-border);
 				border-radius: var(--radius-md);
 				box-shadow: 0 8px 28px rgba(0,0,0,0.16);
-				backdrop-filter: blur(var(--blur));
-				-webkit-backdrop-filter: blur(var(--blur));
+
 				padding: 6px 0;
 				min-width: 180px;
 			}
@@ -2786,7 +2755,7 @@
 			.vault-pass-row    { display:flex; align-items:center; gap:6px; margin-top:6px; }
 			.vault-pass-field  { font-family:ui-monospace,monospace; font-size:0.8rem; flex:1; -webkit-text-security:disc; word-break:break-all; }
 			.vault-pass-field.vis { -webkit-text-security:none; }
-			#vault-add-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; z-index:8800; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+			#vault-add-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; z-index:8800; -webkit-}
 			#vault-add-overlay[hidden] { display:none !important; }
 
 			/* ── SPREADSHEET ────────────────────────────────────────────── */
@@ -2817,7 +2786,7 @@
 			.clock-del:hover { opacity:1; color:var(--error,#dc2626); }
 
 			/* ── QUICK CAPTURE OVERLAY ──────────────────────────────────── */
-			#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; backdrop-filter:blur(4px); padding-top:80px; }
+			#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; padding-top:80px; }
 			#quick-capture-overlay[hidden] { display:none !important; }
 			#quick-capture-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:18px; width:min(580px,92vw); box-shadow:0 20px 60px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:10px; }
 
@@ -2827,12 +2796,12 @@
 			#app-lock-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:32px 28px; width:min(320px,90vw); display:flex; flex-direction:column; align-items:center; gap:14px; box-shadow:0 20px 60px rgba(0,0,0,.35); text-align:center; }
 
 			/* ── AI ASSISTANT MODAL ─────────────────────────────────────── */
-			#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8700; backdrop-filter:blur(4px); }
+			#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8700; }
 			#ai-modal-overlay[hidden] { display:none !important; }
 			#ai-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:22px; width:min(600px,94vw); max-height:80vh; overflow-y:auto; display:flex; flex-direction:column; gap:11px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
 
 			/* ── DIFF MODAL ─────────────────────────────────────────────── */
-			#diff-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8600; backdrop-filter:blur(4px); }
+			#diff-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8600; }
 			#diff-modal-overlay[hidden] { display:none !important; }
 
 			/* ── MULTISELECT BAR ────────────────────────────────────────── */
@@ -2877,8 +2846,9 @@
 			.doc-more-popup hr { border:none; border-top:1px solid var(--panel-border); margin:2px 0; }
 
 			/* ── PAGE VIEW ───────────────────────────────────────────────── */
+			#notes { background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(128,128,128,0.12) calc(100% - 1px), rgba(128,128,128,0.12) 100%); background-size:100% calc(25 * 1.35 * var(--base-font)); background-repeat:repeat-y; }
 			body.page-view-active #panel-notes { background:var(--bg); }
-			body.page-view-active #notes { background:white; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:2px; box-shadow:0 1px 6px rgba(0,0,0,.2); line-height:1.75; font-size:12pt; resize:none; }
+			body.page-view-active #notes { background:white; background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(0,0,0,0.08) calc(100% - 1px), rgba(0,0,0,0.08) 100%); background-size:100% calc(25 * 1.75 * 12pt); background-repeat:repeat-y; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:2px; box-shadow:0 1px 6px rgba(0,0,0,.2); line-height:1.75; font-size:12pt; resize:none; }
 			body.page-view-active #notes:focus { outline:none; box-shadow:0 1px 6px rgba(0,0,0,.2); }
 			body.page-view-active #note-gutter { display:none; }
 			body.page-view-active .fmt-toolbar { background:var(--bg); }
@@ -3160,7 +3130,6 @@
 				align-items: flex-start;
 				justify-content: center;
 				padding: 24px 16px 16px;
-				backdrop-filter: blur(4px);
 			}
 			.rpt-print-overlay[hidden] { display: none !important; }
 			.rpt-print-modal {
@@ -3393,7 +3362,7 @@
 			/* Snippet editor overlay */
 			.snip-editor-overlay {
 				position:fixed; inset:0; z-index:9700;
-				background:rgba(0,0,0,0.5); backdrop-filter:blur(6px);
+ background:rgba(0,0,0,0.5);
 				display:flex; align-items:center; justify-content:center; padding:24px;
 				animation:lb-in 0.18s var(--ease) both;
 			}
@@ -3471,7 +3440,7 @@
 		#cmdk-overlay {
 			position: fixed; inset: 0; z-index: 9900;
 			background: rgba(0,0,0,0.42);
-			backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+
 			display: flex; align-items: flex-start; justify-content: center;
 			padding-top: 13vh;
 			animation: cmdk-bg-in 0.15s var(--ease) both;
@@ -3678,7 +3647,7 @@
 
 		/* ════════════════ ENCRYPTED NOTES ══════════════════════════════ */
 		.doc-encrypted-badge { font-size:0.63rem; background:var(--accent); color:#fff; border-radius:3px; padding:1px 5px; margin-left:3px; }
-		#encrypt-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8000; backdrop-filter:blur(4px); }
+		#encrypt-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8000; }
 		#encrypt-modal-overlay[hidden] { display:none !important; }
 		#encrypt-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:24px; min-width:300px; max-width:380px; display:flex; flex-direction:column; gap:12px; box-shadow:var(--card-shadow); }
 		#encrypt-modal h3 { margin:0; font-size:1rem; }
@@ -3694,7 +3663,7 @@
 		.slash-sub { font-size:0.71rem; color:var(--muted); display:block; }
 
 		/* ════════════════ REMINDER MODAL ════════════════════════════════ */
-		#remind-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8000; backdrop-filter:blur(4px); }
+		#remind-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8000; }
 		#remind-modal-overlay[hidden] { display:none !important; }
 		#remind-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:22px; min-width:300px; max-width:360px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--card-shadow); }
 		#remind-modal h3 { margin:0; font-size:1rem; }
@@ -3810,8 +3779,9 @@
 						<button class="tab" id="tab-snippets" type="button" role="tab" aria-controls="panel-snippets" aria-selected="false">Snippets</button>
 						<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
 						<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
-						<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
-						<div class="tab-more-wrap" id="tab-more-wrap">
+				<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
+				<button class="tab" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
+				<div class="tab-more-wrap" id="tab-more-wrap">
 							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
 						</div>
 						<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
@@ -4630,7 +4600,7 @@
 							<div class="tool-row" style="gap:8px">
 								<input class="input" id="tool-qr-input" type="text" placeholder="Text or URL to encode…" style="flex:1" />
 								<button class="btn btn-small btn-accent" id="tool-qr-gen" type="button">Generate</button>
-								<button class="btn btn-small" id="tool-qr-download" type="button" style="display:none">⤓ Save PNG</button>
+								<button class="btn btn-small" id="tool-qr-download" type="button">⤓ Save PNG</button>
 							</div>
 							<div id="tool-qr-out" style="margin-top:10px;display:flex;justify-content:center;min-height:32px"></div>
 						</div>
@@ -6771,7 +6741,7 @@
 		<!-- ══ ZPL CONVERTER PANEL ════════════════════════════════════════ -->
 		<section class="panel" id="panel-zpl" role="tabpanel" aria-labelledby="tab-zpl" hidden>
 			<h2 style="margin:0 0 8px">PDF → ZPL Converter</h2>
-			<p style="font-size:0.82rem;color:var(--muted);margin:0 0 10px">Upload a PDF, preview as monochrome bitmap, and copy ZPL code for label printers.</p>
+			<p style="font-size:0.82rem;color:var(--muted);margin:0 0 10px">Upload a PDF, preview as monochrome bitmap. Barcodes are auto-detected and rendered as native ZPL ^BC (Code 128) for crisp scanning.</p>
 			<div class="zpl-body">
 				<div class="zpl-upload-area" id="zpl-upload-area">
 					<div style="font-size:2rem;margin-bottom:8px">📄</div>
@@ -6783,6 +6753,7 @@
 				<div id="zpl-options" hidden style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
 					<label style="font-size:0.82rem">Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
 					<label style="font-size:0.82rem">DPI: <select id="zpl-dpi"><option value="203">203</option><option value="300">300</option></select></label>
+				<label style="font-size:0.82rem;margin-left:12px"><input type="checkbox" id="zpl-barcode-detect"> Detect barcodes</label>
 					<button class="btn btn-small" id="btn-zpl-regenerate" type="button">Regenerate</button>
 				</div>
 				<div class="zpl-preview-wrap" id="zpl-preview-wrap" hidden></div>
@@ -6790,6 +6761,7 @@
 				<div style="display:flex;gap:8px;flex-wrap:wrap">
 					<button class="btn btn-small" id="btn-zpl-copy" type="button">📋 Copy ZPL</button>
 					<button class="btn btn-small" id="btn-zpl-download" type="button">⤓ Download .zpl</button>
+					<button class="btn btn-small" id="btn-zpl-to-note" type="button">📝 Save as Note</button>
 				</div>
 			</div>
 		</section>
@@ -6888,9 +6860,8 @@
 				<button class="tab-more-item" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">Goals</button>
 				<button class="tab-more-item" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">Vault</button>
 				<button class="tab-more-item" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">Sheet</button>
-				<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
-				<button class="tab-more-item" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
-				<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
+			<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
+			<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
 			</div>
 			<div style="text-align:right"><button class="btn btn-small" id="btn-more-close" type="button">Close</button></div>
 		</div>
@@ -6908,6 +6879,7 @@
 							<div class="kb-modal-row"><span>Switch to Tools</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>X</kbd></span></div>
 							<div class="kb-modal-row"><span>Switch to Work</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>W</kbd></span></div>
 							<div class="kb-modal-row"><span>Switch to Reports</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>R</kbd></span></div>
+						<div class="kb-modal-row"><span>Switch to ZPL</span><span class="kb-modal-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Z</kbd></span></div>
 						</div>
 						<div class="kb-modal-section">
 							<h3>Notes</h3>
@@ -7182,8 +7154,9 @@
 				{ tab: document.getElementById('tab-snippets'), panel: document.getElementById('panel-snippets') },
 				{ tab: document.getElementById('tab-canvas'),   panel: document.getElementById('panel-canvas') },
 				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
-				{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
-				{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
+			{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
+			{ tab: document.getElementById('tab-zpl'),      panel: document.getElementById('panel-zpl') },
+			{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
 			const authTabs = [
@@ -7468,13 +7441,13 @@
 							panel.hidden = !selected;
 						}
 						// Hide all More-dropdown panels and deselect their buttons
-						['panel-dashboard','panel-kanban','panel-advsearch','panel-timetrack','panel-goals','panel-passwords','panel-sheet','panel-clipboard','panel-zpl','panel-worldclock'].forEach(id => {
+						['panel-dashboard','panel-kanban','panel-advsearch','panel-timetrack','panel-goals','panel-passwords','panel-sheet','panel-clipboard','panel-worldclock'].forEach(id => {
 							const p = document.getElementById(id); if (p) p.hidden = true;
 						});
 						document.querySelectorAll('.tab-more-item').forEach(b => b.setAttribute('aria-selected', 'false'));
 					});
 					// Update "More" trigger highlight and close modal
-					const _moreTabs = ['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-zpl','tab-worldclock'];
+					const _moreTabs = ['tab-dashboard','tab-kanban','tab-advsearch','tab-timetrack','tab-goals','tab-passwords','tab-sheet','tab-clipboard','tab-worldclock'];
 					const _moreTrigger = document.getElementById('tab-more-trigger');
 					const _moreOverlay = document.getElementById('tab-more-overlay');
 					const _isMoreTab  = _moreTabs.includes(selectedId);
@@ -11044,6 +11017,7 @@ body {
 						if (e.key === 'X' || e.key === 'x') { e.preventDefault(); selectTab('tab-tools'); }
 						if (e.key === 'W' || e.key === 'w') { e.preventDefault(); selectTab('tab-work'); }
 						if (e.key === 'R' || e.key === 'r') { e.preventDefault(); selectTab('tab-reports'); }
+					if (e.key === 'Z' || e.key === 'z') { e.preventDefault(); selectTab('tab-zpl'); }
 						// ⌘⇧P: toggle markdown preview
 						if (e.key === 'P' || e.key === 'p') { e.preventDefault(); document.getElementById('btn-md-preview')?.click(); }
 					}
@@ -11436,7 +11410,7 @@ body {
 				function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 				// ── FIND & REPLACE ────────────────────────────────────────────
-				let _fnrMatches = [], _fnrIdx = 0;
+				let _fnrMatches = [], _fnrIdx = -1;
 				function openFindReplace() {
 					const bar = document.getElementById('find-replace-bar');
 					if (!bar) return;
@@ -11446,50 +11420,113 @@ body {
 				function closeFindReplace() {
 					const bar = document.getElementById('find-replace-bar');
 					if (bar) bar.hidden = true;
-					_fnrMatches = []; _fnrIdx = 0;
+					_fnrMatches = []; _fnrIdx = -1;
 					const countEl = document.getElementById('fnr-count');
 					if (countEl) countEl.textContent = '';
 				}
+		function _fnrTextNodes() {
+			const notesTA = document.getElementById('notes');
+			if (!notesTA) return [];
+			const walker = document.createTreeWalker(notesTA, NodeFilter.SHOW_TEXT, null, false);
+			const nodes = [];
+			while (walker.nextNode()) nodes.push(walker.currentNode);
+			return nodes;
+		}
 		function fnrSearch(q) {
 			const notesTA = document.getElementById('notes');
-			if (!notesTA || !q) { _fnrMatches = []; const c = document.getElementById('fnr-count'); if(c) c.textContent=''; return; }
-			const text = notesTA.textContent || '', ql = q.toLowerCase();
-			_fnrMatches = []; let i = 0;
-			while ((i = text.toLowerCase().indexOf(ql, i)) !== -1) { _fnrMatches.push(i); i += q.length; }
+			if (!notesTA || !q) { _fnrMatches = []; _fnrIdx = -1; const c = document.getElementById('fnr-count'); if(c) c.textContent=''; return; }
+			_fnrMatches = []; _fnrIdx = 0;
+			const ql = q.toLowerCase();
+			const textNodes = _fnrTextNodes();
+			for (const node of textNodes) {
+				const text = node.textContent || '';
+				const lc = text.toLowerCase();
+				let pos = 0;
+				while ((pos = lc.indexOf(ql, pos)) !== -1) {
+					_fnrMatches.push({ node, offset: pos, length: q.length });
+					pos += q.length;
+				}
+			}
 			const c = document.getElementById('fnr-count');
-			if (c) c.textContent = _fnrMatches.length ? `1/${_fnrMatches.length}` : '0 results';
+			if (c) c.textContent = _fnrMatches.length ? `1/${_fnrMatches.length}` : 'No results';
 		}
 		function fnrGo(dir) {
 			if (!_fnrMatches.length) return;
 			_fnrIdx = (_fnrIdx + dir + _fnrMatches.length) % _fnrMatches.length;
-			const q = document.getElementById('find-input')?.value ?? '';
+			const match = _fnrMatches[_fnrIdx];
 			const notesTA = document.getElementById('notes');
-			if (notesTA) { notesTA.focus(); }
+			if (!notesTA || !match) return;
+			try {
+				const range = document.createRange();
+				range.setStart(match.node, match.offset);
+				range.setEnd(match.node, match.offset + match.length);
+				const sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+				notesTA.focus();
+				const rect = range.getClientRects()[0];
+				if (rect) {
+					const taRect = notesTA.getBoundingClientRect();
+					notesTA.scrollTop += rect.top - taRect.top - taRect.height * 0.3;
+				}
+			} catch (e) { /* selection error */ }
 			const c = document.getElementById('fnr-count');
 			if (c) c.textContent = `${_fnrIdx+1}/${_fnrMatches.length}`;
 		}
 	function fnrReplaceOne() {
-		if (!_fnrMatches.length) return;
 		const q = document.getElementById('find-input')?.value ?? '';
+		if (!q) return;
+		if (!_fnrMatches.length) { fnrSearch(q); if (!_fnrMatches.length) return; _fnrIdx = 0; }
+		const match = _fnrMatches[_fnrIdx];
+		if (!match) return;
 		const r = document.getElementById('replace-input')?.value ?? '';
-		const notesTA = document.getElementById('notes');
-		if (!notesTA) return;
-		const html = notesTA.innerHTML;
-		const idx = html.indexOf(q);
-		if (idx === -1) return;
-		notesTA.innerHTML = html.slice(0, idx) + r + html.slice(idx + q.length);
-		scheduleDocSave?.();
-		fnrSearch(q);
+		try {
+			const original = match.node.textContent || '';
+			const before = original.substring(0, match.offset);
+			const after = original.substring(match.offset + match.length);
+			match.node.textContent = before + r + after;
+			const delta = r.length - match.length;
+			match.length = r.length;
+			for (let i = _fnrIdx + 1; i < _fnrMatches.length; i++) {
+				if (_fnrMatches[i].node === match.node) _fnrMatches[i].offset += delta;
+			}
+			_fnrMatches.splice(_fnrIdx, 1);
+			if (_fnrIdx >= _fnrMatches.length) _fnrIdx = _fnrMatches.length - 1;
+			scheduleDocSave?.();
+			const notesTA = document.getElementById('notes');
+			if (notesTA) notesTA.dispatchEvent(new Event('input', { bubbles: true }));
+			if (_fnrMatches.length && _fnrIdx >= 0) fnrGo(0);
+			const c = document.getElementById('fnr-count');
+			if (c) c.textContent = _fnrMatches.length ? `${_fnrIdx+1}/${_fnrMatches.length}` : '0 results';
+		} catch (e) { /* replace error */ }
 	}
 	function fnrReplaceAll() {
 		const q = document.getElementById('find-input')?.value ?? '';
 		const r = document.getElementById('replace-input')?.value ?? '';
-		const notesTA = document.getElementById('notes');
-		if (!q || !notesTA) return;
-		const count = (notesTA.innerHTML.match(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-		notesTA.innerHTML = notesTA.innerHTML.replaceAll(q, r);
+		if (!q) return;
+		let count = 0;
+		const textNodes = _fnrTextNodes();
+		for (const node of textNodes) {
+			const text = node.textContent || '';
+			const lc = text.toLowerCase();
+			const ql = q.toLowerCase();
+			if (!lc.includes(ql)) continue;
+			let result = '';
+			let last = 0, pos = 0;
+			while ((pos = lc.indexOf(ql, last)) !== -1) {
+				result += text.substring(last, pos) + r;
+				last = pos + q.length;
+				count++;
+			}
+			result += text.substring(last);
+			node.textContent = result;
+		}
 		scheduleDocSave?.();
-		fnrSearch(q);
+		const notesTA = document.getElementById('notes');
+		if (notesTA) notesTA.dispatchEvent(new Event('input', { bubbles: true }));
+		_fnrMatches = []; _fnrIdx = -1;
+		const c = document.getElementById('fnr-count');
+		if (c) c.textContent = '';
 		showToast?.(`Replaced ${count} occurrence${count!==1?'s':''}`, count ? 'success' : 'info');
 	}
 				document.getElementById('find-input')?.addEventListener('keydown', e => {
@@ -14650,7 +14687,7 @@ function renderTOC() {
 		.ctx-item:hover { background:var(--accent-glow); color:var(--accent); }
 		.ctx-sep { height:1px; background:var(--panel-border); margin:3px 6px; }
 		/* ══ QUICK CAPTURE ════════════════════════════════════════════ */
-		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; backdrop-filter:blur(4px); padding-top:68px; }
+		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; padding-top:68px; }
 		#quick-capture-overlay[hidden] { display:none !important; }
 		#quick-capture-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg,12px); padding:18px; width:min(580px,94vw); box-shadow:0 20px 60px rgba(0,0,0,.3); display:flex; flex-direction:column; gap:10px; }
 		/* ══ APP LOCK ═════════════════════════════════════════════════ */
@@ -14660,7 +14697,7 @@ function renderTOC() {
 		#lock-pin-input { font-size:1.4rem; letter-spacing:8px; text-align:center; font-family:ui-monospace,monospace; width:180px; }
 		#lock-status { font-size:0.8rem; color:var(--error,#dc2626); min-height:18px; }
 		/* ══ AI ASSISTANT ═════════════════════════════════════════════ */
-		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8500; backdrop-filter:blur(4px); }
+		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8500; }
 		#ai-modal-overlay[hidden] { display:none !important; }
 		#ai-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg,12px); padding:22px; width:min(620px,96vw); max-height:82vh; overflow-y:auto; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
 		#ai-response-box { background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px; padding:12px; font-size:0.84rem; line-height:1.65; white-space:pre-wrap; min-height:80px; max-height:300px; overflow-y:auto; }
@@ -14774,7 +14811,7 @@ function renderTOC() {
 		.vault-pass-row    { display:flex; align-items:center; gap:6px; margin-top:6px; }
 		.vault-pass-field  { font-family:ui-monospace,monospace; font-size:0.8rem; flex:1; -webkit-text-security:disc; word-break:break-all; }
 		.vault-pass-field.vis { -webkit-text-security:none; }
-		#vault-add-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:8800; backdrop-filter:blur(3px); }
+		#vault-add-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:8800; }
 		#vault-add-overlay[hidden] { display:none!important; }
 
 		/* ── SPREADSHEET ───────────────────────────────────────────── */
@@ -14830,7 +14867,7 @@ function renderTOC() {
 		.ctx-sep  { height:1px; background:var(--panel-border); margin:3px 6px; }
 
 		/* ── QUICK CAPTURE ─────────────────────────────────────────── */
-		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; backdrop-filter:blur(4px); padding-top:80px; }
+		#quick-capture-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:flex-start; justify-content:center; z-index:9500; padding-top:80px; }
 		#quick-capture-overlay[hidden] { display:none!important; }
 		#quick-capture-box { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:18px; width:min(580px,92vw); box-shadow:0 20px 60px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:10px; }
 
@@ -14841,12 +14878,12 @@ function renderTOC() {
 		#lock-pin-input { font-size:1.5rem; letter-spacing:8px; text-align:center; font-family:ui-monospace,monospace; width:190px; }
 
 		/* ── AI MODAL ──────────────────────────────────────────────── */
-		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8700; backdrop-filter:blur(4px); }
+		#ai-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8700; }
 		#ai-modal-overlay[hidden] { display:none!important; }
 		#ai-modal { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-lg); padding:22px; width:min(600px,94vw); max-height:80vh; overflow-y:auto; display:flex; flex-direction:column; gap:11px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
 
 		/* ── DIFF MODAL ────────────────────────────────────────────── */
-		#diff-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8600; backdrop-filter:blur(4px); }
+		#diff-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.42); display:flex; align-items:center; justify-content:center; z-index:8600; }
 		#diff-modal-overlay[hidden] { display:none!important; }
 
 	/* ── SIDEBAR PREVIEW ───────────────────────────────────────── */
@@ -16054,8 +16091,9 @@ function _applySlash(cmd, ta) {
 
 		// ══ ZPL CONVERTER ═══════════════════════════════════════════════
 		let _zplPages = [];
-		let _zplPdfDoc = null;
+		let _zplPdfDoc = null; let _zplLastFile = null;
 		async function loadZplPdf(file) {
+			if (file) _zplLastFile = file;
 			const area = document.getElementById('zpl-upload-area');
 			const progress = document.getElementById('zpl-progress');
 			const bar = document.getElementById('zpl-progress-bar');
@@ -16093,12 +16131,42 @@ function _applySlash(cmd, ta) {
 					const ctx = c.getContext('2d');
 					await page.render({ canvasContext: ctx, viewport: vp }).promise;
 					const imgData = ctx.getImageData(0, 0, c.width, c.height);
-					const threshold = parseInt(document.getElementById('zpl-threshold')?.value || '180');
+					_zplPages.push({ imgData: new Uint8ClampedArray(imgData.data), w: c.width, h: c.height });
+				const threshold = parseInt(document.getElementById('zpl-threshold')?.value || '180');
 					const bw = new Uint8Array(c.width * c.height);
 					for (let p = 0; p < bw.length; p++) {
 						const i = p * 4;
 						bw[p] = (imgData.data[i] * 0.299 + imgData.data[i+1] * 0.587 + imgData.data[i+2] * 0.114) < threshold ? 1 : 0;
 					}
+				// ── Detect barcodes via text extraction ──
+				const zplBarcodes = [];
+				const detectBarcodes = document.getElementById('zpl-barcode-detect')?.checked;
+				if (detectBarcodes) {
+					try {
+						const textContent = await page.getTextContent();
+						for (const item of textContent.items) {
+							const str = (item.str || '').trim();
+						if (!str) continue;
+						const clean = str.replace(/[\s\-\.\/]/g, '');
+						if (clean.length < 10) continue;
+						const isBarcode =
+							/^\d{10,}$/.test(clean) ||
+							/^1Z[0-9A-Z]{10,}$/.test(clean);
+							if (!isBarcode) continue;
+							const tx = item.transform[4], ty = item.transform[5];
+							const vx = tx * vp.transform[0] + ty * vp.transform[2] + vp.transform[4];
+							const vy = tx * vp.transform[1] + ty * vp.transform[3] + vp.transform[5];
+							const tw = (item.width || (str.length * 5)) * vp.scale;
+							const th = (item.height || 12) * vp.scale;
+							const pad = 8;
+							const bx = Math.max(0, Math.floor(vx - pad));
+							const by = Math.max(0, Math.floor(vy - th + pad));
+							const bw2 = Math.min(c.width - bx, Math.ceil(tw + pad * 2));
+					const bh2 = Math.min(c.height - by, Math.ceil(th + pad * 2));
+						zplBarcodes.push({ x: bx, y: by, w: bw2, h: bh2, text: clean });
+						}
+					} catch (e) { /* text extraction unavailable */ }
+			}
 					// Draw monochrome preview
 					const preview = document.createElement('canvas');
 					const scale = Math.min(300 / c.width, 400 / c.height);
@@ -16114,34 +16182,44 @@ function _applySlash(cmd, ta) {
 						}
 					}
 					pctx.putImageData(pid, 0, 0);
+				_zplPages[_zplPages.length - 1].preview = preview;
+				_zplPages[_zplPages.length - 1].pscale = scale;
+					if (zplBarcodes.length) { pctx.strokeStyle = '#ef4444'; pctx.lineWidth = 2; pctx.setLineDash([3, 3]); zplBarcodes.forEach(bc => pctx.strokeRect(Math.round(bc.x * scale), Math.round(bc.y * scale), Math.round(bc.w * scale), Math.round(bc.h * scale))); }
 					const div = document.createElement('div');
 					div.style.textAlign = 'center';
-					div.innerHTML = `<div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Page ${i}/${total}</div>`;
+					div.innerHTML = `<div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Page ${i}/${total}${zplBarcodes.length ? ' \u2022 ' + zplBarcodes.length + ' barcode' + (zplBarcodes.length > 1 ? 's' : '') + ': ' + zplBarcodes.map(bc => bc.text).join(', ') : ''}</div>`;
 					div.appendChild(preview);
 					wrap.appendChild(div);
-					// Generate ZPL ^GF
-					const dpi = parseInt(document.getElementById('zpl-dpi')?.value || '203');
-					const mmW = c.width / 2 * 25.4 / 72;
+					// Generate ZPL ^BC + ^GF
+				const dpi = parseInt(document.getElementById('zpl-dpi')?.value || '203');
+				const mmW = c.width / 2 * 25.4 / 72;
 					const mmH = c.height / 2 * 25.4 / 72;
 					const dotsW = Math.round(mmW * dpi / 25.4);
 					const dotsH = Math.round(mmH * dpi / 25.4);
-					const bytesPerRow = Math.ceil(dotsW / 8);
-					const totalBytes = bytesPerRow * dotsH;
-					let dataBin = '';
-					for (let y = 0; y < dotsH; y++) {
-						for (let x = 0; x < dotsW; x++) {
-							const sx = Math.floor(x / dotsW * c.width);
-							const sy = Math.floor(y / dotsH * c.height);
-							dataBin += bw[sy * c.width + sx] ? '1' : '0';
-						}
+				const bytesPerRow = Math.ceil(dotsW / 8);
+				const totalBytes = bytesPerRow * dotsH;
+				let dataBin = '';
+				for (let y = 0; y < dotsH; y++) {
+					for (let x = 0; x < dotsW; x++) {
+						const sx = Math.floor(x / dotsW * c.width);
+						const sy = Math.floor(y / dotsH * c.height);
+						dataBin += bw[sy * c.width + sx] ? '1' : '0';
 					}
-					// Pad to byte boundary
-					while (dataBin.length % 8) dataBin += '0';
-					let zplData = '';
+					while (dataBin.length % (bytesPerRow * 8)) dataBin += '0';
+				}
+					let zplHex = '';
 					for (let i = 0; i < dataBin.length; i += 8) {
-						zplData += String.fromCharCode(parseInt(dataBin.slice(i, i+8), 2));
+						const byte = parseInt(dataBin.slice(i, i + 8), 2);
+						zplHex += byte.toString(16).padStart(2, '0').toUpperCase();
 					}
-					zpl += `^XA^FO0,0^GF${zplData.length},${zplData.length},${bytesPerRow},${zplData}^FS^XZ`;
+					let barcodeZPL = '';
+					for (const bc of zplBarcodes) {
+						const zx = Math.round(bc.x * dpi / 144);
+						const zy = Math.round((bc.y + bc.h) * dpi / 144);
+						const zh = Math.round(bc.h * dpi / 144);
+						barcodeZPL += `^FO${zx},${zy}^BCN,${zh},Y,N,N^FD${bc.text}^FS`;
+					}
+					zpl += `^XA^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
 					bar.style.width = `${60 + (i / total) * 35}%`;
 				}
 				output.value = zpl;
@@ -16151,6 +16229,30 @@ function _applySlash(cmd, ta) {
 			} catch (err) {
 				output.value = 'Error: ' + err.message;
 				progress.hidden = true;
+			}
+		}
+		let _zplRefreshTimer = null;
+		function _zplRefreshPreviews() {
+			const threshold = parseInt(document.getElementById('zpl-threshold')?.value || '180');
+			for (const page of _zplPages) {
+				if (!page.preview || !page.imgData) continue;
+				const { imgData, w, h, preview, pscale } = page;
+				const bw = new Uint8Array(w * h);
+				for (let p = 0; p < bw.length; p++) {
+					const i = p * 4;
+					bw[p] = (imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114) < threshold ? 1 : 0;
+				}
+				const pctx = preview.getContext('2d');
+				const pid = pctx.createImageData(preview.width, preview.height);
+				for (let y = 0; y < preview.height; y++) {
+					for (let x = 0; x < preview.width; x++) {
+						const sx = Math.floor(x / pscale), sy = Math.floor(y / pscale);
+						const v = bw[sy * w + sx] ? 0 : 255;
+						const pi = (y * preview.width + x) * 4;
+						pid.data[pi] = v; pid.data[pi+1] = v; pid.data[pi+2] = v; pid.data[pi+3] = 255;
+					}
+				}
+				pctx.putImageData(pid, 0, 0);
 			}
 		}
 		document.getElementById('zpl-upload-area')?.addEventListener('click', () => {
@@ -16183,11 +16285,29 @@ function _applySlash(cmd, ta) {
 			a.download = 'label.zpl';
 			a.click();
 		});
+		document.getElementById('btn-zpl-to-note')?.addEventListener('click', () => {
+			const v = document.getElementById('zpl-output')?.value;
+			if (!v) { showToast?.('Nothing to save','error'); return; }
+			const doc = createDoc('ZPL Label \u2022 ' + new Date().toLocaleString(), v);
+			noteDocs.unshift(doc);
+			renderDocList();
+			switchDoc(doc.id);
+			selectTab?.('tab-notes');
+			if (activeUserId) saveDocsLocally(activeUserId);
+			if (activeUserId && activeAccessToken) {
+				restUpsertDoc(activeUserId, doc, activeAccessToken).catch(() => {});
+			}
+			showToast?.('ZPL saved as note','success');
+		});
 		document.getElementById('zpl-threshold')?.addEventListener('input', () => {
-			if (_zplPdfDoc) loadZplPdf(document.getElementById('zpl-pdf-input')?.files?.[0]);
+			clearTimeout(_zplRefreshTimer);
+			_zplRefreshTimer = setTimeout(() => _zplRefreshPreviews(), 80);
 		});
 		document.getElementById('zpl-dpi')?.addEventListener('change', () => {
-			if (_zplPdfDoc) loadZplPdf(document.getElementById('zpl-pdf-input')?.files?.[0]);
+			if (_zplPdfDoc) loadZplPdf(_zplLastFile);
+		});
+		document.getElementById('btn-zpl-regenerate')?.addEventListener('click', () => {
+			if (_zplPdfDoc) loadZplPdf(_zplLastFile);
 		});
 
 		function renderWorldClocks() {
@@ -18907,7 +19027,7 @@ function showClipperBookmarklet() {
 		<p style="font-size:0.74rem;color:var(--muted)"><strong>Tip:</strong> Click to copy the bookmarklet code. Then create a new bookmark and paste it as the URL.</p>
 	</div>`;
 	const overlay = document.createElement('div');
-	overlay.style.cssText = 'position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px';
+	overlay.style.cssText = 'position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px';
 	overlay.innerHTML = `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);max-width:560px;width:100%;box-shadow:var(--card-shadow)">${html}<div style="text-align:right;padding:0 16px 16px"><button class="btn btn-small" id="clipper-close-btn">Close</button></div></div>`;
 	document.body.appendChild(overlay);
 	overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); } });
@@ -18962,7 +19082,7 @@ function showHistory(docId) {
 	try { snapshots = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
 	if (!snapshots.length) { showToast?.('No history for this note', 'info'); return; }
 	const overlay = document.createElement('div');
-	overlay.style.cssText = 'position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px';
+	overlay.style.cssText = 'position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px';
 	let html = `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);max-width:620px;width:100%;box-shadow:var(--card-shadow);max-height:80vh;display:flex;flex-direction:column">
 		<div style="padding:16px 20px;border-bottom:1px solid var(--panel-border);display:flex;justify-content:space-between;align-items:center">
 			<h3 style="margin:0;font-size:0.95rem">Note History (${snapshots.length} snapshots)</h3>
