@@ -16227,7 +16227,7 @@ function _applySlash(cmd, ta) {
 					const zh = Math.round(bc.h * dpi / 144 * imgScale);
 						barcodeZPL += `^FO${zx},${zy}^BCN,${zh},Y,N,N^FD${bc.text}^FS`;
 					}
-					zpl += `^XA^PW${maxDots}^LL${dotsH}^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
+					zpl += `^XA^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
 					bar.style.width = `${60 + (i / total) * 35}%`;
 				}
 				output.value = zpl;
