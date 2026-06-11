@@ -16202,8 +16202,8 @@ function _applySlash(cmd, ta) {
 			const mmH = c.height / 2 * 25.4 / 72;
 			let dotsW = Math.round(mmW * dpi / 25.4);
 			let dotsH = Math.round(mmH * dpi / 25.4);
-			const scale = dotsW > maxDots ? maxDots / dotsW : 1;
-			if (scale < 1) { dotsW = maxDots; dotsH = Math.round(dotsH * scale); }
+			const imgScale = dotsW > maxDots ? maxDots / dotsW : 1;
+			if (imgScale < 1) { dotsW = maxDots; dotsH = Math.round(dotsH * imgScale); }
 				const bytesPerRow = Math.ceil(dotsW / 8);
 				const totalBytes = bytesPerRow * dotsH;
 				let dataBin = '';
@@ -16222,9 +16222,9 @@ function _applySlash(cmd, ta) {
 					}
 					let barcodeZPL = '';
 				for (const bc of zplBarcodes) {
-					const zx = Math.round(bc.x * dpi / 144 * scale);
-					const zy = Math.round((bc.y + bc.h) * dpi / 144 * scale);
-					const zh = Math.round(bc.h * dpi / 144 * scale);
+					const zx = Math.round(bc.x * dpi / 144 * imgScale);
+					const zy = Math.round((bc.y + bc.h) * dpi / 144 * imgScale);
+					const zh = Math.round(bc.h * dpi / 144 * imgScale);
 						barcodeZPL += `^FO${zx},${zy}^BCN,${zh},Y,N,N^FD${bc.text}^FS`;
 					}
 					zpl += `^XA^PW${maxDots}^LL${dotsH}^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
