@@ -6751,9 +6751,8 @@
 				</div>
 				<div class="zpl-progress" id="zpl-progress" hidden><div class="zpl-progress-bar" id="zpl-progress-bar"></div></div>
 				<div id="zpl-options" hidden style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-				<label style="font-size:0.82rem">Label: <input type="number" id="zpl-label-w" value="100" min="20" max="200" step="1" style="width:55px" /> mm</label>
-				<label style="font-size:0.82rem">Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
-				<label style="font-size:0.82rem">DPI: <select id="zpl-dpi"><option value="203">203</option><option value="300">300</option></select></label>
+					<label style="font-size:0.82rem">Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
+					<label style="font-size:0.82rem">DPI: <select id="zpl-dpi"><option value="203">203</option><option value="300">300</option></select></label>
 				<label style="font-size:0.82rem;margin-left:12px"><input type="checkbox" id="zpl-barcode-detect"> Detect barcodes</label>
 					<button class="btn btn-small" id="btn-zpl-regenerate" type="button">Regenerate</button>
 				</div>
@@ -16196,21 +16195,17 @@ function _applySlash(cmd, ta) {
 					wrap.appendChild(div);
 					// Generate ZPL ^BC + ^GF
 				const dpi = parseInt(document.getElementById('zpl-dpi')?.value || '203');
-				const labelMM = parseFloat(document.getElementById('zpl-label-w')?.value) || 100;
-				const maxDots = Math.round(labelMM * dpi / 25.4);
 				const mmW = c.width / 2 * 25.4 / 72;
-				const mmH = c.height / 2 * 25.4 / 72;
-				let dotsW = Math.round(mmW * dpi / 25.4);
-				let dotsH = Math.round(mmH * dpi / 25.4);
-				const scale = dotsW > maxDots ? maxDots / dotsW : 1;
-				if (scale < 1) { dotsW = maxDots; dotsH = Math.round(dotsH * scale); }
+					const mmH = c.height / 2 * 25.4 / 72;
+					const dotsW = Math.round(mmW * dpi / 25.4);
+					const dotsH = Math.round(mmH * dpi / 25.4);
 				const bytesPerRow = Math.ceil(dotsW / 8);
 				const totalBytes = bytesPerRow * dotsH;
-			let dataBin = '';
-			for (let y = 0; y < dotsH; y++) {
-				for (let x = 0; x < dotsW; x++) {
-					const sx = Math.floor(x / dotsW * c.width);
-					const sy = Math.floor(y / dotsH * c.height);
+				let dataBin = '';
+				for (let y = 0; y < dotsH; y++) {
+					for (let x = 0; x < dotsW; x++) {
+						const sx = Math.floor(x / dotsW * c.width);
+						const sy = Math.floor(y / dotsH * c.height);
 						dataBin += bw[sy * c.width + sx] ? '1' : '0';
 					}
 					while (dataBin.length % (bytesPerRow * 8)) dataBin += '0';
@@ -16220,14 +16215,14 @@ function _applySlash(cmd, ta) {
 						const byte = parseInt(dataBin.slice(i, i + 8), 2);
 						zplHex += byte.toString(16).padStart(2, '0').toUpperCase();
 					}
-				let barcodeZPL = '';
-				for (const bc of zplBarcodes) {
-					const zx = Math.round(bc.x * dpi / 144 * scale);
-					const zy = Math.round((bc.y + bc.h) * dpi / 144 * scale);
-					const zh = Math.round(bc.h * dpi / 144 * scale);
+					let barcodeZPL = '';
+					for (const bc of zplBarcodes) {
+						const zx = Math.round(bc.x * dpi / 144);
+						const zy = Math.round((bc.y + bc.h) * dpi / 144);
+						const zh = Math.round(bc.h * dpi / 144);
 						barcodeZPL += `^FO${zx},${zy}^BCN,${zh},Y,N,N^FD${bc.text}^FS`;
 					}
-					zpl += `^XA^PW${maxDots}^LL${dotsH}^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
+					zpl += `^XA^FO0,0^GFA,${zplHex.length},${zplHex.length},${bytesPerRow},${zplHex}^FS${barcodeZPL}^XZ`;
 					bar.style.width = `${60 + (i / total) * 35}%`;
 				}
 				output.value = zpl;
