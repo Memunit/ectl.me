@@ -2857,9 +2857,17 @@
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
 		@page { margin:0; }
-		@media print { body.page-view-active #notes { display:none !important; }
-			#notes-print-static { display:block !important; background:white; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:0; line-height:1.75; font-size:12pt; white-space:pre-wrap; overflow:visible; }
-			#notes-print-static div, #notes-print-static p, #notes-print-static br { display:block; min-height:1.75em; }
+		@media print {
+			body.page-view-active #notes { display:none !important; }
+			body.page-view-active #note-gutter { display:none !important; }
+			body.page-view-active #notes-print-static { display:block !important; }
+			/* DEBUG: show static print clone below notes to verify content */
+			body.page-view-active #notes-print-static { display:block; background:white; color:#0f172a; width:210mm; min-height:auto; margin:0 auto 20px auto; padding:20mm 25mm; line-height:1.75; font-size:12pt; white-space:pre-line; word-break:break-word; border:2px solid #ef4444; border-radius:2px; }
+			body.page-view-active #notes-print-static br { display:block; min-height:1.75em; }
+			body.page-view-active #notes-print-static div, body.page-view-active #notes-print-static p { display:block; min-height:1.75em; }
+			#notes-print-static { background:white; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; line-height:1.75; font-size:12pt; white-space:pre-line; overflow:visible; word-break:break-word; }
+			#notes-print-static br { display:block; min-height:1.75em; }
+			#notes-print-static div, #notes-print-static p { display:block; min-height:1.75em; }
 		}
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
@@ -4042,7 +4050,7 @@
 								<span class="fnr-divider"></span>
 								<button class="btn btn-small" id="fnr-close" type="button" aria-label="Close">✕</button>
 							</div>
-							<div id="note-line-wrap" class="note-line-wrap"><div id="note-gutter" class="note-gutter"></div><div id="notes" contenteditable="true" data-placeholder="Sign in to write notes"></div><div id="notes-print-static" hidden></div></div>
+							<div id="note-line-wrap" class="note-line-wrap"><div id="note-gutter" class="note-gutter"></div><div id="notes" contenteditable="true" data-placeholder="Sign in to write notes"></div><div id="notes-print-static" contenteditable="false" hidden></div></div>
 							<!-- Markdown preview pane -->
 							<div class="md-preview-pane" id="md-preview-pane" hidden aria-label="Markdown preview"></div>
 							<!-- Slash command menu -->
@@ -10555,21 +10563,12 @@ body {
 					if (docMorePopup) docMorePopup.hidden = true;
 				});
 
-				// Fix: Chrome strips HTML tags from contenteditable in print —
-				// temporarily disable contentEditable so the browser renders the rich HTML
-				window.addEventListener('beforeprint', () => {
-					if (document.body.classList.contains('page-view-active') && notesEl) {
-						const printDiv = document.getElementById('notes-print-static');
-						if (printDiv) {
-							printDiv.innerHTML = notesEl.innerHTML;
-							printDiv.hidden = false;
-						}
-					}
-				});
-				window.addEventListener('afterprint', () => {
-					const printDiv = document.getElementById('notes-print-static');
-					if (printDiv) { printDiv.hidden = true; printDiv.innerHTML = ''; }
-				});
+				// Sync a hidden static clone of the notes for print —
+				// ARC/Chromium print engine doesn't render contenteditable HTML correctly
+				const _printDiv = document.getElementById('notes-print-static');
+				function _syncPrintDiv() { if (_printDiv) _printDiv.innerHTML = notesEl.innerHTML; }
+				notesEl.addEventListener('input', _syncPrintDiv);
+				if (notesEl.innerHTML) _syncPrintDiv();
 
 				// Keyboard shortcuts for formatting (⌘B / ⌘I / ⌘U)
 				// These are added inside the textarea to avoid conflicts with browser defaults
