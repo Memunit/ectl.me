@@ -16204,11 +16204,17 @@ function _applySlash(cmd, ta) {
 					pctx.putImageData(pid, 0, 0);
 				_zplPages[_zplPages.length - 1].preview = preview;
 				_zplPages[_zplPages.length - 1].pscale = scale;
+				_zplPages[_zplPages.length - 1].barcodes = zplBarcodes;
 					if (zplBarcodes.length) { pctx.strokeStyle = '#ef4444'; pctx.lineWidth = 2; pctx.setLineDash([3, 3]); zplBarcodes.forEach(bc => pctx.strokeRect(Math.round(bc.x * scale), Math.round(bc.y * scale), Math.round(bc.w * scale), Math.round(bc.h * scale))); }
 					const div = document.createElement('div');
 					div.style.textAlign = 'center';
 					div.innerHTML = `<div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Page ${i}/${total}${zplBarcodes.length ? ' \u2022 ' + zplBarcodes.length + ' barcode' + (zplBarcodes.length > 1 ? 's' : '') + ': ' + zplBarcodes.map(bc => bc.text).join(', ') : ''}</div>`;
 					div.appendChild(preview);
+					for (const bc of zplBarcodes) {
+						for (let by = bc.y; by < bc.y + bc.h && by < c.height; by++)
+							for (let bx = bc.x; bx < bc.x + bc.w && bx < c.width; bx++)
+								bw[by * c.width + bx] = 0;
+					}
 					wrap.appendChild(div);
 					// Generate ZPL ^BC + ^GF
 			const dpi = parseInt(document.getElementById('zpl-dpi')?.value || '203');
@@ -16280,6 +16286,13 @@ function _applySlash(cmd, ta) {
 							gray[idx + w] += err * 5 / 16;
 							if (x + 1 < w) gray[idx + w + 1] += err * 1 / 16;
 						}
+					}
+				}
+				if (page.barcodes) {
+					for (const bc of page.barcodes) {
+						for (let by = bc.y; by < bc.y + bc.h && by < h; by++)
+							for (let bx = bc.x; bx < bc.x + bc.w && bx < w; bx++)
+								bw[by * w + bx] = 0;
 					}
 				}
 				const pctx = preview.getContext('2d');
