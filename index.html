@@ -16180,9 +16180,9 @@ function _applySlash(cmd, ta) {
 							const th = (item.height || 12) * vp.scale;
 							const pad = 8;
 							const bx = Math.max(0, Math.floor(vx - pad));
-							const by = Math.max(0, Math.floor(vy - th + pad));
+							const by = Math.max(0, Math.floor(vy - th * 5));
 							const bw2 = Math.min(c.width - bx, Math.ceil(tw + pad * 2));
-					const bh2 = Math.min(c.height - by, Math.ceil(th + pad * 2));
+					const bh2 = Math.min(c.height - by, Math.ceil(th * 6));
 						zplBarcodes.push({ x: bx, y: by, w: bw2, h: bh2, text: clean });
 						}
 					} catch (e) { /* text extraction unavailable */ }
