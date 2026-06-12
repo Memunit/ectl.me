@@ -2866,6 +2866,8 @@
 			.zpl-upload-area input[type="file"] { display:none; }
 			.zpl-preview-wrap { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
 			.zpl-preview-wrap canvas { border:1px solid var(--card-border); border-radius:6px; max-width:100%; }
+			.zpl-preview-wrap.marking-mode { user-select:none; -webkit-user-select:none; }
+			.zpl-preview-wrap.marking-mode canvas { cursor:crosshair; touch-action:none; }
 			.zpl-output { width:100%; min-height:180px; font-family:ui-monospace,monospace; font-size:0.78rem; background:var(--bg); border:1px solid var(--panel-border); border-radius:6px; padding:10px; resize:vertical; color:var(--text); }
 			.zpl-progress { width:100%; height:4px; background:var(--panel-border); border-radius:2px; overflow:hidden; }
 			.zpl-progress-bar { height:100%; width:0%; background:var(--accent); border-radius:2px; transition:width .2s; }
@@ -6753,6 +6755,8 @@
 			<div id="zpl-options" hidden style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
 				<label style="font-size:0.82rem">Label: <input type="number" id="zpl-label-w" value="105" min="20" max="200" step="1" style="width:55px" /> mm</label>
 				<label style="font-size:0.82rem"><input type="checkbox" id="zpl-dither"> Dither</label>
+				<button class="btn btn-small" id="btn-zpl-mark" type="button">✎ Mark Dither</button>
+				<button class="btn btn-small" id="btn-zpl-clear-marks" type="button" hidden>✕ Clear Marks</button>
 				<label style="font-size:0.82rem">Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
 				<label style="font-size:0.82rem">DPI: <select id="zpl-dpi"><option value="203">203</option><option value="300">300</option></select></label>
 				<label style="font-size:0.82rem;margin-left:12px"><input type="checkbox" id="zpl-barcode-detect"> Detect barcodes</label>
@@ -16097,8 +16101,49 @@ function _applySlash(cmd, ta) {
 		// ══ ZPL CONVERTER ═══════════════════════════════════════════════
 		let _zplPages = [];
 		let _zplPdfDoc = null; let _zplLastFile = null;
+		let _zplMarking = false;
+		let _zplMarkDraw = null;
+
+		function _fsDither(bw, iw, ih, imgData, threshold, rx, ry, rw, rh) {
+			const x0 = Math.max(0, rx), y0 = Math.max(0, ry);
+			const x1 = Math.min(iw, rx + rw), y1 = Math.min(ih, ry + rh);
+			const gW = x1 - x0, gH = y1 - y0;
+			if (gW <= 0 || gH <= 0) return;
+			const gray = new Float32Array(gW * gH);
+			for (let y = 0; y < gH; y++) {
+				for (let x = 0; x < gW; x++) {
+					const sx = x0 + x, sy = y0 + y;
+					const i = (sy * iw + sx) * 4;
+					gray[y * gW + x] = imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114;
+				}
+			}
+			const halfBand = Math.max(20, Math.round(threshold * 0.15));
+			for (let y = 0; y < gH; y++) {
+				for (let x = 0; x < gW; x++) {
+					const idx = y * gW + x;
+					const old = gray[idx];
+					const dist = Math.abs(old - threshold);
+					if (dist > halfBand) {
+						bw[(y0 + y) * iw + (x0 + x)] = old < threshold ? 1 : 0;
+					} else {
+						const newVal = old < threshold ? 1 : 0;
+						bw[(y0 + y) * iw + (x0 + x)] = newVal;
+						const err = old - (newVal ? 0 : 255);
+						if (x + 1 < gW) gray[idx + 1] += err * 7 / 16;
+						if (y + 1 < gH) {
+							if (x > 0) gray[idx + gW - 1] += err * 3 / 16;
+							gray[idx + gW] += err * 5 / 16;
+							if (x + 1 < gW) gray[idx + gW + 1] += err * 1 / 16;
+						}
+					}
+				}
+			}
+		}
+
 		async function loadZplPdf(file) {
 			if (file) _zplLastFile = file;
+			const savedAreas = _zplPages.map(p => p.ditherAreas || []);
+			_zplMarkDraw = null;
 			const area = document.getElementById('zpl-upload-area');
 			const progress = document.getElementById('zpl-progress');
 			const bar = document.getElementById('zpl-progress-bar');
@@ -16137,6 +16182,7 @@ function _applySlash(cmd, ta) {
 					await page.render({ canvasContext: ctx, viewport: vp }).promise;
 					const imgData = ctx.getImageData(0, 0, c.width, c.height);
 					_zplPages.push({ imgData: new Uint8ClampedArray(imgData.data), w: c.width, h: c.height });
+				_zplPages[_zplPages.length - 1].ditherAreas = savedAreas[i-1] || [];
 				const threshold = parseInt(document.getElementById('zpl-threshold')?.value || '180');
 				const useDither = document.getElementById('zpl-dither')?.checked;
 				const bw = new Uint8Array(c.width * c.height);
@@ -16146,28 +16192,39 @@ function _applySlash(cmd, ta) {
 						bw[p] = (imgData.data[i] * 0.299 + imgData.data[i+1] * 0.587 + imgData.data[i+2] * 0.114) < threshold ? 1 : 0;
 					}
 				} else {
-					const gray = new Float32Array(c.width * c.height);
-					for (let p = 0; p < bw.length; p++) {
-						const i = p * 4;
-						gray[p] = imgData.data[i] * 0.299 + imgData.data[i+1] * 0.587 + imgData.data[i+2] * 0.114;
-					}
-					const halfBand = Math.max(20, Math.round(threshold * 0.15));
-					for (let y = 0; y < c.height; y++) {
-						for (let x = 0; x < c.width; x++) {
-							const idx = y * c.width + x;
-							const old = gray[idx];
-							const dist = Math.abs(old - threshold);
-							if (dist > halfBand) {
-								bw[idx] = old < threshold ? 1 : 0;
-							} else {
-								const newVal = old < threshold ? 1 : 0;
-								bw[idx] = newVal;
-								const err = old - (newVal ? 0 : 255);
-								if (x + 1 < c.width) gray[idx + 1] += err * 7 / 16;
-								if (y + 1 < c.height) {
-									if (x > 0) gray[idx + c.width - 1] += err * 3 / 16;
-									gray[idx + c.width] += err * 5 / 16;
-									if (x + 1 < c.width) gray[idx + c.width + 1] += err * 1 / 16;
+					const pageAreas = _zplPages[i-1]?.ditherAreas;
+					if (pageAreas && pageAreas.length) {
+						for (let p = 0; p < bw.length; p++) {
+							const ii = p * 4;
+							bw[p] = (imgData.data[ii] * 0.299 + imgData.data[ii+1] * 0.587 + imgData.data[ii+2] * 0.114) < threshold ? 1 : 0;
+						}
+						for (const area of pageAreas) {
+							_fsDither(bw, c.width, c.height, imgData.data, threshold, area.x, area.y, area.w, area.h);
+						}
+					} else {
+						const gray = new Float32Array(c.width * c.height);
+						for (let p = 0; p < bw.length; p++) {
+							const ii = p * 4;
+							gray[p] = imgData.data[ii] * 0.299 + imgData.data[ii+1] * 0.587 + imgData.data[ii+2] * 0.114;
+						}
+						const halfBand = Math.max(20, Math.round(threshold * 0.15));
+						for (let y = 0; y < c.height; y++) {
+							for (let x = 0; x < c.width; x++) {
+								const idx = y * c.width + x;
+								const old = gray[idx];
+								const dist = Math.abs(old - threshold);
+								if (dist > halfBand) {
+									bw[idx] = old < threshold ? 1 : 0;
+								} else {
+									const newVal = old < threshold ? 1 : 0;
+									bw[idx] = newVal;
+									const err = old - (newVal ? 0 : 255);
+									if (x + 1 < c.width) gray[idx + 1] += err * 7 / 16;
+									if (y + 1 < c.height) {
+										if (x > 0) gray[idx + c.width - 1] += err * 3 / 16;
+										gray[idx + c.width] += err * 5 / 16;
+										if (x + 1 < c.width) gray[idx + c.width + 1] += err * 1 / 16;
+									}
 								}
 							}
 						}
@@ -16220,6 +16277,7 @@ function _applySlash(cmd, ta) {
 				_zplPages[_zplPages.length - 1].preview = preview;
 				_zplPages[_zplPages.length - 1].pscale = scale;
 				_zplPages[_zplPages.length - 1].barcodes = zplBarcodes;
+				_zplPages[_zplPages.length - 1]._monoData = pid;
 					if (zplBarcodes.length) { pctx.strokeStyle = '#ef4444'; pctx.lineWidth = 2; pctx.setLineDash([3, 3]); zplBarcodes.forEach(bc => pctx.strokeRect(Math.round(bc.x * scale), Math.round(bc.y * scale), Math.round(bc.w * scale), Math.round(bc.h * scale))); }
 					const div = document.createElement('div');
 					div.style.textAlign = 'center';
@@ -16271,6 +16329,7 @@ function _applySlash(cmd, ta) {
 				output.readOnly = false;
 				bar.style.width = '100%';
 				setTimeout(() => { progress.hidden = true; bar.style.width = '0%'; }, 800);
+				_zplRedrawPreviewOverlays();
 			} catch (err) {
 				output.value = 'Error: ' + err.message;
 				progress.hidden = true;
@@ -16290,28 +16349,38 @@ function _applySlash(cmd, ta) {
 						bw[p] = (imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114) < threshold ? 1 : 0;
 					}
 				} else {
-					const gray = new Float32Array(w * h);
-					for (let p = 0; p < bw.length; p++) {
-						const i = p * 4;
-						gray[p] = imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114;
-					}
-					const halfBand = Math.max(20, Math.round(threshold * 0.15));
-					for (let y = 0; y < h; y++) {
-						for (let x = 0; x < w; x++) {
-							const idx = y * w + x;
-							const old = gray[idx];
-							const dist = Math.abs(old - threshold);
-							if (dist > halfBand) {
-								bw[idx] = old < threshold ? 1 : 0;
-							} else {
-								const newVal = old < threshold ? 1 : 0;
-								bw[idx] = newVal;
-								const err = old - (newVal ? 0 : 255);
-								if (x + 1 < w) gray[idx + 1] += err * 7 / 16;
-								if (y + 1 < h) {
-									if (x > 0) gray[idx + w - 1] += err * 3 / 16;
-									gray[idx + w] += err * 5 / 16;
-									if (x + 1 < w) gray[idx + w + 1] += err * 1 / 16;
+					if (page.ditherAreas && page.ditherAreas.length) {
+						for (let p = 0; p < bw.length; p++) {
+							const ii = p * 4;
+							bw[p] = (imgData[ii] * 0.299 + imgData[ii+1] * 0.587 + imgData[ii+2] * 0.114) < threshold ? 1 : 0;
+						}
+						for (const area of page.ditherAreas) {
+							_fsDither(bw, w, h, imgData, threshold, area.x, area.y, area.w, area.h);
+						}
+					} else {
+						const gray = new Float32Array(w * h);
+						for (let p = 0; p < bw.length; p++) {
+							const ii = p * 4;
+							gray[p] = imgData[ii] * 0.299 + imgData[ii+1] * 0.587 + imgData[ii+2] * 0.114;
+						}
+						const halfBand = Math.max(20, Math.round(threshold * 0.15));
+						for (let y = 0; y < h; y++) {
+							for (let x = 0; x < w; x++) {
+								const idx = y * w + x;
+								const old = gray[idx];
+								const dist = Math.abs(old - threshold);
+								if (dist > halfBand) {
+									bw[idx] = old < threshold ? 1 : 0;
+								} else {
+									const newVal = old < threshold ? 1 : 0;
+									bw[idx] = newVal;
+									const err = old - (newVal ? 0 : 255);
+									if (x + 1 < w) gray[idx + 1] += err * 7 / 16;
+									if (y + 1 < h) {
+										if (x > 0) gray[idx + w - 1] += err * 3 / 16;
+										gray[idx + w] += err * 5 / 16;
+										if (x + 1 < w) gray[idx + w + 1] += err * 1 / 16;
+									}
 								}
 							}
 						}
@@ -16335,8 +16404,127 @@ function _applySlash(cmd, ta) {
 					}
 				}
 				pctx.putImageData(pid, 0, 0);
+				page._monoData = pid;
+			}
+			_zplRedrawPreviewOverlays();
+		}
+		function _zplRedrawPreviewOverlays(pageIdx) {
+			for (let i = 0; i < _zplPages.length; i++) {
+				if (pageIdx != null && i !== pageIdx) continue;
+				const page = _zplPages[i];
+				if (!page.preview || !page._monoData) continue;
+				const pctx = page.preview.getContext('2d');
+				const ps = page.pscale;
+				pctx.putImageData(page._monoData, 0, 0);
+				if (page.ditherAreas) {
+					pctx.fillStyle = 'rgba(34,197,94,0.25)';
+					pctx.strokeStyle = '#22c55e';
+					pctx.lineWidth = 2;
+					pctx.setLineDash([4, 2]);
+					for (const a of page.ditherAreas) {
+						const rx = a.x * ps, ry = a.y * ps, rw = a.w * ps, rh = a.h * ps;
+						pctx.fillRect(rx, ry, rw, rh);
+						pctx.strokeRect(rx, ry, rw, rh);
+					}
+				}
+				if (_zplMarkDraw && _zplMarkDraw.pageIdx === i) {
+					const d = _zplMarkDraw;
+					const x1 = Math.min(d.px1, d.px2) * ps, y1 = Math.min(d.py1, d.py2) * ps;
+					const x2 = Math.max(d.px1, d.px2) * ps, y2 = Math.max(d.py1, d.py2) * ps;
+					pctx.strokeStyle = '#f97316';
+					pctx.lineWidth = 2;
+					pctx.setLineDash([4, 2]);
+					pctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+				}
 			}
 		}
+		function _zplToggleMarking() {
+			_zplMarking = !_zplMarking;
+			_zplMarkDraw = null;
+			const btn = document.getElementById('btn-zpl-mark');
+			const clear = document.getElementById('btn-zpl-clear-marks');
+			if (btn) btn.textContent = _zplMarking ? '\u2713 Done Marking' : '\u270E Mark Dither';
+			if (clear) clear.hidden = !hasDitherAreas();
+			document.getElementById('zpl-preview-wrap')?.classList.toggle('marking-mode', _zplMarking);
+			_zplRedrawPreviewOverlays();
+		}
+		function hasDitherAreas() {
+			return _zplPages.some(p => p.ditherAreas && p.ditherAreas.length);
+		}
+		function _zplClearMarks() {
+			for (const p of _zplPages) p.ditherAreas = [];
+			_zplMarkDraw = null;
+			document.getElementById('btn-zpl-clear-marks').hidden = true;
+			_zplRedrawPreviewOverlays();
+			_zplRefreshPreviews();
+		}
+		function _zplMarkDown(pageIdx, cx, cy) {
+			if (!_zplMarking) return;
+			const page = _zplPages[pageIdx];
+			if (!page) return;
+			const ps = page.pscale;
+			_zplMarkDraw = { pageIdx, px1: cx / ps, py1: cy / ps, px2: cx / ps, py2: cy / ps };
+		}
+		function _zplMarkMove(cx, cy) {
+			if (!_zplMarking || !_zplMarkDraw) return;
+			const page = _zplPages[_zplMarkDraw.pageIdx];
+			if (!page) return;
+			_zplMarkDraw.px2 = cx / page.pscale;
+			_zplMarkDraw.py2 = cy / page.pscale;
+			_zplRedrawPreviewOverlays(_zplMarkDraw.pageIdx);
+		}
+		function _zplMarkUp() {
+			if (!_zplMarking || !_zplMarkDraw) return;
+			const page = _zplPages[_zplMarkDraw.pageIdx];
+			if (!page) return;
+			const x1 = Math.min(_zplMarkDraw.px1, _zplMarkDraw.px2);
+			const y1 = Math.min(_zplMarkDraw.py1, _zplMarkDraw.py2);
+			const x2 = Math.max(_zplMarkDraw.px1, _zplMarkDraw.px2);
+			const y2 = Math.max(_zplMarkDraw.py1, _zplMarkDraw.py2);
+			if (x2 - x1 > 4 && y2 - y1 > 4) {
+				if (!page.ditherAreas) page.ditherAreas = [];
+				page.ditherAreas.push({ x: Math.round(x1), y: Math.round(y1), w: Math.round(x2 - x1), h: Math.round(y2 - y1) });
+				document.getElementById('btn-zpl-clear-marks').hidden = false;
+				_zplRefreshPreviews();
+			}
+			_zplMarkDraw = null;
+			_zplRedrawPreviewOverlays();
+		}
+
+		document.getElementById('btn-zpl-mark')?.addEventListener('click', _zplToggleMarking);
+		document.getElementById('btn-zpl-clear-marks')?.addEventListener('click', _zplClearMarks);
+
+		(function setupMarkingDelegation() {
+			const wrap = document.getElementById('zpl-preview-wrap');
+			if (!wrap) return;
+			wrap.addEventListener('pointerdown', (e) => {
+				const cv = e.target.closest('canvas');
+				if (!cv || !_zplMarking) return;
+				e.preventDefault();
+				const idx = _zplPages.findIndex(p => p.preview === cv);
+				if (idx < 0) return;
+				const rect = cv.getBoundingClientRect();
+				const cx = (e.clientX - rect.left) * (cv.width / rect.width);
+				const cy = (e.clientY - rect.top) * (cv.height / rect.height);
+				_zplMarkDown(idx, cx, cy);
+			});
+			wrap.addEventListener('pointermove', (e) => {
+				if (!_zplMarkDraw) return;
+				const cv = _zplPages[_zplMarkDraw.pageIdx]?.preview;
+				if (!cv) return;
+				const rect = cv.getBoundingClientRect();
+				const cx = (e.clientX - rect.left) * (cv.width / rect.width);
+				const cy = (e.clientY - rect.top) * (cv.height / rect.height);
+				_zplMarkMove(cx, cy);
+			});
+			document.addEventListener('pointerup', (e) => {
+				if (!_zplMarkDraw) return;
+				_zplMarkUp();
+			});
+			wrap.addEventListener('pointerleave', () => {
+				if (_zplMarkDraw) { _zplMarkDraw = null; _zplRedrawPreviewOverlays(); }
+			});
+		})();
 		document.getElementById('zpl-upload-area')?.addEventListener('click', () => {
 			document.getElementById('zpl-pdf-input')?.click();
 		});
