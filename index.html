@@ -2857,17 +2857,15 @@
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
 		@page { margin:0; }
-		@media print { body.page-view-active #notes { display:none !important; }
+		@media print {
+			body.page-view-active #notes { display:none !important; }
 			body.page-view-active #note-gutter { display:none !important; }
-			body.page-view-active #notes-print-static { display:block !important; }
-			#notes-print-static { background:white; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; line-height:1.75; font-size:12pt; white-space:pre-line; overflow:visible; word-break:break-word; }
-			#notes-print-static br { display:block; min-height:1.75em; }
-			#notes-print-static div, #notes-print-static p { display:block; min-height:1.75em; }
 		}
 		#notes-print-static { display:none; }
-		body.page-view-active #notes-print-static { display:block; background:white; color:#0f172a; width:210mm; min-height:auto; margin:0 auto 20px auto; padding:20mm 25mm; line-height:1.75; font-size:12pt; white-space:pre-line; word-break:break-word; border:2px solid #ef4444; border-radius:2px; }
+		body.page-view-active #notes-print-static { display:block; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; background:white; color:#0f172a; line-height:1.75; font-size:12pt; white-space:pre-wrap; word-break:break-word; border:none; overflow:visible; }
 		body.page-view-active #notes-print-static br { display:block; min-height:1.75em; }
 		body.page-view-active #notes-print-static div, body.page-view-active #notes-print-static p { display:block; min-height:1.75em; }
+		body.page-view-active #note-line-wrap { flex-direction:column; }
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
 			.zpl-body { display:flex; flex-direction:column; gap:12px; }
