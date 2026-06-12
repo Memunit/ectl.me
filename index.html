@@ -10496,20 +10496,21 @@ body {
 				const sel = window.getSelection();
 				if (sel.rangeCount && !sel.isCollapsed) {
 					const range = sel.getRangeAt(0);
-					const span = document.createElement('span');
-					span.style.fontSize = pt + 'pt';
-					try { range.surroundContents(span); } catch (e) {
-						const fragment = range.extractContents();
-						span.appendChild(fragment);
-						range.insertNode(span);
+					const fragment = range.extractContents();
+					const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_TEXT);
+					const nodes = [];
+					while (walker.nextNode()) nodes.push(walker.currentNode);
+					for (const node of nodes) {
+						const span = document.createElement('span');
+						span.style.fontSize = pt + 'pt';
+						node.parentNode.insertBefore(span, node);
+						span.appendChild(node);
 					}
-					sel.removeAllRanges();
-					const r2 = document.createRange();
-					r2.selectNodeContents(span);
-					sel.addRange(r2);
+					range.insertNode(fragment);
 				}
 				notesEl.dispatchEvent(new Event('input', { bubbles: true }));
-				notesEl.focus(); this.value='';
+				notesEl.focus();
+				requestAnimationFrame(() => { this.value = ''; });
 			});
 				// Color picker UI (wraps selection in <span style="color/highlight">)
 				['text-color-picker','highlight-picker'].forEach(pid => {
