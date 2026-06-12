@@ -10564,9 +10564,25 @@ body {
 				// Sync a hidden static clone of the notes for print —
 				// ARC/Chromium print engine doesn't render contenteditable HTML correctly
 				const _printDiv = document.getElementById('notes-print-static');
-				function _syncPrintDiv() { if (_printDiv) _printDiv.innerHTML = notesEl.innerHTML; }
+				function _syncPrintDiv() {
+					if (!_printDiv) return;
+					_printDiv.innerHTML = notesEl ? notesEl.innerHTML : '';
+				}
 				notesEl.addEventListener('input', _syncPrintDiv);
-				if (notesEl.innerHTML) _syncPrintDiv();
+
+				// Use matchMedia('print') instead of beforeprint — more reliable across browsers
+				const _printMQ = window.matchMedia('print');
+				_printMQ.addEventListener('change', (e) => {
+					if (!document.body.classList.contains('page-view-active')) return;
+					if (e.matches) {
+						_syncPrintDiv();
+						if (notesEl) notesEl.style.display = 'none';
+						if (_printDiv) _printDiv.style.display = '';
+					} else {
+						if (notesEl) notesEl.style.display = '';
+						if (_printDiv) _printDiv.style.display = '';
+					}
+				});
 
 				// Keyboard shortcuts for formatting (⌘B / ⌘I / ⌘U)
 				// These are added inside the textarea to avoid conflicts with browser defaults
