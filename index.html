@@ -16131,7 +16131,7 @@ function _applySlash(cmd, ta) {
 					const vp = page.getViewport({ scale: 3 });
 					const c = document.createElement('canvas');
 					c.width = vp.width; c.height = vp.height;
-					c.style.maxWidth = '320px';
+					c.style.maxWidth = '640px';
 					const ctx = c.getContext('2d');
 					await page.render({ canvasContext: ctx, viewport: vp }).promise;
 					const imgData = ctx.getImageData(0, 0, c.width, c.height);
@@ -16195,7 +16195,7 @@ function _applySlash(cmd, ta) {
 			}
 					// Draw monochrome preview
 					const preview = document.createElement('canvas');
-					const scale = Math.min(300 / c.width, 400 / c.height);
+					const scale = Math.min(600 / c.width, 800 / c.height);
 					preview.width = Math.round(c.width * scale); preview.height = Math.round(c.height * scale);
 					const pctx = preview.getContext('2d');
 					const pid = pctx.createImageData(preview.width, preview.height);
