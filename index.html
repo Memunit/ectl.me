@@ -2849,6 +2849,7 @@
 			#notes { background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(128,128,128,0.12) calc(100% - 1px), rgba(128,128,128,0.12) 100%); background-size:100% calc(1.35 * var(--note-font-size)); background-repeat:repeat-y; }
 			body.page-view-active #panel-notes { background:var(--bg); }
 			body.page-view-active #notes { background:white; background-image:linear-gradient(to bottom, transparent calc(100% - 1px), rgba(0,0,0,0.08) calc(100% - 1px), rgba(0,0,0,0.08) 100%); background-size:100% calc(25 * 1.75 * 12pt); background-repeat:repeat-y; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:2px; box-shadow:0 1px 6px rgba(0,0,0,.2); line-height:1.75; font-size:12pt; resize:none; }
+			body.page-view-active #notes br, body.page-view-active #notes p, body.page-view-active #notes div { display:block; min-height:1.75em; }
 			body.page-view-active #notes:focus { outline:none; box-shadow:0 1px 6px rgba(0,0,0,.2); }
 			body.page-view-active #note-gutter { display:none; }
 			body.page-view-active .fmt-toolbar { background:var(--bg); }
@@ -2856,7 +2857,10 @@
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
 		@page { margin:0; }
-		@media print { body.page-view-active #notes { box-shadow:none; } }
+		@media print { body.page-view-active #notes { box-shadow:none; }
+			#notes br { display:initial; }
+			#notes div, #notes p { display:block; min-height:1em; }
+		}
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
 			.zpl-body { display:flex; flex-direction:column; gap:12px; }
