@@ -2857,9 +2857,9 @@
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
 		@page { margin:0; }
-		@media print { body.page-view-active #notes { box-shadow:none; }
-			#notes br { display:initial; }
-			#notes div, #notes p { display:block; min-height:1em; }
+		@media print { body.page-view-active #notes { box-shadow:none; white-space:pre-wrap !important; overflow:visible !important; }
+			#notes br { display:block !important; min-height:1.75em; }
+			#notes div, #notes p { display:block !important; min-height:1.75em; }
 		}
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
@@ -10553,6 +10553,17 @@ body {
 				document.getElementById('btn-doc-page-view')?.addEventListener('click', () => {
 					document.body.classList.toggle('page-view-active');
 					if (docMorePopup) docMorePopup.hidden = true;
+				});
+
+				// Fix: Chrome strips HTML tags from contenteditable in print —
+				// temporarily disable contentEditable so the browser renders the rich HTML
+				window.addEventListener('beforeprint', () => {
+					if (document.body.classList.contains('page-view-active') && notesEl) {
+						notesEl.setAttribute('contenteditable', 'false');
+					}
+				});
+				window.addEventListener('afterprint', () => {
+					if (notesEl) notesEl.setAttribute('contenteditable', 'true');
 				});
 
 				// Keyboard shortcuts for formatting (⌘B / ⌘I / ⌘U)
