@@ -6752,7 +6752,7 @@
 				<div class="zpl-progress" id="zpl-progress" hidden><div class="zpl-progress-bar" id="zpl-progress-bar"></div></div>
 			<div id="zpl-options" hidden style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
 				<label style="font-size:0.82rem">Label: <input type="number" id="zpl-label-w" value="105" min="20" max="200" step="1" style="width:55px" /> mm</label>
-				<label style="font-size:0.82rem">Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
+				<label style="font-size:0.82rem">Dither / Threshold: <input type="range" id="zpl-threshold" min="80" max="255" value="180" style="width:100px" /></label>
 				<label style="font-size:0.82rem">DPI: <select id="zpl-dpi"><option value="203">203</option><option value="300">300</option></select></label>
 				<label style="font-size:0.82rem;margin-left:12px"><input type="checkbox" id="zpl-barcode-detect"> Detect barcodes</label>
 					<button class="btn btn-small" id="btn-zpl-regenerate" type="button">Regenerate</button>
@@ -16128,7 +16128,7 @@ function _applySlash(cmd, ta) {
 				let zpl = '';
 				for (let i = 1; i <= total; i++) {
 					const page = await _zplPdfDoc.getPage(i);
-					const vp = page.getViewport({ scale: 2 });
+					const vp = page.getViewport({ scale: 3 });
 					const c = document.createElement('canvas');
 					c.width = vp.width; c.height = vp.height;
 					c.style.maxWidth = '320px';
@@ -16137,11 +16137,27 @@ function _applySlash(cmd, ta) {
 					const imgData = ctx.getImageData(0, 0, c.width, c.height);
 					_zplPages.push({ imgData: new Uint8ClampedArray(imgData.data), w: c.width, h: c.height });
 				const threshold = parseInt(document.getElementById('zpl-threshold')?.value || '180');
-					const bw = new Uint8Array(c.width * c.height);
-					for (let p = 0; p < bw.length; p++) {
-						const i = p * 4;
-						bw[p] = (imgData.data[i] * 0.299 + imgData.data[i+1] * 0.587 + imgData.data[i+2] * 0.114) < threshold ? 1 : 0;
+				const bw = new Uint8Array(c.width * c.height);
+				const gray = new Float32Array(c.width * c.height);
+				for (let p = 0; p < bw.length; p++) {
+					const i = p * 4;
+					gray[p] = imgData.data[i] * 0.299 + imgData.data[i+1] * 0.587 + imgData.data[i+2] * 0.114;
+				}
+				for (let y = 0; y < c.height; y++) {
+					for (let x = 0; x < c.width; x++) {
+						const idx = y * c.width + x;
+						const old = gray[idx];
+						const newVal = old < threshold ? 1 : 0;
+						bw[idx] = newVal;
+						const err = old - (newVal ? 0 : 255);
+						if (x + 1 < c.width) gray[idx + 1] += err * 7 / 16;
+						if (y + 1 < c.height) {
+							if (x > 0) gray[idx + c.width - 1] += err * 3 / 16;
+							gray[idx + c.width] += err * 5 / 16;
+							if (x + 1 < c.width) gray[idx + c.width + 1] += err * 1 / 16;
+						}
 					}
+				}
 				// ── Detect barcodes via text extraction ──
 				const zplBarcodes = [];
 				const detectBarcodes = document.getElementById('zpl-barcode-detect')?.checked;
@@ -16246,9 +16262,25 @@ function _applySlash(cmd, ta) {
 				if (!page.preview || !page.imgData) continue;
 				const { imgData, w, h, preview, pscale } = page;
 				const bw = new Uint8Array(w * h);
+				const gray = new Float32Array(w * h);
 				for (let p = 0; p < bw.length; p++) {
 					const i = p * 4;
-					bw[p] = (imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114) < threshold ? 1 : 0;
+					gray[p] = imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114;
+				}
+				for (let y = 0; y < h; y++) {
+					for (let x = 0; x < w; x++) {
+						const idx = y * w + x;
+						const old = gray[idx];
+						const newVal = old < threshold ? 1 : 0;
+						bw[idx] = newVal;
+						const err = old - (newVal ? 0 : 255);
+						if (x + 1 < w) gray[idx + 1] += err * 7 / 16;
+						if (y + 1 < h) {
+							if (x > 0) gray[idx + w - 1] += err * 3 / 16;
+							gray[idx + w] += err * 5 / 16;
+							if (x + 1 < w) gray[idx + w + 1] += err * 1 / 16;
+						}
+					}
 				}
 				const pctx = preview.getContext('2d');
 				const pid = pctx.createImageData(preview.width, preview.height);
