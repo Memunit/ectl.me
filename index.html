@@ -2857,9 +2857,9 @@
 			body.page-view-active #note-line-wrap { background:var(--bg); padding:10px 0; display:flex; justify-content:center; }
 			body.page-view-active #editor-statusbar { background:var(--bg); }
 		@page { margin:0; }
-		@media print { body.page-view-active #notes { box-shadow:none; white-space:pre-wrap !important; overflow:visible !important; }
-			#notes br { display:block !important; min-height:1.75em; }
-			#notes div, #notes p { display:block !important; min-height:1.75em; }
+		@media print { body.page-view-active #notes { display:none !important; }
+			#notes-print-static { display:block !important; background:white; color:#0f172a; width:210mm; min-height:297mm; margin:20px auto; padding:20mm 25mm; border:none; border-radius:0; line-height:1.75; font-size:12pt; white-space:pre-wrap; overflow:visible; }
+			#notes-print-static div, #notes-print-static p, #notes-print-static br { display:block; min-height:1.75em; }
 		}
 
 			/* ── ZPL CONVERTER ───────────────────────────────────────────── */
@@ -4042,7 +4042,7 @@
 								<span class="fnr-divider"></span>
 								<button class="btn btn-small" id="fnr-close" type="button" aria-label="Close">✕</button>
 							</div>
-							<div id="note-line-wrap" class="note-line-wrap"><div id="note-gutter" class="note-gutter"></div><div id="notes" contenteditable="true" data-placeholder="Sign in to write notes"></div></div>
+							<div id="note-line-wrap" class="note-line-wrap"><div id="note-gutter" class="note-gutter"></div><div id="notes" contenteditable="true" data-placeholder="Sign in to write notes"></div><div id="notes-print-static" hidden></div></div>
 							<!-- Markdown preview pane -->
 							<div class="md-preview-pane" id="md-preview-pane" hidden aria-label="Markdown preview"></div>
 							<!-- Slash command menu -->
@@ -10559,11 +10559,16 @@ body {
 				// temporarily disable contentEditable so the browser renders the rich HTML
 				window.addEventListener('beforeprint', () => {
 					if (document.body.classList.contains('page-view-active') && notesEl) {
-						notesEl.setAttribute('contenteditable', 'false');
+						const printDiv = document.getElementById('notes-print-static');
+						if (printDiv) {
+							printDiv.innerHTML = notesEl.innerHTML;
+							printDiv.hidden = false;
+						}
 					}
 				});
 				window.addEventListener('afterprint', () => {
-					if (notesEl) notesEl.setAttribute('contenteditable', 'true');
+					const printDiv = document.getElementById('notes-print-static');
+					if (printDiv) { printDiv.hidden = true; printDiv.innerHTML = ''; }
 				});
 
 				// Keyboard shortcuts for formatting (⌘B / ⌘I / ⌘U)
