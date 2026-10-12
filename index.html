@@ -3792,6 +3792,7 @@
 						<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
 				<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
 				<button class="tab" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
+				<button class="tab" id="tab-video" type="button" role="tab" aria-controls="panel-video" aria-selected="false">Video</button>
 				<div class="tab-more-wrap" id="tab-more-wrap">
 							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
 						</div>
@@ -4223,6 +4224,76 @@
 						<p class="files-status" id="files-status" aria-live="polite"></p>
 						<div class="file-list" id="file-list"></div>
 					</section>
+
+				<!-- ── Video Text Reader panel ── -->
+				<section class="panel" id="panel-video" role="tabpanel" aria-labelledby="tab-video" hidden>
+					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">Video Text Reader</p>
+					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Read the text shown on screen in a video (e.g. song titles in a compilation) and build a timestamped transcript. Everything runs in your browser — the video is never uploaded.</p>
+
+					<div class="upload-zone" id="video-upload-zone" role="button" tabindex="0" aria-label="Choose a video file">
+						<input type="file" id="video-input" accept="video/*" />
+						<span class="upload-zone-label">Click or drag a video file here</span>
+						<span class="upload-zone-sub">MP4, WebM, MOV… · stays on your device</span>
+					</div>
+
+					<div id="video-workspace" hidden>
+						<video id="video-preview" controls playsinline style="width:100%;max-height:360px;border-radius:var(--radius-md);background:#000;margin-top:12px"></video>
+
+						<div class="tool-card" style="margin-top:12px">
+							<div class="tool-card-header">⚙️ Scan settings</div>
+							<div class="tool-card-body">
+								<div class="tool-row" style="flex-wrap:wrap;gap:14px">
+									<label class="tool-label">Sample every
+										<select class="tool-select" id="video-interval" aria-label="Sample interval">
+											<option value="1">1 s</option>
+											<option value="2" selected>2 s</option>
+											<option value="3">3 s</option>
+											<option value="5">5 s</option>
+											<option value="10">10 s</option>
+										</select>
+									</label>
+									<label class="tool-label">Read area
+										<select class="tool-select" id="video-region" aria-label="Read area">
+											<option value="full" selected>Whole frame</option>
+											<option value="top">Top third</option>
+											<option value="middle">Middle third</option>
+											<option value="bottom">Bottom third</option>
+										</select>
+									</label>
+									<label class="tool-label" title="Higher = only re-read when the picture changes more">Sensitivity
+										<input type="range" id="video-change" class="tool-range" min="0" max="40" value="12" step="1" style="width:110px" aria-label="Change sensitivity" />
+									</label>
+								</div>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<button class="btn btn-accent" id="video-scan-start" type="button">▶ Start scan</button>
+									<button class="btn" id="video-scan-cancel" type="button" disabled>✕ Cancel</button>
+									<label class="tool-check"><input type="checkbox" id="video-skip-same" checked /> Skip unchanged frames</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="upload-progress" id="video-progress"><div class="upload-progress-bar" id="video-progress-bar"></div></div>
+						<p class="files-status" id="video-status" aria-live="polite"></p>
+
+						<div class="tool-card">
+							<div class="tool-card-header">📝 Transcript <span id="video-count" style="font-weight:600;font-size:0.8rem;color:var(--muted)"></span></div>
+							<div class="tool-card-body">
+								<textarea class="input tool-textarea" id="video-transcript" rows="10" placeholder="Detected text will appear here…" spellcheck="false"></textarea>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<button class="btn btn-small" id="video-copy" type="button">Copy</button>
+									<button class="btn btn-small" id="video-download" type="button">⤓ .txt</button>
+									<button class="btn btn-small" id="video-to-note" type="button">→ Save to note</button>
+									<button class="btn btn-small" id="video-clean" type="button">🧹 Clean up</button>
+									<button class="btn btn-small btn-accent" id="video-ai" type="button">✨ Enhance with AI</button>
+								</div>
+								<details style="font-size:0.8rem;color:var(--muted)">
+									<summary style="cursor:pointer">Raw OCR lines (per frame)</summary>
+									<textarea class="input tool-textarea" id="video-raw" rows="6" readonly spellcheck="false" style="margin-top:8px"></textarea>
+								</details>
+							</div>
+						</div>
+					</div>
+				</section>
 
 				<!-- ── Tools panel ── -->
 				<section class="panel" id="panel-tools" role="tabpanel" aria-labelledby="tab-tools" hidden>
@@ -7171,6 +7242,7 @@
 				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
 			{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
 			{ tab: document.getElementById('tab-zpl'),      panel: document.getElementById('panel-zpl') },
+			{ tab: document.getElementById('tab-video'),    panel: document.getElementById('panel-video') },
 			{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
@@ -17026,6 +17098,342 @@ function _applySlash(cmd, ta) {
 
 			// init idle timer
 			if (isLockEnabled()) resetIdleTimer();
+		})();
+
+		// ── VIDEO TEXT READER (on-screen OCR → transcript) ───────────────
+		(function() {
+			const zone     = document.getElementById('video-upload-zone');
+			const input    = document.getElementById('video-input');
+			if (!zone || !input) return;
+			const preview   = document.getElementById('video-preview');
+			const workspace = document.getElementById('video-workspace');
+			const statusEl  = document.getElementById('video-status');
+			const progWrap  = document.getElementById('video-progress');
+			const progBar   = document.getElementById('video-progress-bar');
+			const transcriptEl = document.getElementById('video-transcript');
+			const rawEl     = document.getElementById('video-raw');
+			const countEl   = document.getElementById('video-count');
+			const startBtn  = document.getElementById('video-scan-start');
+			const cancelBtn = document.getElementById('video-scan-cancel');
+			const aiBtn     = document.getElementById('video-ai');
+
+			let fileURL = null, duration = 0, vw = 0, vh = 0;
+			let scanning = false, cancelFlag = false, ocrWorker = null;
+			let entries = [], prevSig = null;
+
+			const mainCanvas = document.createElement('canvas');
+			const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true });
+			const sigCanvas = document.createElement('canvas'); sigCanvas.width = 96; sigCanvas.height = 54;
+			const sigCtx = sigCanvas.getContext('2d', { willReadFrequently: true });
+
+			const setStatus = (t) => { if (statusEl) statusEl.textContent = t; };
+			const pad = (n) => String(n).padStart(2, '0');
+			function fmtStamp(s) {
+				s = Math.max(0, Math.floor(s));
+				const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
+				return (h ? h + ':' : '') + pad(m) + ':' + pad(ss);
+			}
+			function copyText(text, btn) {
+				navigator.clipboard?.writeText(text).catch(() => {});
+				if (btn) { const o = btn.textContent; btn.textContent = '✓ Copied'; setTimeout(() => { btn.textContent = o; }, 1200); }
+			}
+
+			// ── Load a file ──
+			function loadFile(file) {
+				if (!file || !(file.type || '').startsWith('video/')) { setStatus('Please choose a video file (MP4, WebM, MOV…).'); return; }
+				if (fileURL) URL.revokeObjectURL(fileURL);
+				fileURL = URL.createObjectURL(file);
+				preview.src = fileURL;
+				workspace.hidden = false;
+				entries = []; prevSig = null;
+				if (transcriptEl) transcriptEl.value = '';
+				if (rawEl) rawEl.value = '';
+				if (progBar) progBar.style.width = '0%';
+				updateCount();
+				setStatus('Loading video…');
+			}
+
+			zone.addEventListener('click', () => input.click());
+			zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+			input.addEventListener('change', () => { if (input.files && input.files[0]) loadFile(input.files[0]); });
+			['dragenter', 'dragover'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('drag-over'); }));
+			['dragleave', 'drop'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove('drag-over'); }));
+			zone.addEventListener('drop', (e) => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) loadFile(f); });
+
+			preview.addEventListener('loadedmetadata', () => {
+				duration = isFinite(preview.duration) ? preview.duration : 0;
+				vw = preview.videoWidth; vh = preview.videoHeight;
+				setStatus(duration ? ('Loaded ' + fmtStamp(duration) + ' · ' + vw + '×' + vh + '. Ready to scan.') : 'Could not read the video duration.');
+			});
+
+			// ── OCR engine (loaded lazily from CDN) ──
+			function loadTesseract() {
+				if (window.Tesseract) return Promise.resolve();
+				return new Promise((res, rej) => {
+					const s = document.createElement('script');
+					s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+					s.crossOrigin = 'anonymous';
+					s.onload = () => res();
+					s.onerror = () => rej(new Error('Could not load the OCR engine. Check your connection.'));
+					document.head.appendChild(s);
+				});
+			}
+			async function ensureOCR() {
+				if (ocrWorker) return ocrWorker;
+				setStatus('Loading OCR engine…');
+				await loadTesseract();
+				ocrWorker = await window.Tesseract.createWorker('eng');
+				try { await ocrWorker.setParameters({ tessedit_pageseg_mode: '11' }); } catch (e) {}
+				return ocrWorker;
+			}
+
+			// ── Frame capture / diffing ──
+			function regionRect(region) {
+				let sx = 0, sy = 0, cw = vw, ch = vh;
+				if (region === 'top') { ch = Math.round(vh * 0.34); }
+				else if (region === 'middle') { sy = Math.round(vh * 0.33); ch = Math.round(vh * 0.34); }
+				else if (region === 'bottom') { sy = Math.round(vh * 0.66); ch = vh - sy; }
+				return { sx, sy, cw, ch };
+			}
+			function captureRegion(region) {
+				const r = regionRect(region);
+				const scale = Math.min(2, Math.max(1, 1000 / r.cw));
+				mainCanvas.width = Math.max(1, Math.round(r.cw * scale));
+				mainCanvas.height = Math.max(1, Math.round(r.ch * scale));
+				mainCtx.drawImage(preview, r.sx, r.sy, r.cw, r.ch, 0, 0, mainCanvas.width, mainCanvas.height);
+				try {
+					const im = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+					const p = im.data;
+					for (let i = 0; i < p.length; i += 4) {
+						let v = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+						v = v < 110 ? 0 : (v > 150 ? 255 : v);
+						p[i] = p[i + 1] = p[i + 2] = v;
+					}
+					mainCtx.putImageData(im, 0, 0);
+				} catch (e) {}
+				return mainCanvas;
+			}
+			function regionDiff(region) {
+				const r = regionRect(region);
+				sigCtx.drawImage(preview, r.sx, r.sy, r.cw, r.ch, 0, 0, sigCanvas.width, sigCanvas.height);
+				const d = sigCtx.getImageData(0, 0, sigCanvas.width, sigCanvas.height).data;
+				const g = new Float32Array(sigCanvas.width * sigCanvas.height);
+				for (let i = 0, j = 0; i < d.length; i += 4, j++) g[j] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+				if (!prevSig) { prevSig = g; return 999; }
+				let sum = 0;
+				for (let k = 0; k < g.length; k++) sum += Math.abs(g[k] - prevSig[k]);
+				prevSig = g;
+				return sum / g.length;
+			}
+			function seekTo(t) {
+				return new Promise((res) => {
+					let done = false;
+					const finish = () => { if (done) return; done = true; preview.removeEventListener('seeked', finish); res(); };
+					preview.addEventListener('seeked', finish);
+					try { preview.currentTime = t; } catch (e) { finish(); }
+					setTimeout(finish, 4000);
+				});
+			}
+
+			// ── Text normalisation / de-duplication ──
+			function normalizeLines(text) {
+				return text.split('\n')
+					.map((l) => l.replace(/\s+/g, ' ').trim())
+					.filter((l) => {
+						if (l.length < 3) return false;
+						const alnum = (l.match(/[A-Za-z0-9]/g) || []).length;
+						return alnum >= 3 && alnum / l.length >= 0.4;
+					});
+			}
+			function similarity(a, b) {
+				a = a.toLowerCase(); b = b.toLowerCase();
+				if (a === b) return 1;
+				const A = a.split(' '), B = b.split(' ');
+				const setB = new Set(B);
+				let inter = 0;
+				for (const w of A) if (setB.has(w)) inter++;
+				return inter / Math.max(1, Math.max(A.length, B.length));
+			}
+			function groupLines(lines) {
+				const out = [];
+				for (const { t, text } of lines) {
+					let match = null;
+					for (const e of out) { if (similarity(e.text, text) >= 0.8) { match = e; break; } }
+					if (match) { match.last = t; match.count = (match.count || 1) + 1; }
+					else out.push({ t, last: t, text, count: 1 });
+				}
+				return out;
+			}
+			function renderTranscript() {
+				if (transcriptEl) transcriptEl.value = entries.map((e) => '[' + fmtStamp(e.t) + '] ' + e.text).join('\n');
+				updateCount();
+			}
+			function updateCount() {
+				if (countEl) countEl.textContent = entries.length ? ('· ' + entries.length + ' line' + (entries.length === 1 ? '' : 's')) : '';
+			}
+
+			// ── Scan ──
+			async function startScan() {
+				if (!preview.src || !duration) { setStatus('Load a video first.'); return; }
+				scanning = true; cancelFlag = false; prevSig = null; entries = [];
+				if (transcriptEl) transcriptEl.value = '';
+				if (rawEl) rawEl.value = '';
+				updateCount();
+				progWrap?.classList.add('visible');
+				if (progBar) progBar.style.width = '0%';
+
+				const interval = parseFloat(document.getElementById('video-interval')?.value || '2');
+				const region = document.getElementById('video-region')?.value || 'full';
+				const skipSame = document.getElementById('video-skip-same')?.checked !== false;
+				const threshold = parseInt(document.getElementById('video-change')?.value || '12', 10);
+
+				try { ocrWorker = await ensureOCR(); }
+				catch (e) { setStatus('OCR engine failed: ' + e.message); scanning = false; progWrap?.classList.remove('visible'); return; }
+
+				preview.pause();
+				const total = Math.max(1, Math.ceil(duration / interval));
+				const lines = [];
+				let ocrCount = 0;
+
+				for (let i = 0; i <= total; i++) {
+					if (cancelFlag) break;
+					const t = Math.min(i * interval, duration);
+					await seekTo(t);
+					const diff = regionDiff(region);
+					if (!skipSame || diff >= threshold) {
+						let text = '';
+						try {
+							const res = await ocrWorker.recognize(captureRegion(region));
+							text = (res && res.data && res.data.text || '').trim();
+						} catch (e) {}
+						ocrCount++;
+						for (const ln of normalizeLines(text)) lines.push({ t, text: ln });
+						if (rawEl && text) rawEl.value += '[' + fmtStamp(t) + '] ' + text.replace(/\n/g, ' ⏎ ') + '\n';
+						entries = groupLines(lines);
+						renderTranscript();
+					}
+					const pct = Math.round((i / total) * 100);
+					if (progBar) progBar.style.width = pct + '%';
+					setStatus('Scanning… ' + pct + '% · ' + ocrCount + ' frame' + (ocrCount === 1 ? '' : 's') + ' read · ' + fmtStamp(t) + ' / ' + fmtStamp(duration));
+					await new Promise((r) => setTimeout(r, 0));
+				}
+
+				if (progBar) progBar.style.width = '100%';
+				scanning = false;
+				setStatus(cancelFlag
+					? ('Cancelled. ' + entries.length + ' unique line(s) found so far.')
+					: ('Done. Read ' + ocrCount + ' frame' + (ocrCount === 1 ? '' : 's') + ' → ' + entries.length + ' unique line' + (entries.length === 1 ? '' : 's') + '.'));
+				progWrap?.classList.remove('visible');
+			}
+
+			startBtn?.addEventListener('click', async () => {
+				startBtn.disabled = true; if (cancelBtn) cancelBtn.disabled = false;
+				try { await startScan(); }
+				catch (e) { setStatus('Error: ' + e.message); }
+				finally { startBtn.disabled = false; if (cancelBtn) cancelBtn.disabled = true; scanning = false; }
+			});
+			cancelBtn?.addEventListener('click', () => { cancelFlag = true; setStatus('Cancelling…'); });
+
+			// ── Actions ──
+			document.getElementById('video-copy')?.addEventListener('click', (e) => { if (transcriptEl) copyText(transcriptEl.value, e.currentTarget); });
+
+			document.getElementById('video-download')?.addEventListener('click', () => {
+				const blob = new Blob([transcriptEl ? transcriptEl.value : ''], { type: 'text/plain;charset=utf-8' });
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = 'video-transcript.txt';
+				a.click();
+				setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+			});
+
+			document.getElementById('video-to-note')?.addEventListener('click', () => {
+				const ta = document.getElementById('notes');
+				if (!ta) { setStatus('Open the Notes tab first, then try again.'); return; }
+				const body = transcriptEl ? transcriptEl.value.trim() : '';
+				if (!body) { setStatus('Nothing to save yet.'); return; }
+				const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				const html = 'Video transcript<br>' + esc(body).replace(/\n/g, '<br>');
+				ta.focus();
+				ta.innerHTML += (ta.innerHTML && ta.innerHTML.trim() ? '<br><br>' : '') + html;
+				ta.dispatchEvent(new Event('input'));
+				setStatus('Appended transcript to the current note.');
+			});
+
+			document.getElementById('video-clean')?.addEventListener('click', () => {
+				if (!transcriptEl) return;
+				const src = transcriptEl.value.split('\n');
+				const lines = [];
+				for (const raw of src) {
+					const m = raw.match(/^\[([^\]]+)\]\s*(.*)$/);
+					const text = (m ? m[2] : raw).replace(/\s+/g, ' ').trim();
+					const stamp = m ? m[1] : '';
+					if (!text) continue;
+					for (const ln of normalizeLines(text)) {
+						lines.push({ t: parseStamp(stamp), text: ln });
+					}
+				}
+				entries = groupLines(lines);
+				renderTranscript();
+				setStatus('Cleaned and de-duplicated → ' + entries.length + ' line(s).');
+			});
+
+			function parseStamp(s) {
+				if (!s) return 0;
+				const parts = s.split(':').map(Number);
+				if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+				if (parts.length === 2) return parts[0] * 60 + parts[1];
+				return 0;
+			}
+
+			// ── AI enhancement (uses the key from Settings) ──
+			async function callAI(provider, key, prompt, content) {
+				const body = prompt + '\n\n---\n' + content.substring(0, 12000);
+				if (provider === 'anthropic') {
+					const r = await fetch('https://api.anthropic.com/v1/messages', {
+						method: 'POST',
+						headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+						body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 1500, messages: [{ role: 'user', content: body }] }),
+					});
+					const d = await r.json();
+					const t = d.content && d.content[0] && d.content[0].text;
+					if (!t) throw new Error(d.error?.message || JSON.stringify(d));
+					return t;
+				}
+				const url = provider === 'groq'
+					? 'https://api.groq.com/openai/v1/chat/completions'
+					: 'https://api.openai.com/v1/chat/completions';
+				const model = provider === 'groq' ? 'llama-3.1-8b-instant' : 'gpt-4o-mini';
+				const r = await fetch(url, {
+					method: 'POST',
+					headers: { 'Authorization': 'Bearer ' + key, 'content-type': 'application/json' },
+					body: JSON.stringify({ model, messages: [{ role: 'system', content: 'You tidy up OCR text into clean, de-duplicated lists.' }, { role: 'user', content: body }] }),
+				});
+				const d = await r.json();
+				const t = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+				if (!t) throw new Error(d.error?.message || JSON.stringify(d));
+				return t;
+			}
+
+			aiBtn?.addEventListener('click', async () => {
+				const key = localStorage.getItem('ectl_ai_key_v1');
+				if (!key) { setStatus('No AI key saved. Add one in Settings → AI Writing Assistant.'); return; }
+				const provider = localStorage.getItem('ectl_ai_provider_v1') || 'openai';
+				const src = transcriptEl ? transcriptEl.value.trim() : '';
+				if (!src) { setStatus('Nothing to enhance yet.'); return; }
+				const prompt = 'These are raw OCR lines captured from on-screen text in a video (often a music compilation). Clean them into a de-duplicated, ordered list of the actual titles/names shown. Fix OCR typos (e.g. I/1, O/0), drop noise, menu text and pure symbol garbage, and keep the timestamps. Return only the cleaned list.';
+				const orig = aiBtn.textContent;
+				aiBtn.disabled = true; aiBtn.textContent = '✨ Working…';
+				setStatus('Asking the AI to clean up the transcript…');
+				try {
+					const result = await callAI(provider, key, prompt, src);
+					if (transcriptEl) transcriptEl.value = result.trim();
+					setStatus('AI enhancement applied.');
+				} catch (e) {
+					setStatus('AI error: ' + e.message);
+				} finally {
+					aiBtn.disabled = false; aiBtn.textContent = orig;
+				}
+			});
 		})();
 
 		// ── AI WRITING ASSISTANT ─────────────────────────────────────────

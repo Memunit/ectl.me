@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Editor / workspace files
+*.code-workspace
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
