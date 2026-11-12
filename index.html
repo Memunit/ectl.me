@@ -9055,6 +9055,7 @@
 					const HP_KEY = 'ectl_hp_parts_v1';
 					const SERIAL_KEY = 'ectl_hp_serials_v1';
 					let current = null;
+					let pendingSerial = null;
 
 					const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 					const setStatus = (t) => { if (statusEl) statusEl.textContent = t; };
@@ -9095,8 +9096,8 @@
 							if (!v) return;
 							if (Array.isArray(v)) v.forEach(push);
 							else if (typeof v === 'object') {
-								const pn = v.ProductNumber || v.product_number;
-								const name = v.ProductName || v.product_name || '';
+								const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id;
+								const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || '';
 								if (pn) out.push({ ProductNumber: String(pn), ProductName: name });
 							}
 						};
@@ -9119,6 +9120,7 @@
 					// Resolve a serial to its model/product number, cache the mapping,
 					// then load the product's parts (or the serial's own parts).
 					async function searchSerial(sn) {
+						pendingSerial = null;
 						const mapped = loadSerials()[sn];
 						if (mapped && mapped.productNumber) {
 							const cached = loadDB()[mapped.productNumber];
@@ -9157,8 +9159,9 @@
 							return true;
 						}
 						if (cands.length > 1) {
+							pendingSerial = sn;
 							showProductList(cands);
-							setStatus('This serial matches ' + cands.length + ' products — pick the right one.');
+							setStatus('This serial matches ' + cands.length + ' products — pick the right one (this gets saved to the serial).');
 							return true;
 						}
 						if (snParts.length) {
@@ -9211,6 +9214,7 @@
 					async function run() {
 						const q = (qEl.value || '').trim();
 						if (!q) { qEl.focus(); return; }
+						pendingSerial = null;
 						searchBtn.disabled = true;
 						setStatus('Searching HP PartSurfer…');
 						try {
@@ -9246,7 +9250,19 @@
 						if (!b) return;
 						const pn = b.getAttribute('data-hp-pn');
 						qEl.value = pn;
-						try { searchBtn.disabled = true; await lookupPN(pn); }
+						try {
+							searchBtn.disabled = true;
+							const ok = await lookupPN(pn);
+							if (ok && pendingSerial) {
+								const m = loadDB()[pn] || {};
+								const sm = loadSerials();
+								sm[pendingSerial] = { productNumber: pn, productName: m.productName || '', savedAt: Date.now() };
+								saveSerials(sm);
+								setStatus('Saved: serial ' + pendingSerial + ' → ' + (m.productName || pn) + ' (' + pn + ').');
+								pendingSerial = null;
+								renderSaved();
+							}
+						}
 						catch (err) { setStatus('Error: ' + err.message); }
 						finally { searchBtn.disabled = false; }
 					});
