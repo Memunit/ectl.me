@@ -4835,6 +4835,32 @@
 						</div>
 					</div>
 
+					<!-- HP PartSurfer -->
+					<div class="tool-card">
+						<div class="tool-card-header">🖥 HP PartSurfer — parts lookup</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<input class="input tool-output" id="tool-hp-input" type="text" placeholder="Product number (e.g. 1AB39US) or model (e.g. 840 G3)" aria-label="HP product number or model" autocomplete="off" spellcheck="false" />
+								<button class="btn btn-accent" id="tool-hp-search" type="button">Search</button>
+							</div>
+							<p class="hint" id="tool-hp-status" style="font-size:0.8rem;color:var(--muted);margin:0"></p>
+							<div id="tool-hp-results" style="display:none">
+								<div class="tool-row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+									<strong id="tool-hp-title" style="font-size:0.85rem"></strong>
+									<div class="tool-row" style="gap:6px;flex-wrap:wrap">
+										<button class="btn btn-small" id="tool-hp-copy" type="button">Copy parts</button>
+										<button class="btn btn-small" id="tool-hp-csv" type="button">⤓ CSV</button>
+									</div>
+								</div>
+								<div id="tool-hp-list" style="margin-top:8px;max-height:360px;overflow:auto;border:1px solid var(--panel-border);border-radius:var(--radius-sm)"></div>
+							</div>
+							<details style="font-size:0.82rem">
+								<summary style="cursor:pointer;font-weight:600">Saved models <span id="tool-hp-saved-count" class="tool-label"></span></summary>
+								<div id="tool-hp-saved" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+							</details>
+						</div>
+					</div>
+
 				</section>
 
 				<!-- ── Work panel ── -->
@@ -8988,6 +9014,175 @@
 						setTimeout(() => { btn.textContent = orig; }, 1200);
 					}
 				}
+
+				// ── HP PartSurfer (parts lookup via Supabase Edge Function) ──
+				(function() {
+					const qEl       = document.getElementById('tool-hp-input');
+					if (!qEl) return;
+					const searchBtn = document.getElementById('tool-hp-search');
+					const statusEl  = document.getElementById('tool-hp-status');
+					const resultsEl = document.getElementById('tool-hp-results');
+					const titleEl   = document.getElementById('tool-hp-title');
+					const listEl    = document.getElementById('tool-hp-list');
+					const copyBtn   = document.getElementById('tool-hp-copy');
+					const csvBtn    = document.getElementById('tool-hp-csv');
+					const savedEl   = document.getElementById('tool-hp-saved');
+					const savedCount= document.getElementById('tool-hp-saved-count');
+					const HP_KEY = 'ectl_hp_parts_v1';
+					let current = null;
+
+					const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+					const setStatus = (t) => { if (statusEl) statusEl.textContent = t; };
+					function loadDB() { try { return JSON.parse(localStorage.getItem(HP_KEY)) || {}; } catch (e) { return {}; } }
+					function saveDB(db) { try { localStorage.setItem(HP_KEY, JSON.stringify(db)); } catch (e) {} }
+
+					async function callProxy(params) {
+						const qs = new URLSearchParams(params).toString();
+						const res = await fetch(`${SUPABASE_URL}/functions/v1/hp-partsurfer?${qs}`, {
+							headers: { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' },
+						});
+						const text = await res.text();
+						let data = null;
+						try { data = JSON.parse(text); } catch (e) {}
+						if (res.status === 404) throw new Error('Proxy not deployed yet — run: supabase functions deploy hp-partsurfer --no-verify-jwt');
+						if (!res.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+						if (!data) throw new Error('Bad response from proxy');
+						return data;
+					}
+
+					function cleanParts(list) {
+						return (list || []).filter((p) => p && p.PartNumber).map((p) => ({
+							PartNumber: p.PartNumber,
+							Category: p.KeywordName || '',
+							Description: p.EnhancedDescription || '',
+							ProductName: p.ProductName || '',
+							ProductNumber: p.ProductNumber || '',
+						}));
+					}
+
+					function showParts(title, parts, pn) {
+						current = { title: title, pn: pn, parts: parts };
+						if (titleEl) titleEl.textContent = title + (pn ? ' · ' + pn : '');
+						if (listEl) {
+							const rows = parts.map((p) => '<tr><td style="padding:4px 8px;font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="padding:4px 8px;white-space:nowrap">' + esc(p.Category) + '</td><td style="padding:4px 8px">' + esc(p.Description) + '</td></tr>').join('');
+							listEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr style="position:sticky;top:0;background:var(--btn-bg)"><th style="text-align:left;padding:6px 8px">Part #</th><th style="text-align:left;padding:6px 8px">Category</th><th style="text-align:left;padding:6px 8px">Description</th></tr></thead><tbody>' + rows + '</tbody></table>';
+						}
+						if (resultsEl) resultsEl.style.display = 'block';
+					}
+
+					function showProductList(list) {
+						const seen = new Set(); const uniq = [];
+						for (const it of list) {
+							const pn = it && it.ProductNumber;
+							if (!pn || seen.has(pn)) continue;
+							seen.add(pn); uniq.push(it);
+							if (uniq.length >= 300) break;
+						}
+						current = null;
+						if (titleEl) titleEl.textContent = 'Matching products (' + uniq.length + (list.length > uniq.length ? ' of ' + list.length : '') + ')';
+						if (listEl) listEl.innerHTML = uniq.map((it) => '<button data-hp-pn="' + esc(it.ProductNumber) + '" type="button" style="display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--panel-border);padding:6px 8px;cursor:pointer;color:inherit;font-size:0.82rem"><strong style="font-family:monospace">' + esc(it.ProductNumber) + '</strong> <span style="color:var(--muted)">' + esc(it.ProductName) + '</span></button>').join('');
+						if (resultsEl) resultsEl.style.display = 'block';
+					}
+
+					async function lookupPN(pn) {
+						setStatus('Looking up parts for ' + pn + '…');
+						const data = await callProxy({ pn: pn });
+						const parts = cleanParts(data.Body);
+						if (!parts.length) { setStatus('No parts found for ' + pn + '.'); return false; }
+						const productName = parts[0].ProductName || '';
+						const db = loadDB();
+						db[pn] = { productNumber: pn, productName: productName, savedAt: Date.now(), parts: parts };
+						saveDB(db); renderSaved();
+						showParts(productName || pn, parts, pn);
+						setStatus('Found ' + parts.length + ' parts for ' + pn + ' — saved to this device.');
+						return true;
+					}
+
+					async function run() {
+						const q = (qEl.value || '').trim();
+						if (!q) { qEl.focus(); return; }
+						searchBtn.disabled = true;
+						setStatus('Searching HP PartSurfer…');
+						try {
+							const looksPN = /^[A-Za-z0-9]{5,12}$/.test(q) && /\d/.test(q) && !/\s/.test(q);
+							if (looksPN) {
+								const ok = await lookupPN(q.toUpperCase());
+								if (ok) return;
+							}
+							const data = await callProxy({ q: q });
+							const list = (data.Body && data.Body.ProductNameList) || [];
+							if (!list.length) { setStatus('No matches for "' + q + '".'); if (resultsEl) resultsEl.style.display = 'none'; return; }
+							showProductList(list);
+							setStatus('Found ' + list.length + ' matching products — pick one to load its parts.');
+						} catch (e) {
+							setStatus('Error: ' + e.message);
+						} finally {
+							searchBtn.disabled = false;
+						}
+					}
+
+					searchBtn?.addEventListener('click', run);
+					qEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+
+					listEl?.addEventListener('click', async (e) => {
+						const b = e.target.closest('[data-hp-pn]');
+						if (!b) return;
+						const pn = b.getAttribute('data-hp-pn');
+						qEl.value = pn;
+						try { searchBtn.disabled = true; await lookupPN(pn); }
+						catch (err) { setStatus('Error: ' + err.message); }
+						finally { searchBtn.disabled = false; }
+					});
+
+					function renderSaved() {
+						const db = loadDB();
+						const keys = Object.keys(db).sort((a, b) => (db[b].savedAt || 0) - (db[a].savedAt || 0));
+						if (savedCount) savedCount.textContent = keys.length ? '· ' + keys.length : '';
+						if (!savedEl) return;
+						if (!keys.length) { savedEl.innerHTML = '<span class="tool-label">No saved models yet — search a product number and it saves automatically.</span>'; return; }
+						savedEl.innerHTML = keys.map((pn) => {
+							const m = db[pn] || {};
+							return '<div style="display:flex;align-items:center;gap:8px"><button data-hp-load="' + esc(pn) + '" type="button" style="flex:1;text-align:left;background:none;border:0;cursor:pointer;color:inherit;font-size:0.82rem;padding:2px 0"><strong style="font-family:monospace">' + esc(pn) + '</strong> <span style="color:var(--muted)">' + esc(m.productName || '') + ' · ' + ((m.parts || []).length) + ' parts</span></button><button data-hp-del="' + esc(pn) + '" type="button" class="btn btn-small" title="Remove saved model">🗑</button></div>';
+						}).join('');
+					}
+
+					savedEl?.addEventListener('click', (e) => {
+						const del = e.target.closest('[data-hp-del]');
+						if (del) {
+							const pn = del.getAttribute('data-hp-del');
+							const db = loadDB(); delete db[pn]; saveDB(db); renderSaved();
+							return;
+						}
+						const loadBtn = e.target.closest('[data-hp-load]');
+						if (loadBtn) {
+							const pn = loadBtn.getAttribute('data-hp-load');
+							const m = loadDB()[pn];
+							if (m) { qEl.value = pn; showParts(m.productName || pn, m.parts || [], pn); setStatus('Loaded saved parts for ' + pn + '.'); }
+						}
+					});
+
+					function partsText() {
+						if (!current || !current.parts) return '';
+						return current.parts.map((p) => p.PartNumber + '\t' + p.Category + '\t' + p.Description).join('\n');
+					}
+
+					copyBtn?.addEventListener('click', () => { const t = partsText(); if (t) toolCopy(t, copyBtn); });
+
+					csvBtn?.addEventListener('click', () => {
+						if (!current || !current.parts) return;
+						const escCsv = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+						const lines = ['PartNumber,Category,Description'];
+						for (const p of current.parts) lines.push([p.PartNumber, p.Category, p.Description].map(escCsv).join(','));
+						const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = 'hp-parts-' + (current.pn || 'hp').replace(/[^A-Za-z0-9._-]/g, '_') + '.csv';
+						a.click();
+						setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+					});
+
+					renderSaved();
+				})();
 
 				// ── Password Generator ────────────────────────────────
 				(function() {
