@@ -8,6 +8,7 @@
 //
 // Usage:
 //   GET /functions/v1/hp-partsurfer?pn=1AB39US   -> parts list for a product number
+//   GET /functions/v1/hp-partsurfer?sn=SERIAL     -> product model + serial parts
 //   GET /functions/v1/hp-partsurfer?q=840%20G3   -> matching products
 //
 // Deploy:
@@ -36,17 +37,21 @@ function json(data: unknown, status = 200): Response {
 
 function buildInput(url: URL): string | null {
 	const pn = (url.searchParams.get('pn') || '').trim();
+	const sn = (url.searchParams.get('sn') || '').trim();
 	const q = (url.searchParams.get('q') || '').trim();
 	const path = (url.searchParams.get('path') || '').trim();
 
 	if (pn) {
 		return `/Product/GetProduct/${encodeURIComponent(pn)}/country/${COUNTRY}/usertype/${USERTYPE}`;
 	}
+	if (sn) {
+		return `/SerialNumber/GetSerialNumber/${encodeURIComponent(sn)}/country/${COUNTRY}/usertype/${USERTYPE}`;
+	}
 	if (q) {
 		return `/Search/GenericSearch/${encodeURIComponent(q)}/country/${COUNTRY}/usertype/${USERTYPE}`;
 	}
 	// Optional whitelisted raw path for advanced use.
-	if (/^\/(Product\/GetProduct|Part\/GetPart|Part\/GetWhereUsedProductList|Search\/GenericSearch)\/[A-Za-z0-9%._~/-]+$/.test(path)) {
+	if (/^\/(Product\/GetProduct|SerialNumber\/GetSerialNumber|Part\/GetPart|Part\/GetWhereUsedProductList|Search\/GenericSearch)\/[A-Za-z0-9%._~/-]+$/.test(path)) {
 		return path;
 	}
 	return null;
