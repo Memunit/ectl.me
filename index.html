@@ -4884,6 +4884,9 @@
 										<button class="btn btn-small" id="tool-hp-csv" type="button">⤓ CSV</button>
 									</div>
 								</div>
+								<div class="tool-row" style="margin-top:8px">
+									<input class="input" id="tool-hp-filter" type="search" placeholder="Filter parts — part #, category, or description…" aria-label="Filter parts" autocomplete="off" style="width:100%" />
+								</div>
 								<div id="tool-hp-list" style="margin-top:8px;max-height:360px;overflow:auto;border:1px solid var(--panel-border);border-radius:var(--radius-sm)"></div>
 							</div>
 							<details style="font-size:0.82rem">
@@ -9062,6 +9065,7 @@
 					const csvBtn    = document.getElementById('tool-hp-csv');
 					const savedEl   = document.getElementById('tool-hp-saved');
 					const savedCount= document.getElementById('tool-hp-saved-count');
+					const filterEl  = document.getElementById('tool-hp-filter');
 					const HP_KEY = 'ectl_hp_parts_v1';
 					const SERIAL_KEY = 'ectl_hp_serials_v1';
 					let current = null;
@@ -9185,12 +9189,30 @@
 
 					function showParts(title, parts, pn) {
 						current = { title: title, pn: pn, parts: parts };
-						if (titleEl) titleEl.textContent = title + (pn ? ' · ' + pn : '');
-						if (listEl) {
-							const rows = parts.map((p, i) => '<tr><td style="font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="white-space:nowrap">' + esc(p.Category) + '</td><td>' + esc(p.Description) + '</td><td class="hp-copy-cell"><button class="btn btn-small" data-hp-copy-idx="' + i + '" type="button" title="Copy part number + description">Copy</button></td></tr>').join('');
-							listEl.innerHTML = '<table class="hp-parts-table"><thead><tr><th>Part #</th><th>Category</th><th>Description</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
-						}
+						if (filterEl) filterEl.value = '';
 						if (resultsEl) resultsEl.style.display = 'block';
+						renderPartsTable();
+					}
+
+					// Render the parts table, filtered by the search box (matches part #,
+					// category or description). Copy buttons keep the real index.
+					function renderPartsTable() {
+						if (!listEl || !current) return;
+						const q = filterEl ? filterEl.value.trim().toLowerCase() : '';
+						const parts = current.parts || [];
+						const idxs = [];
+						for (let i = 0; i < parts.length; i++) {
+							const p = parts[i];
+							const hay = ((p.PartNumber || '') + ' ' + (p.Category || '') + ' ' + (p.Description || '')).toLowerCase();
+							if (!q || hay.indexOf(q) !== -1) idxs.push(i);
+						}
+						const rows = idxs.map((i) => {
+							const p = parts[i];
+							return '<tr><td style="font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="white-space:nowrap">' + esc(p.Category) + '</td><td>' + esc(p.Description) + '</td><td class="hp-copy-cell"><button class="btn btn-small" data-hp-copy-idx="' + i + '" type="button" title="Copy part number + description">Copy</button></td></tr>';
+						}).join('');
+						const empty = '<tr><td colspan="4" style="padding:10px;color:var(--muted)">No parts match "' + esc(q) + '".</td></tr>';
+						listEl.innerHTML = '<table class="hp-parts-table"><thead><tr><th>Part #</th><th>Category</th><th>Description</th><th></th></tr></thead><tbody>' + (rows || empty) + '</tbody></table>';
+						if (titleEl) titleEl.textContent = current.title + (current.pn ? ' · ' + current.pn : '') + (q ? ' (' + idxs.length + '/' + parts.length + ')' : '');
 					}
 
 					function showProductList(list) {
@@ -9254,6 +9276,7 @@
 
 					searchBtn?.addEventListener('click', run);
 					qEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+					filterEl?.addEventListener('input', renderPartsTable);
 
 					listEl?.addEventListener('click', async (e) => {
 						const cp = e.target.closest('[data-hp-copy-idx]');
