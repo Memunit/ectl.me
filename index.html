@@ -9177,8 +9177,8 @@
 						current = { title: title, pn: pn, parts: parts };
 						if (titleEl) titleEl.textContent = title + (pn ? ' · ' + pn : '');
 						if (listEl) {
-							const rows = parts.map((p) => '<tr><td style="padding:4px 8px;font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="padding:4px 8px;white-space:nowrap">' + esc(p.Category) + '</td><td style="padding:4px 8px">' + esc(p.Description) + '</td></tr>').join('');
-							listEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr style="position:sticky;top:0;background:var(--btn-bg)"><th style="text-align:left;padding:6px 8px">Part #</th><th style="text-align:left;padding:6px 8px">Category</th><th style="text-align:left;padding:6px 8px">Description</th></tr></thead><tbody>' + rows + '</tbody></table>';
+							const rows = parts.map((p, i) => '<tr><td style="padding:4px 8px;font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="padding:4px 8px;white-space:nowrap">' + esc(p.Category) + '</td><td style="padding:4px 8px">' + esc(p.Description) + '</td><td style="padding:4px 8px;text-align:right"><button class="btn btn-small" data-hp-copy-idx="' + i + '" type="button" title="Copy part number + description">Copy</button></td></tr>').join('');
+							listEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr style="position:sticky;top:0;background:var(--btn-bg)"><th style="text-align:left;padding:6px 8px">Part #</th><th style="text-align:left;padding:6px 8px">Category</th><th style="text-align:left;padding:6px 8px">Description</th><th style="text-align:right;padding:6px 8px"></th></tr></thead><tbody>' + rows + '</tbody></table>';
 						}
 						if (resultsEl) resultsEl.style.display = 'block';
 					}
@@ -9246,6 +9246,13 @@
 					qEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); run(); } });
 
 					listEl?.addEventListener('click', async (e) => {
+						const cp = e.target.closest('[data-hp-copy-idx]');
+						if (cp) {
+							const i = parseInt(cp.getAttribute('data-hp-copy-idx'), 10);
+							const p = current && current.parts && current.parts[i];
+							if (p) toolCopy(p.PartNumber + ' — ' + p.Description, cp);
+							return;
+						}
 						const b = e.target.closest('[data-hp-pn]');
 						if (!b) return;
 						const pn = b.getAttribute('data-hp-pn');
