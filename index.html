@@ -3793,6 +3793,7 @@
 				<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
 				<button class="tab" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
 				<button class="tab" id="tab-video" type="button" role="tab" aria-controls="panel-video" aria-selected="false">Video</button>
+				<button class="tab" id="tab-hp" type="button" role="tab" aria-controls="panel-hp" aria-selected="false">HP Parts</button>
 				<div class="tab-more-wrap" id="tab-more-wrap">
 							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
 						</div>
@@ -4285,6 +4286,15 @@
 									<button class="btn btn-small" id="video-to-note" type="button">→ Save to note</button>
 									<button class="btn btn-small" id="video-clean" type="button">🧹 Clean up</button>
 									<button class="btn btn-small btn-accent" id="video-ai" type="button">✨ Enhance with AI</button>
+								</div>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px;margin-top:2px">
+									<button class="btn btn-small btn-accent" id="video-songs" type="button">🎵 Build song list</button>
+									<span class="tool-label" style="font-size:0.78rem">→ <code>Artist - Title</code>, ready for TuneMyMusic</span>
+								</div>
+								<textarea class="input tool-textarea" id="video-songs-out" rows="8" placeholder="Song list (Artist - Title) will appear here…" spellcheck="false"></textarea>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<button class="btn btn-small" id="video-songs-copy" type="button">Copy</button>
+									<button class="btn btn-small" id="video-songs-download" type="button">⤓ tunemymusic.txt</button>
 								</div>
 								<details style="font-size:0.8rem;color:var(--muted)">
 									<summary style="cursor:pointer">Raw OCR lines (per frame)</summary>
@@ -4834,6 +4844,13 @@
 							<div id="tool-pal-out" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"></div>
 						</div>
 					</div>
+
+				</section>
+
+				<!-- ── HP PartSurfer panel ── -->
+				<section class="panel" id="panel-hp" role="tabpanel" aria-labelledby="tab-hp" hidden>
+					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">HP PartSurfer</p>
+					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Look up HP service parts by product number, model, or serial number. Results and serial→model mappings are saved on this device.</p>
 
 					<!-- HP PartSurfer -->
 					<div class="tool-card">
@@ -7274,6 +7291,7 @@
 			{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
 			{ tab: document.getElementById('tab-zpl'),      panel: document.getElementById('panel-zpl') },
 			{ tab: document.getElementById('tab-video'),    panel: document.getElementById('panel-video') },
+			{ tab: document.getElementById('tab-hp'),       panel: document.getElementById('panel-hp') },
 			{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
@@ -17435,6 +17453,8 @@ function _applySlash(cmd, ta) {
 			const startBtn  = document.getElementById('video-scan-start');
 			const cancelBtn = document.getElementById('video-scan-cancel');
 			const aiBtn     = document.getElementById('video-ai');
+			const songBtn   = document.getElementById('video-songs');
+			const songsOut  = document.getElementById('video-songs-out');
 
 			let fileURL = null, duration = 0, vw = 0, vh = 0;
 			let scanning = false, cancelFlag = false, ocrWorker = null;
@@ -17752,6 +17772,75 @@ function _applySlash(cmd, ta) {
 				} finally {
 					aiBtn.disabled = false; aiBtn.textContent = orig;
 				}
+			});
+
+			// ── Song list (Artist - Title) for TuneMyMusic ──
+			// Local pass: strip timestamps / leading timecodes, drop noise, normalise
+			// dashes to " - ", then fuzzy de-duplicate.
+			const UI_LINE = /\b(subscribe|turn on notifications|thanks for watching|like and follow|like & follow|hit the bell|more videos|next video)\b/i;
+			function localSongLines(src) {
+				const kept = [];
+				for (let line of src.split('\n')) {
+					line = line.replace(/^\[[^\]]*\]\s*/, '');
+					line = line.replace(/^\s*\d{1,2}[:.]\d{1,2}([:.]\d{1,2})?\s*[-–—.)]?\s*/, '');
+					line = line.replace(/\s+/g, ' ').trim();
+					if (line.length < 3) continue;
+					if (UI_LINE.test(line)) continue;
+					const alnum = (line.match(/[A-Za-z0-9]/g) || []).length;
+					if (alnum < 3 || alnum / line.length < 0.4) continue;
+					kept.push(line.replace(/\s*[–—]\s*/g, ' - ').replace(/\s+-\s+/g, ' - ').trim());
+				}
+				return groupLines(kept.map((t) => ({ t: 0, text: t }))).map((e) => e.text);
+			}
+
+			async function buildSongList() {
+				const src = (transcriptEl && transcriptEl.value.trim()) || (rawEl && rawEl.value.trim()) || '';
+				if (!src) { setStatus('Nothing to convert yet — scan a video first.'); return; }
+				const candidate = localSongLines(src).join('\n');
+				if (!candidate) { setStatus('Could not find any song-like lines. Try a different read area or lower the sensitivity.'); return; }
+
+				const key = localStorage.getItem('ectl_ai_key_v1');
+				if (!key) {
+					if (songsOut) songsOut.value = candidate;
+					setStatus('No AI key — used local cleanup only (' + candidate.split('\n').length + ' lines). Add a key in Settings to correct names and fill in missing artists.');
+					return;
+				}
+				const provider = localStorage.getItem('ectl_ai_provider_v1') || 'openai';
+				const prompt =
+					'You are given raw OCR lines captured from on-screen text in a music compilation video. Identify every song that appears and produce a clean playlist.\n\n' +
+					'Output ONLY plain text, one song per line, in EXACTLY this format: Artist - Title\n' +
+					'Rules:\n' +
+					'- Correct OCR/spelling errors to the real song and artist names.\n' +
+					'- If a line shows only a title (no artist), add the correct artist if you can identify the song.\n' +
+					'- Remove everything that is not a song entry (timestamps, timecodes, UI/menu text, channel names, "subscribe", numbers, symbol garbage).\n' +
+					'- Remove duplicates.\n' +
+					'- No numbering, no bullets, no quotes, no markdown, no blank lines, no commentary.\n' +
+					'Return only the list.';
+				const orig = songBtn.textContent;
+				songBtn.disabled = true; songBtn.textContent = '🎵 Working…';
+				setStatus('Building song list with AI…');
+				try {
+					let result = await callAI(provider, key, prompt, candidate);
+					result = String(result).replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/,'').trim();
+					if (songsOut) songsOut.value = result;
+					setStatus('Song list ready — ' + result.split('\n').filter(Boolean).length + ' entries.');
+				} catch (e) {
+					if (songsOut) songsOut.value = candidate;
+					setStatus('AI error: ' + e.message + ' (showing local cleanup instead).');
+				} finally {
+					songBtn.disabled = false; songBtn.textContent = orig;
+				}
+			}
+
+			songBtn?.addEventListener('click', buildSongList);
+			document.getElementById('video-songs-copy')?.addEventListener('click', (e) => { if (songsOut) copyText(songsOut.value, e.currentTarget); });
+			document.getElementById('video-songs-download')?.addEventListener('click', () => {
+				const blob = new Blob([songsOut ? songsOut.value : ''], { type: 'text/plain;charset=utf-8' });
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(blob);
+				a.download = 'tunemymusic.txt';
+				a.click();
+				setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 			});
 		})();
 
