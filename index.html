@@ -4852,6 +4852,16 @@
 					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">HP PartSurfer</p>
 					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Look up HP service parts by product number, model, or serial number. Results and serial→model mappings are saved on this device.</p>
 
+					<style>
+						.hp-parts-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+						.hp-parts-table thead tr { position: sticky; top: 0; background: var(--btn-bg); z-index: 1; }
+						.hp-parts-table th { text-align: left; padding: 6px 8px; }
+						.hp-parts-table td { padding: 5px 8px; border-bottom: 1px solid var(--panel-border); vertical-align: top; }
+						.hp-parts-table tbody tr:nth-child(odd) { background: var(--accent-glow); }
+						.hp-parts-table tbody tr:hover { background: var(--panel-border); }
+						.hp-parts-table td.hp-copy-cell { width: 1%; white-space: nowrap; text-align: right; }
+					</style>
+
 					<!-- HP PartSurfer -->
 					<div class="tool-card">
 						<div class="tool-card-header">🖥 HP PartSurfer — parts lookup</div>
@@ -9177,8 +9187,8 @@
 						current = { title: title, pn: pn, parts: parts };
 						if (titleEl) titleEl.textContent = title + (pn ? ' · ' + pn : '');
 						if (listEl) {
-							const rows = parts.map((p, i) => '<tr><td style="padding:4px 8px;font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="padding:4px 8px;white-space:nowrap">' + esc(p.Category) + '</td><td style="padding:4px 8px">' + esc(p.Description) + '</td><td style="padding:4px 8px;text-align:right"><button class="btn btn-small" data-hp-copy-idx="' + i + '" type="button" title="Copy part number + description">Copy</button></td></tr>').join('');
-							listEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr style="position:sticky;top:0;background:var(--btn-bg)"><th style="text-align:left;padding:6px 8px">Part #</th><th style="text-align:left;padding:6px 8px">Category</th><th style="text-align:left;padding:6px 8px">Description</th><th style="text-align:right;padding:6px 8px"></th></tr></thead><tbody>' + rows + '</tbody></table>';
+							const rows = parts.map((p, i) => '<tr><td style="font-family:monospace;white-space:nowrap">' + esc(p.PartNumber) + '</td><td style="white-space:nowrap">' + esc(p.Category) + '</td><td>' + esc(p.Description) + '</td><td class="hp-copy-cell"><button class="btn btn-small" data-hp-copy-idx="' + i + '" type="button" title="Copy part number + description">Copy</button></td></tr>').join('');
+							listEl.innerHTML = '<table class="hp-parts-table"><thead><tr><th>Part #</th><th>Category</th><th>Description</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
 						}
 						if (resultsEl) resultsEl.style.display = 'block';
 					}
