@@ -4928,11 +4928,11 @@
 							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
 								<label class="tool-label">Serial<br><input class="input" id="rep-serial" type="text" placeholder="e.g. 5CD5153HTV" style="width:170px" autocomplete="off" /></label>
 								<button class="btn btn-small btn-accent" id="rep-load-serial" type="button">📦 Load parts from serial</button>
-								<button class="btn btn-small" id="rep-warranty" type="button">🔗 Warranty check</button>
 								<label class="tool-label">Warranty start<br><input class="input" id="rep-start" type="date" style="width:160px" /></label>
 								<label class="tool-label">Year<br><select class="tool-select" id="rep-year"><option value="">auto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
 							</div>
 							<p class="hint" id="rep-age-note" style="font-size:0.8rem;color:var(--muted);margin:0"></p>
+							<p class="hint" id="rep-decode-note" style="font-size:0.78rem;color:var(--muted);margin:0"></p>
 
 							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
 								<label class="tool-label">HP product #<br><input class="input" id="rep-hp-pn" type="text" placeholder="e.g. K4Q94UA" style="width:150px" autocomplete="off" /></label>
@@ -18112,6 +18112,7 @@ function _applySlash(cmd, ta) {
 				if (m && m.hpProductNumber) { hpPnEl.value = m.hpProductNumber; loadHPParts(m.hpProductNumber); }
 				else { hpParts = []; hpPnEl.value = ''; renderHPParts(); }
 				renderSummary();
+				if (serialEl.value) autoDecodeSerial();
 			}
 			modelSel.addEventListener('change', () => { currentKey = modelSel.value; loadModelUI(); });
 
@@ -18156,6 +18157,7 @@ function _applySlash(cmd, ta) {
 			async function resolveSerial(sn, chosenPn) {
 				sn = String(sn || '').trim().toUpperCase();
 				if (!sn) { hpStatus.textContent = 'Enter a serial first.'; return; }
+				autoDecodeSerial();
 				if (candsEl) { candsEl.style.display = 'none'; candsEl.innerHTML = ''; }
 				if (chosenPn) {
 					const sm = loadSerials();
@@ -18190,6 +18192,8 @@ function _applySlash(cmd, ta) {
 			}
 			$('rep-load-serial')?.addEventListener('click', () => resolveSerial(serialEl.value));
 			serialEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); resolveSerial(serialEl.value); } });
+			serialEl.addEventListener('change', autoDecodeSerial);
+			serialEl.addEventListener('blur', autoDecodeSerial);
 			candsEl?.addEventListener('change', () => { if (candsEl.value && candsEl.dataset.serial) resolveSerial(candsEl.dataset.serial, candsEl.value); });
 
 			function renderHPParts() {
@@ -18233,6 +18237,48 @@ function _applySlash(cmd, ta) {
 				if (months < 0) months = 0;
 				return Math.min(5, Math.floor(months / 12) + 1);
 			}
+			// Decode HP serial → manufacture date (4th char = year digit, 5-6 = ISO week).
+			// Known heuristic for HP notebooks; year disambiguated with the model year.
+			function isoWeekDate(year, week) {
+				const jan4 = new Date(Date.UTC(year, 0, 4));
+				const dow = jan4.getUTCDay() || 7;
+				const monday = new Date(Date.UTC(year, 0, 4 - (dow - 1)));
+				monday.setUTCDate(monday.getUTCDate() + (week - 1) * 7);
+				return monday;
+			}
+			function decodeSerialDate(sn, modelYear) {
+				sn = String(sn || '').trim().toUpperCase();
+				if (sn.length < 6) return null;
+				const yc = sn.charAt(3);
+				if (!/[0-9]/.test(yc)) return null;
+				const wk = parseInt(sn.slice(4, 6), 10);
+				if (!(wk >= 1 && wk <= 53)) return null;
+				const d = parseInt(yc, 10);
+				const nowY = new Date().getFullYear();
+				const base = (modelYear && modelYear > 1990 && modelYear <= nowY + 1) ? modelYear : nowY;
+				const cands = [];
+				for (let y = 2000; y <= nowY; y++) if (y % 10 === d) cands.push(y);
+				if (!cands.length) return null;
+				const inRange = cands.filter((y) => y >= base - 2 && y <= base + 1);
+				const pool = inRange.length ? inRange : cands;
+				const year = pool.reduce((best, y) => (Math.abs(y - base) < Math.abs(best - base) ? y : best), pool[0]);
+				return { year: year, week: wk, dateISO: isoWeekDate(year, wk).toISOString().slice(0, 10) };
+			}
+			function autoDecodeSerial() {
+				const sn = serialEl.value.trim().toUpperCase();
+				const dn = $('rep-decode-note');
+				if (!sn) { if (dn) dn.textContent = ''; return; }
+				if (startEl.value && startEl.dataset.auto !== '1') return; // don't override a real date
+				const m = cur();
+				const my = (m && m.year) ? parseInt(m.year, 10) : null;
+				const dec = decodeSerialDate(sn, my);
+				if (!dec) { if (dn) dn.textContent = 'Serial date not recognised — enter the warranty start manually.'; return; }
+				startEl.value = dec.dateISO;
+				startEl.dataset.auto = '1';
+				if (dn) dn.textContent = 'Estimated from serial: manufactured week ' + dec.week + ' of ' + dec.year + ' (' + dec.dateISO + '). Actual warranty may start later — adjust if you know it.';
+				renderSummary();
+			}
+			startEl.addEventListener('input', () => { startEl.dataset.auto = ''; const dn = $('rep-decode-note'); if (dn) dn.textContent = ''; });
 			startEl.addEventListener('change', renderSummary);
 			yearSel.addEventListener('change', renderSummary);
 
@@ -18271,15 +18317,6 @@ function _applySlash(cmd, ta) {
 					'<div style="display:flex;justify-content:space-between;margin-top:4px"><span><strong>Decision</strong></span><strong style="color:' + vColor + '">' + vText + '</strong></div>' +
 					'</div>';
 			}
-
-			// ── Warranty link ──
-			$('rep-warranty')?.addEventListener('click', () => {
-				const sn = serialEl.value.trim();
-				const url = 'https://support.hp.com/se-sv/check-warranty' + (sn ? ('?serialnumber=' + encodeURIComponent(sn)) : '');
-				if (sn) navigator.clipboard?.writeText(sn).catch(() => {});
-				window.open(url, '_blank');
-				importStatus.textContent = sn ? 'Opening HP warranty (serial copied to clipboard).' : 'Opening HP warranty.';
-			});
 
 			// ── Jira-ready copy ──
 			$('rep-jira')?.addEventListener('click', () => {
