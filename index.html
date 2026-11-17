@@ -3794,6 +3794,7 @@
 				<button class="tab" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
 				<button class="tab" id="tab-video" type="button" role="tab" aria-controls="panel-video" aria-selected="false">Video</button>
 				<button class="tab" id="tab-hp" type="button" role="tab" aria-controls="panel-hp" aria-selected="false">HP Parts</button>
+				<button class="tab" id="tab-repair" type="button" role="tab" aria-controls="panel-repair" aria-selected="false">Repair</button>
 				<div class="tab-more-wrap" id="tab-more-wrap">
 							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
 						</div>
@@ -4896,6 +4897,71 @@
 						</div>
 					</div>
 
+				</section>
+
+				<!-- ── Repair / Dispose panel ── -->
+				<section class="panel" id="panel-repair" role="tabpanel" aria-labelledby="tab-repair" hidden>
+					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">Repair / Dispose</p>
+					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Import your price table, pick a model, set the warranty start date, tick the damage — it adds the parts and compares against the year's repair limit to decide Repair or Dispose. Prices are stored on this device (HP PartSurfer has no prices).</p>
+
+					<div class="tool-card">
+						<div class="tool-card-header">📥 Import model table (paste from Excel)</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="rep-import-text" rows="4" placeholder="Paste rows from Excel:&#10;Modell&#9;Action&#9;Prio&#9;Modell-år&#9;Ersättningsmodell&#9;Inköpspris&#9;Reparation år 1&#9;…&#9;år 5"></textarea>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px;align-items:center">
+								<button class="btn btn-accent btn-small" id="rep-import-btn" type="button">Import / update</button>
+								<button class="btn btn-small" id="rep-export" type="button">⤓ Export data</button>
+								<button class="btn btn-small" id="rep-import-file" type="button">⤒ Import file</button>
+								<input type="file" id="rep-file" accept=".json,.csv,.tsv,.txt" hidden />
+								<button class="btn btn-small" id="rep-clear" type="button">🗑 Clear all</button>
+								<span class="tool-label" id="rep-import-status"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="tool-card">
+						<div class="tool-card-header">🧮 Calculator</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<select class="tool-select" id="rep-model" aria-label="Model" style="flex:1;min-width:220px"></select>
+							</div>
+							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+								<label class="tool-label">Serial<br><input class="input" id="rep-serial" type="text" placeholder="e.g. 5CD5153HTV" style="width:170px" autocomplete="off" /></label>
+								<button class="btn btn-small" id="rep-warranty" type="button">🔗 Warranty check</button>
+								<label class="tool-label">Warranty start<br><input class="input" id="rep-start" type="date" style="width:160px" /></label>
+								<label class="tool-label">Year<br><select class="tool-select" id="rep-year"><option value="">auto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+							</div>
+							<p class="hint" id="rep-age-note" style="font-size:0.8rem;color:var(--muted);margin:0"></p>
+
+							<div class="tool-row" style="flex-wrap:wrap;gap:16px;align-items:center">
+								<label class="tool-check"><input type="checkbox" id="rep-dmg-screen" data-dmg="screen" /> Screen</label>
+								<label class="tool-label">typical <input class="input" id="rep-typ-screen" type="number" min="0" step="1" style="width:90px" /></label>
+								<label class="tool-check"><input type="checkbox" id="rep-dmg-keyboard" data-dmg="keyboard" /> Keyboard</label>
+								<label class="tool-label">typical <input class="input" id="rep-typ-keyboard" type="number" min="0" step="1" style="width:90px" /></label>
+								<label class="tool-check"><input type="checkbox" id="rep-dmg-topcover" data-dmg="topcover" /> Top cover</label>
+								<label class="tool-label">typical <input class="input" id="rep-typ-topcover" type="number" min="0" step="1" style="width:90px" /></label>
+							</div>
+
+							<div id="rep-summary" style="margin-top:6px"></div>
+
+							<details style="font-size:0.82rem;margin-top:6px">
+								<summary style="cursor:pointer;font-weight:600">Parts (optional — for exact cost)</summary>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+									<select class="tool-select" id="rep-part-dmg" aria-label="Damage type"><option value="screen">Screen</option><option value="keyboard">Keyboard</option><option value="topcover">Top cover</option></select>
+									<input class="input" id="rep-part-pn" placeholder="Part #" style="width:120px" autocomplete="off" />
+									<input class="input" id="rep-part-desc" placeholder="Description" style="flex:1;min-width:150px" autocomplete="off" />
+									<input class="input" id="rep-part-price" type="number" min="0" step="1" placeholder="Price kr" style="width:100px" />
+									<button class="btn btn-small" id="rep-part-hp" type="button" title="Look up description on HP (no price)">🔎 HP</button>
+									<button class="btn btn-small btn-accent" id="rep-part-add" type="button">Add</button>
+								</div>
+								<div id="rep-parts-list" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+							</details>
+
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+								<button class="btn btn-small" id="rep-jira" type="button">📋 Copy Jira list</button>
+							</div>
+						</div>
+					</div>
 				</section>
 
 				<!-- ── Work panel ── -->
@@ -7305,6 +7371,7 @@
 			{ tab: document.getElementById('tab-zpl'),      panel: document.getElementById('panel-zpl') },
 			{ tab: document.getElementById('tab-video'),    panel: document.getElementById('panel-video') },
 			{ tab: document.getElementById('tab-hp'),       panel: document.getElementById('panel-hp') },
+			{ tab: document.getElementById('tab-repair'),   panel: document.getElementById('panel-repair') },
 			{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
@@ -17898,6 +17965,281 @@ function _applySlash(cmd, ta) {
 				a.click();
 				setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 			});
+		})();
+
+		// ── REPAIR / DISPOSE CALCULATOR ──────────────────────────────────
+		(function() {
+			const R_KEY = 'ectl_repair_v1';
+			const modelSel = document.getElementById('rep-model');
+			if (!modelSel) return;
+			const $ = (id) => document.getElementById(id);
+			const importText = $('rep-import-text'), importStatus = $('rep-import-status');
+			const serialEl = $('rep-serial'), startEl = $('rep-start'), yearSel = $('rep-year'), ageNote = $('rep-age-note');
+			const summaryEl = $('rep-summary'), partsListEl = $('rep-parts-list');
+			const dmgEls = { screen: $('rep-dmg-screen'), keyboard: $('rep-dmg-keyboard'), topcover: $('rep-dmg-topcover') };
+			const typEls = { screen: $('rep-typ-screen'), keyboard: $('rep-typ-keyboard'), topcover: $('rep-typ-topcover') };
+			const DMG = ['screen', 'keyboard', 'topcover'];
+			const DMG_LABEL = { screen: 'Screen', keyboard: 'Keyboard', topcover: 'Top cover' };
+			let db = load();
+			let currentKey = null;
+
+			const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+			function load() { try { const d = JSON.parse(localStorage.getItem(R_KEY)); return (d && d.models) ? d : { models: {} }; } catch (e) { return { models: {} }; } }
+			function save() { try { localStorage.setItem(R_KEY, JSON.stringify(db)); } catch (e) {} }
+			function fmt(n) { return Number(n || 0).toLocaleString('sv-SE') + ' kr'; }
+			function money(s) { const d = String(s == null ? '' : s).replace(/[^\d]/g, ''); return d ? parseInt(d, 10) : 0; }
+			function label(m) { return m.model + (m.year ? ' (' + m.year + ')' : ''); }
+			function modelKey(m) { return String(m.model || '').trim().toLowerCase().replace(/\s+/g, ' ') + '#' + (m.year || ''); }
+			function cur() { return db.models[currentKey]; }
+
+			// ── Import from Excel (tab-separated) / CSV ──
+			function parseImport(text) {
+				const lines = String(text || '').split(/\r?\n/).filter((l) => l.trim());
+				if (!lines.length) return [];
+				const delim = lines[0].indexOf('\t') !== -1 ? '\t' : (lines[0].indexOf(';') !== -1 ? ';' : ',');
+				const rows = lines.map((l) => l.split(delim).map((c) => c.trim()));
+				const first = rows[0].map((h) => h.toLowerCase().replace(/\s+/g, ' '));
+				const isHeader = first.some((h) => h.indexOf('modell') !== -1 || h.indexOf('inköp') !== -1 || h.indexOf('reparation') !== -1);
+				let cm;
+				if (isHeader) {
+					cm = { limits: {} };
+					first.forEach((h, i) => {
+						if (h === 'modell') cm.model = i;
+						else if (h === 'action') cm.action = i;
+						else if (h.indexOf('prio') === 0) cm.prio = i;
+						else if (h.indexOf('ersätt') !== -1) cm.replacement = i;
+						else if (h.indexOf('inköp') !== -1) cm.purchase = i;
+						else if (h.indexOf('modell') !== -1 && (h.indexOf('år') !== -1 || h.indexOf('year') !== -1)) cm.year = i;
+						const mm = h.match(/reparation.*?(\d)/);
+						if (mm) cm.limits[mm[1]] = i;
+					});
+					rows.shift();
+				} else {
+					cm = { model: 0, action: 1, prio: 2, year: 3, replacement: 4, purchase: 5, limits: { '1': 6, '2': 7, '3': 8, '4': 9, '5': 10 } };
+				}
+				const out = [];
+				for (const r of rows) {
+					if (cm.model == null || !r[cm.model]) continue;
+					const limits = {};
+					for (const y of ['1', '2', '3', '4', '5']) { const idx = cm.limits[y]; if (idx != null && r[idx] != null && r[idx] !== '') limits[y] = money(r[idx]); }
+					out.push({
+						model: r[cm.model],
+						action: cm.action != null ? (r[cm.action] || '') : '',
+						prio: cm.prio != null ? (r[cm.prio] || '') : '',
+						year: cm.year != null ? (r[cm.year] || '') : '',
+						replacement: cm.replacement != null ? (r[cm.replacement] || '') : '',
+						purchase: cm.purchase != null ? money(r[cm.purchase]) : 0,
+						limits: limits
+					});
+				}
+				return out;
+			}
+			function mergeModels(list) {
+				let n = 0;
+				for (const m of list) {
+					if (!m.model) continue;
+					const key = modelKey(m);
+					const prev = db.models[key] || { typical: { screen: 0, keyboard: 0, topcover: 0 }, parts: { screen: [], keyboard: [], topcover: [] }, limits: {} };
+					db.models[key] = {
+						model: m.model, action: m.action, prio: m.prio, year: m.year, replacement: m.replacement, purchase: m.purchase,
+						limits: Object.assign({}, prev.limits, m.limits),
+						typical: prev.typical || { screen: 0, keyboard: 0, topcover: 0 },
+						parts: prev.parts || { screen: [], keyboard: [], topcover: [] }
+					};
+					n++;
+				}
+				save();
+				return n;
+			}
+			$('rep-import-btn')?.addEventListener('click', () => {
+				const list = parseImport(importText.value);
+				if (!list.length) { importStatus.textContent = 'Nothing parsed — paste rows from Excel.'; return; }
+				const n = mergeModels(list);
+				importStatus.textContent = 'Imported/updated ' + n + ' model(s).';
+				importText.value = '';
+				renderModels();
+			});
+			$('rep-export')?.addEventListener('click', () => {
+				const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+				const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'ectl-repair-data.json'; a.click();
+				setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+			});
+			$('rep-import-file')?.addEventListener('click', () => { const f = $('rep-file'); if (f) f.click(); });
+			$('rep-file')?.addEventListener('change', (e) => {
+				const f = e.target.files && e.target.files[0]; if (!f) return;
+				const reader = new FileReader();
+				reader.onload = () => {
+					const txt = String(reader.result || '');
+					if (/\.json$/i.test(f.name)) {
+						try { const d = JSON.parse(txt); if (d && d.models) { db = d; save(); renderModels(); importStatus.textContent = 'Imported JSON (' + Object.keys(db.models).length + ' models).'; } else importStatus.textContent = 'Not a valid repair JSON file.'; }
+						catch (err) { importStatus.textContent = 'Invalid JSON.'; }
+					} else {
+						const list = parseImport(txt); const n = list.length ? mergeModels(list) : 0;
+						importStatus.textContent = n ? ('Imported/updated ' + n + ' model(s).') : 'Nothing parsed.';
+						renderModels();
+					}
+				};
+				reader.readAsText(f);
+				e.target.value = '';
+			});
+			$('rep-clear')?.addEventListener('click', () => { if (confirm('Delete all imported repair data on this device?')) { db = { models: {} }; save(); currentKey = null; renderModels(); importStatus.textContent = 'Cleared.'; } });
+
+			// ── Models ──
+			function renderModels() {
+				const keys = Object.keys(db.models).sort((a, b) => label(db.models[a]).localeCompare(label(db.models[b])));
+				if (!keys.length) {
+					modelSel.innerHTML = '<option value="">No models — import your table above</option>';
+					currentKey = null;
+				} else {
+					modelSel.innerHTML = keys.map((k) => '<option value="' + esc(k) + '">' + esc(label(db.models[k])) + '</option>').join('');
+					if (!currentKey || keys.indexOf(currentKey) === -1) currentKey = keys[0];
+					modelSel.value = currentKey;
+				}
+				loadModelUI();
+			}
+			function loadModelUI() {
+				const m = cur();
+				if (!m) { typEls.screen.value = typEls.keyboard.value = typEls.topcover.value = ''; renderSummary(); renderParts(); return; }
+				for (const d of DMG) typEls[d].value = (m.typical && m.typical[d]) || '';
+				renderSummary(); renderParts();
+			}
+			modelSel.addEventListener('change', () => { currentKey = modelSel.value; loadModelUI(); });
+			for (const d of DMG) {
+				typEls[d]?.addEventListener('input', () => {
+					const m = cur(); if (!m) return;
+					m.typical = m.typical || { screen: 0, keyboard: 0, topcover: 0 };
+					m.typical[d] = parseInt(typEls[d].value || '0', 10) || 0;
+					save(); renderSummary();
+				});
+				dmgEls[d]?.addEventListener('change', renderSummary);
+			}
+
+			// ── Age ──
+			function computeYear() {
+				if (yearSel.value) return parseInt(yearSel.value, 10);
+				const s = startEl.value; if (!s) return null;
+				const sd = new Date(s + 'T00:00:00'); if (isNaN(sd)) return null;
+				const now = new Date();
+				let months = (now.getFullYear() - sd.getFullYear()) * 12 + (now.getMonth() - sd.getMonth());
+				if (now.getDate() < sd.getDate()) months--;
+				if (months < 0) months = 0;
+				return Math.min(5, Math.floor(months / 12) + 1);
+			}
+			startEl.addEventListener('change', renderSummary);
+			yearSel.addEventListener('change', renderSummary);
+
+			// ── Calculation ──
+			function calc() {
+				const m = cur(); if (!m) return null;
+				const year = computeYear();
+				const limit = (year && m.limits && m.limits[year] != null) ? m.limits[year] : null;
+				let total = 0;
+				const rows = [];
+				for (const d of DMG) {
+					if (!(dmgEls[d] && dmgEls[d].checked)) continue;
+					const parts = (m.parts && m.parts[d]) || [];
+					const partsSum = parts.reduce((a, p) => a + (parseInt(p.price, 10) || 0), 0);
+					const typ = (m.typical && parseInt(m.typical[d], 10)) || 0;
+					const used = partsSum > 0 ? partsSum : typ;
+					total += used;
+					rows.push({ dmd: d, used: used, source: partsSum > 0 ? 'parts' : 'typical' });
+				}
+				const verdict = (limit != null && rows.length) ? (total <= limit ? 'repair' : 'dispose') : null;
+				return { m, year, limit, total, rows, verdict };
+			}
+			function renderSummary() {
+				const m = cur();
+				if (!m) { summaryEl.innerHTML = '<span class="tool-label">Import a model and pick it above.</span>'; ageNote.textContent = ''; return; }
+				const year = computeYear();
+				const limit = (year && m.limits && m.limits[year] != null) ? m.limits[year] : null;
+				ageNote.textContent = year ? ('Age band: year ' + year + (limit != null ? (' · repair limit ' + fmt(limit)) : ' · no limit for this year')) : 'Set a warranty start date (or pick a year) to get the limit.';
+				const r = calc();
+				if (!r || !r.rows.length) { summaryEl.innerHTML = '<span class="tool-label">Tick a damage type above.</span>'; return; }
+				const vColor = r.verdict === 'repair' ? '#1a7f37' : (r.verdict === 'dispose' ? '#b42318' : 'inherit');
+				const vText = r.verdict === 'repair' ? '✅ REPAIR (Reparera)' : (r.verdict === 'dispose' ? '⛔ DISPOSE (Skrota/Ersätt)' : '—');
+				const rowsHtml = r.rows.map((x) => '<div style="display:flex;justify-content:space-between;gap:8px"><span>' + DMG_LABEL[x.dmd] + ' <span class="tool-label">(' + (x.source === 'parts' ? 'exact parts' : 'typical') + ')</span></span><strong>' + fmt(x.used) + '</strong></div>').join('');
+				summaryEl.innerHTML = '<div style="border:1px solid var(--panel-border);border-radius:var(--radius-sm);padding:10px;display:flex;flex-direction:column;gap:4px;font-size:0.86rem">' +
+					rowsHtml +
+					'<div style="display:flex;justify-content:space-between;border-top:1px solid var(--panel-border);padding-top:4px;margin-top:2px"><span><strong>Total</strong></span><strong>' + fmt(r.total) + '</strong></div>' +
+					'<div style="display:flex;justify-content:space-between"><span>Limit' + (r.year ? ' (year ' + r.year + ')' : '') + '</span><strong>' + (r.limit != null ? fmt(r.limit) : '—') + '</strong></div>' +
+					'<div style="display:flex;justify-content:space-between;margin-top:4px"><span><strong>Decision</strong></span><strong style="color:' + vColor + '">' + vText + '</strong></div>' +
+					'</div>';
+			}
+
+			// ── Parts ──
+			function renderParts() {
+				const m = cur();
+				if (!m) { partsListEl.innerHTML = ''; return; }
+				let html = '';
+				for (const d of DMG) {
+					const parts = (m.parts && m.parts[d]) || [];
+					if (!parts.length) continue;
+					html += '<div style="font-weight:600;font-size:0.8rem;margin-top:4px">' + DMG_LABEL[d] + '</div>';
+					html += parts.map((p, i) => '<div style="display:flex;align-items:center;gap:8px;font-size:0.8rem"><span style="font-family:monospace">' + esc(p.pn) + '</span><span style="flex:1;color:var(--muted)">' + esc(p.desc) + '</span><strong>' + fmt(p.price) + '</strong><button class="btn btn-small" data-rep-del="' + d + ':' + i + '" type="button">🗑</button></div>').join('');
+				}
+				partsListEl.innerHTML = html || '<span class="tool-label">No parts added — using typical costs above.</span>';
+			}
+			partsListEl.addEventListener('click', (e) => {
+				const b = e.target.closest('[data-rep-del]'); if (!b) return;
+				const parts = b.getAttribute('data-rep-del').split(':'); const d = parts[0]; const idx = parseInt(parts[1], 10);
+				const m = cur(); if (!m || !m.parts || !m.parts[d]) return;
+				m.parts[d].splice(idx, 1); save(); renderParts(); renderSummary();
+			});
+			$('rep-part-add')?.addEventListener('click', () => {
+				const m = cur(); if (!m) { importStatus.textContent = 'Pick a model first.'; return; }
+				const pn = $('rep-part-pn').value.trim(); if (!pn) return;
+				const d = $('rep-part-dmg').value;
+				const part = { pn: pn, desc: $('rep-part-desc').value.trim(), price: parseInt($('rep-part-price').value || '0', 10) || 0 };
+				m.parts = m.parts || { screen: [], keyboard: [], topcover: [] };
+				m.parts[d] = m.parts[d] || [];
+				m.parts[d].push(part); save();
+				$('rep-part-pn').value = ''; $('rep-part-desc').value = ''; $('rep-part-price').value = '';
+				if (dmgEls[d]) dmgEls[d].checked = true;
+				renderParts(); renderSummary();
+			});
+			$('rep-part-hp')?.addEventListener('click', async () => {
+				const pn = $('rep-part-pn').value.trim(); if (!pn) return;
+				importStatus.textContent = 'Looking up ' + pn + ' on HP…';
+				try {
+					const qs = new URLSearchParams({ path: '/Part/GetPart/' + encodeURIComponent(pn) + '/country/SE/usertype/EXT' }).toString();
+					const res = await fetch(SUPABASE_URL + '/functions/v1/hp-partsurfer?' + qs, { headers: { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' } });
+					const data = await res.json();
+					const body = data && data.Body;
+					if (body && body.EnhancedDescription) { $('rep-part-desc').value = body.EnhancedDescription; importStatus.textContent = 'HP: ' + pn + ' — description filled (HP has no price; enter it).'; }
+					else importStatus.textContent = 'No description found for ' + pn + '.';
+				} catch (e) { importStatus.textContent = 'HP lookup error: ' + e.message; }
+			});
+
+			// ── Warranty link ──
+			$('rep-warranty')?.addEventListener('click', () => {
+				const sn = serialEl.value.trim();
+				const url = 'https://support.hp.com/se-sv/check-warranty' + (sn ? ('?serialnumber=' + encodeURIComponent(sn)) : '');
+				if (sn) navigator.clipboard?.writeText(sn).catch(() => {});
+				window.open(url, '_blank');
+				importStatus.textContent = sn ? 'Opening HP warranty (serial copied to clipboard).' : 'Opening HP warranty.';
+			});
+
+			// ── Jira-ready copy ──
+			$('rep-jira')?.addEventListener('click', () => {
+				const m = cur(); if (!m) return;
+				const r = calc(); if (!r) return;
+				const sn = serialEl.value.trim();
+				const lines = [];
+				lines.push('Model: ' + label(m) + (sn ? ('  ·  Serial: ' + sn) : ''));
+				if (startEl.value) lines.push('Warranty start: ' + startEl.value + (r.year ? ('  ·  year ' + r.year) : ''));
+				const checked = DMG.filter((d) => dmgEls[d] && dmgEls[d].checked);
+				if (checked.length) lines.push('Damage: ' + checked.map((d) => DMG_LABEL[d]).join(', '));
+				const pl = [];
+				for (const d of DMG) for (const p of ((m.parts && m.parts[d]) || [])) pl.push('- [' + DMG_LABEL[d] + '] ' + p.pn + (p.desc ? (' — ' + p.desc) : '') + ' — ' + fmt(p.price));
+				if (pl.length) { lines.push('Parts:'); lines.push.apply(lines, pl); }
+				lines.push('Estimated cost: ' + fmt(r.total));
+				if (r.limit != null) lines.push('Repair limit (year ' + r.year + '): ' + fmt(r.limit));
+				lines.push('Decision: ' + (r.verdict === 'repair' ? 'REPAIR' : (r.verdict === 'dispose' ? 'DISPOSE' : '—')));
+				navigator.clipboard?.writeText(lines.join('\n')).catch(() => {});
+				importStatus.textContent = 'Jira-ready list copied.';
+			});
+
+			renderModels();
 		})();
 
 		// ── AI WRITING ASSISTANT ─────────────────────────────────────────
