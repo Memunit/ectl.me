@@ -4902,7 +4902,7 @@
 				<!-- ── Repair / Dispose panel ── -->
 				<section class="panel" id="panel-repair" role="tabpanel" aria-labelledby="tab-repair" hidden>
 					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">Repair / Dispose</p>
-					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Import your price table, pick a model, set the warranty start date, then load the machine's parts from HP PartSurfer and tick the ones needed. It compares the selected parts against that year's repair limit to decide Repair or Dispose. Prices are stored on this device (HP PartSurfer has no prices).</p>
+					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Import your price table, pick a model, set the warranty start date, then enter the serial and load the machine's parts from HP PartSurfer — tick the ones needed. It compares the selected parts against that year's repair limit to decide Repair or Dispose. Prices are stored on this device (HP PartSurfer has no prices).</p>
 
 					<div class="tool-card">
 						<div class="tool-card-header">📥 Import model table (paste from Excel)</div>
@@ -4927,6 +4927,7 @@
 							</div>
 							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
 								<label class="tool-label">Serial<br><input class="input" id="rep-serial" type="text" placeholder="e.g. 5CD5153HTV" style="width:170px" autocomplete="off" /></label>
+								<button class="btn btn-small btn-accent" id="rep-load-serial" type="button">📦 Load parts from serial</button>
 								<button class="btn btn-small" id="rep-warranty" type="button">🔗 Warranty check</button>
 								<label class="tool-label">Warranty start<br><input class="input" id="rep-start" type="date" style="width:160px" /></label>
 								<label class="tool-label">Year<br><select class="tool-select" id="rep-year"><option value="">auto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
@@ -4937,6 +4938,7 @@
 								<label class="tool-label">HP product #<br><input class="input" id="rep-hp-pn" type="text" placeholder="e.g. K4Q94UA" style="width:150px" autocomplete="off" /></label>
 								<label class="tool-label">or saved model<br><select class="tool-select" id="rep-hp-saved" style="min-width:210px"><option value="">—</option></select></label>
 								<button class="btn btn-small btn-accent" id="rep-hp-load" type="button">Load HP parts</button>
+								<select class="tool-select" id="rep-serial-cands" style="display:none"></select>
 								<span class="tool-label" id="rep-hp-status"></span>
 							</div>
 
@@ -17958,13 +17960,14 @@ function _applySlash(cmd, ta) {
 		(function() {
 			const R_KEY = 'ectl_repair_v1';
 			const HP_KEY = 'ectl_hp_parts_v1';
+			const SERIAL_KEY = 'ectl_hp_serials_v1';
 			const modelSel = document.getElementById('rep-model');
 			if (!modelSel) return;
 			const $ = (id) => document.getElementById(id);
 			const importText = $('rep-import-text'), importStatus = $('rep-import-status');
 			const serialEl = $('rep-serial'), startEl = $('rep-start'), yearSel = $('rep-year'), ageNote = $('rep-age-note');
 			const summaryEl = $('rep-summary'), partsListEl = $('rep-parts-list');
-			const hpPnEl = $('rep-hp-pn'), hpSavedEl = $('rep-hp-saved'), hpStatus = $('rep-hp-status');
+			const hpPnEl = $('rep-hp-pn'), hpSavedEl = $('rep-hp-saved'), hpStatus = $('rep-hp-status'), candsEl = $('rep-serial-cands');
 			let db = load();
 			let currentKey = null;
 			let hpParts = [];        // parts for the current machine (from HP)
@@ -17980,6 +17983,23 @@ function _applySlash(cmd, ta) {
 			function cur() { return db.models[currentKey]; }
 			function hpDB() { try { return JSON.parse(localStorage.getItem(HP_KEY)) || {}; } catch (e) { return {}; } }
 			function priceOf(pn) { return (db.partPrices && db.partPrices[pn] != null) ? db.partPrices[pn] : 0; }
+			function loadSerials() { try { return JSON.parse(localStorage.getItem(SERIAL_KEY)) || {}; } catch (e) { return {}; } }
+			function saveSerials(d) { try { localStorage.setItem(SERIAL_KEY, JSON.stringify(d)); } catch (e) {} }
+			function candidateProducts(body) {
+				const out = [];
+				const push = (v) => {
+					if (!v) return;
+					if (Array.isArray(v)) v.forEach(push);
+					else if (typeof v === 'object') {
+						const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id;
+						const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || '';
+						if (pn) out.push({ ProductNumber: String(pn), ProductName: name });
+					}
+				};
+				if (body) { push(body.ProductBOM); push(body.SNRProductLists); }
+				const seen = new Set();
+				return out.filter((p) => (seen.has(p.ProductNumber) ? false : (seen.add(p.ProductNumber), true)));
+			}
 
 			// ── Import from Excel (tab-separated) / CSV ──
 			function parseImport(text) {
@@ -18131,6 +18151,46 @@ function _applySlash(cmd, ta) {
 				loadHPParts(pn);
 			});
 			hpSavedEl?.addEventListener('change', () => { if (hpSavedEl.value) { hpPnEl.value = hpSavedEl.value; loadHPParts(hpSavedEl.value); } });
+
+			// Resolve a serial to its product(s) and load that product's parts.
+			async function resolveSerial(sn, chosenPn) {
+				sn = String(sn || '').trim().toUpperCase();
+				if (!sn) { hpStatus.textContent = 'Enter a serial first.'; return; }
+				if (candsEl) { candsEl.style.display = 'none'; candsEl.innerHTML = ''; }
+				if (chosenPn) {
+					const sm = loadSerials();
+					sm[sn] = { productNumber: chosenPn, productName: (sm[sn] && sm[sn].productName) || '', savedAt: Date.now() };
+					saveSerials(sm);
+					await loadHPParts(chosenPn);
+					return;
+				}
+				const saved = loadSerials()[sn];
+				if (saved && saved.productNumber) { hpStatus.textContent = 'Serial ' + sn + ' → ' + saved.productNumber + ' (saved).'; await loadHPParts(saved.productNumber); return; }
+				hpStatus.textContent = 'Resolving serial ' + sn + '…';
+				try {
+					const qs = new URLSearchParams({ sn: sn }).toString();
+					const res = await fetch(SUPABASE_URL + '/functions/v1/hp-partsurfer?' + qs, { headers: { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' } });
+					const data = await res.json();
+					const cands = candidateProducts(data && data.Body);
+					if (cands.length === 1) {
+						const pn = cands[0].ProductNumber;
+						const sm = loadSerials();
+						sm[sn] = { productNumber: pn, productName: cands[0].ProductName, savedAt: Date.now() };
+						saveSerials(sm);
+						await loadHPParts(pn);
+					} else if (cands.length > 1 && candsEl) {
+						candsEl.innerHTML = '<option value="">Pick a product…</option>' + cands.map((c) => '<option value="' + esc(c.ProductNumber) + '">' + esc(c.ProductNumber + (c.ProductName ? ' — ' + c.ProductName : '')) + '</option>').join('');
+						candsEl.dataset.serial = sn;
+						candsEl.style.display = 'inline-block';
+						hpStatus.textContent = 'Serial matches ' + cands.length + ' products — pick one.';
+					} else {
+						hpStatus.textContent = 'No product found for serial ' + sn + '.';
+					}
+				} catch (e) { hpStatus.textContent = 'Serial lookup error: ' + e.message; }
+			}
+			$('rep-load-serial')?.addEventListener('click', () => resolveSerial(serialEl.value));
+			serialEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); resolveSerial(serialEl.value); } });
+			candsEl?.addEventListener('change', () => { if (candsEl.value && candsEl.dataset.serial) resolveSerial(candsEl.dataset.serial, candsEl.value); });
 
 			function renderHPParts() {
 				if (!hpParts.length) { partsListEl.innerHTML = '<span class="tool-label">Load a machine\'s HP parts above to pick parts.</span>'; return; }
