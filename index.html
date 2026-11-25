@@ -3914,6 +3914,17 @@ body.theme-dark .mark .lg-top { fill: #ffffff; } body.theme-dark .mark .lg-bot {
 }
 header { align-items: center; }
 		</style>
+		<style id="tool-pages">
+.tool-card { background: transparent !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 0 20px !important; padding: 0 !important; overflow: visible !important; animation: none !important; }
+.tool-card-header { background: transparent !important; border: none !important; padding: 0 0 10px !important; font-size: 1.05rem !important; font-weight: 700 !important; letter-spacing: -0.01em; }
+.tool-card-body { padding: 0 !important; }
+.subtabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--panel-border); margin: 4px 0 18px; }
+.subtab { appearance: none; border: none; background: transparent; color: var(--muted); font: inherit; font-size: 0.82rem; font-weight: 600; padding: 8px 10px; border-bottom: 2px solid transparent; cursor: pointer; border-radius: 0; white-space: nowrap; }
+.subtab:hover { color: var(--text); }
+.subtab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tool-page { display: none; }
+.tool-page.active { display: block; }
+		</style>
 	</head>
 
 	<body>
@@ -4633,6 +4644,7 @@ header { align-items: center; }
 				<section class="panel" id="panel-scanner" role="tabpanel" aria-labelledby="tab-scanner" hidden>
 					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">Scanner &amp; Labels</p>
 					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Generate QR and 1D barcodes, print label sheets, and scan codes with your camera or from images.</p>
+					<div class="subtabs" id="scanner-subtabs" role="tablist" aria-label="Scanner tools"></div>
 
 					<div class="tool-card">
 						<div class="tool-card-header">🔲 QR Code Generator</div>
@@ -13800,6 +13812,41 @@ body {
 				(function() {
 					const panel = document.getElementById('panel-scanner');
 					if (!panel) return;
+					// One tool per full page via sub-tabs (any container with >1 tool-card)
+					(function buildToolSubtabs() {
+						const containers = Array.from(document.querySelectorAll('section.panel'));
+						const vw = document.getElementById('video-workspace');
+						if (vw) containers.push(vw);
+						containers.forEach((container) => {
+							const cards = Array.from(container.querySelectorAll(':scope > .tool-card'));
+							if (cards.length < 2) return;
+							let wrap = container.querySelector(':scope > .subtabs');
+							if (!wrap) {
+								wrap = document.createElement('div');
+								wrap.className = 'subtabs';
+								container.insertBefore(wrap, cards[0]);
+							}
+							wrap.innerHTML = '';
+							cards.forEach((card, i) => {
+								card.classList.add('tool-page');
+								const h = card.querySelector('.tool-card-header');
+								const label = h ? h.textContent.trim() : ('Tool ' + (i + 1));
+								const btn = document.createElement('button');
+								btn.type = 'button';
+								btn.className = 'subtab' + (i === 0 ? ' active' : '');
+								btn.setAttribute('role', 'tab');
+								btn.textContent = label;
+								btn.addEventListener('click', () => {
+									cards.forEach((c) => c.classList.remove('active'));
+									wrap.querySelectorAll('.subtab').forEach((b) => b.classList.remove('active'));
+									card.classList.add('active');
+									btn.classList.add('active');
+								});
+								wrap.appendChild(btn);
+								if (i === 0) card.classList.add('active');
+							});
+						});
+					})();
 					const $ = (id) => document.getElementById(id);
 					const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 					const setStatus = (el, t) => { if (el) el.textContent = t; };
