@@ -3898,6 +3898,18 @@ body:not(.page-view-active) #notes {
 /* find & replace */
 #find-replace-bar { background: var(--card-bg) !important; border: 1px solid var(--panel-border) !important; border-radius: 6px !important; padding: 6px !important; }
 		</style>
+		<style id="logo-svg">
+.mark { background: transparent !important; color: inherit !important; border: none !important; padding: 0 !important; border-radius: 6px !important; overflow: hidden; box-shadow: inset 0 0 0 1px var(--card-border) !important; }
+.mark .ectl-logo { display: block; width: 100%; height: 100%; }
+.mark .lg-bg { fill: #ffffff; } .mark .lg-top { fill: #09090b; } .mark .lg-bot { fill: #d97706; }
+body.theme-dark .mark .lg-bg { fill: #09090b; } body.theme-dark .mark .lg-top { fill: #ffffff; } body.theme-dark .mark .lg-bot { fill: #f59e0b; }
+@media (prefers-color-scheme: dark) {
+  body:not(.theme-light) .mark .lg-bg { fill: #09090b; }
+  body:not(.theme-light) .mark .lg-top { fill: #ffffff; }
+  body:not(.theme-light) .mark .lg-bot { fill: #f59e0b; }
+}
+header { align-items: center; }
+		</style>
 	</head>
 
 	<body>
@@ -3914,7 +3926,7 @@ body:not(.page-view-active) #notes {
 		<div class="wrap" id="login-screen">
 			<main class="card">
 				<header>
-					<div class="mark" aria-hidden="true">e</div>
+					<div class="mark" aria-hidden="true"><svg class="ectl-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect class="lg-bg" width="32" height="32" rx="6"/><text class="lg-top" x="16" y="14.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">ec</text><text class="lg-bot" x="16" y="26.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">tl</text></svg></div>
 					<div>
 						<h1>ectl.me</h1>
 						<p class="subtitle">Log in to continue.</p>
@@ -3977,10 +3989,9 @@ body:not(.page-view-active) #notes {
 		<div class="wrap" id="app" hidden>
 			<main class="card">
 				<header>
-					<div class="mark" aria-hidden="true">e</div>
+					<div class="mark" aria-hidden="true"><svg class="ectl-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect class="lg-bg" width="32" height="32" rx="6"/><text class="lg-top" x="16" y="14.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">ec</text><text class="lg-bot" x="16" y="26.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">tl</text></svg></div>
 					<div>
 						<h1>ectl.me</h1>
-						<p class="subtitle">A small tools site.</p>
 					</div>
 						<div class="header-actions" style="display:flex;gap:8px;align-items:center;">
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
