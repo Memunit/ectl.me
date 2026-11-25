@@ -3899,12 +3899,12 @@ body:not(.page-view-active) #notes {
 #find-replace-bar { background: var(--card-bg) !important; border: 1px solid var(--panel-border) !important; border-radius: 6px !important; padding: 6px !important; }
 		</style>
 		<style id="logo-svg">
-.mark { background: transparent !important; color: inherit !important; border: none !important; padding: 0 !important; border-radius: 6px !important; overflow: hidden; box-shadow: inset 0 0 0 1px var(--card-border) !important; }
+.mark { width: 56px !important; height: 56px !important; min-width: 56px !important; background: transparent !important; color: inherit !important; border: none !important; padding: 0 !important; border-radius: 8px !important; overflow: hidden; box-shadow: none !important; }
 .mark .ectl-logo { display: block; width: 100%; height: 100%; }
-.mark .lg-bg { fill: #ffffff; } .mark .lg-top { fill: #09090b; } .mark .lg-bot { fill: #d97706; }
-body.theme-dark .mark .lg-bg { fill: #09090b; } body.theme-dark .mark .lg-top { fill: #ffffff; } body.theme-dark .mark .lg-bot { fill: #f59e0b; }
+.mark .lg-bg { fill: var(--card-bg); }
+.mark .lg-top { fill: #09090b; } .mark .lg-bot { fill: #d97706; }
+body.theme-dark .mark .lg-top { fill: #ffffff; } body.theme-dark .mark .lg-bot { fill: #f59e0b; }
 @media (prefers-color-scheme: dark) {
-  body:not(.theme-light) .mark .lg-bg { fill: #09090b; }
   body:not(.theme-light) .mark .lg-top { fill: #ffffff; }
   body:not(.theme-light) .mark .lg-bot { fill: #f59e0b; }
 }
