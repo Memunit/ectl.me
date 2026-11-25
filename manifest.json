@@ -1,20 +1,29 @@
 {
   "name": "ectl — Notes & Tools",
   "short_name": "ectl",
-  "description": "A fast, privacy-first notes app with built-in tools, kanban, tracker, vault and more.",
+  "description": "Note-taking with built-in parts, repair and scanner tools.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0f172a",
-  "theme_color": "#6366f1",
+  "background_color": "#0f1012",
+  "theme_color": "#d9480f",
   "lang": "en",
-  "categories": ["productivity", "utilities"],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='72' x='50%' text-anchor='middle' fill='white'>e</text></svg>",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
