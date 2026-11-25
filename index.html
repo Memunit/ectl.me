@@ -3784,21 +3784,14 @@
 						<button class="tab" id="tab-notes" type="button" role="tab" aria-controls="panel-notes" aria-selected="false">Notes</button>
 						<button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false">Settings</button>
 						<button class="tab" id="tab-files" type="button" role="tab" aria-controls="panel-files" aria-selected="false">Files</button>
-						<button class="tab" id="tab-tools" type="button" role="tab" aria-controls="panel-tools" aria-selected="false">Tools</button>
-						<button class="tab" id="tab-work" type="button" role="tab" aria-controls="panel-work" aria-selected="false">Work</button>
 						<button class="tab" id="tab-reports" type="button" role="tab" aria-controls="panel-reports" aria-selected="false">Reports</button>
 						<button class="tab" id="tab-snippets" type="button" role="tab" aria-controls="panel-snippets" aria-selected="false">Snippets</button>
-						<button class="tab" id="tab-canvas" type="button" role="tab" aria-controls="panel-canvas" aria-selected="false">Canvas</button>
-						<button class="tab" id="tab-bookmarks" type="button" role="tab" aria-controls="panel-bookmarks" aria-selected="false">Bookmarks</button>
-				<button class="tab" id="tab-flash" type="button" role="tab" aria-controls="panel-flash" aria-selected="false">Flashcards</button>
 				<button class="tab" id="tab-zpl" type="button" role="tab" aria-controls="panel-zpl" aria-selected="false">ZPL</button>
 				<button class="tab" id="tab-video" type="button" role="tab" aria-controls="panel-video" aria-selected="false">Video</button>
 				<button class="tab" id="tab-hp" type="button" role="tab" aria-controls="panel-hp" aria-selected="false">HP Parts</button>
 				<button class="tab" id="tab-repair" type="button" role="tab" aria-controls="panel-repair" aria-selected="false">Repair</button>
-				<div class="tab-more-wrap" id="tab-more-wrap">
-							<button class="tab tab-more-trigger" id="tab-more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">More ▾</button>
-						</div>
-						<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
+				<button class="tab" id="tab-scanner" type="button" role="tab" aria-controls="panel-scanner" aria-selected="false">Scanner</button>
+										<button class="tab" id="tab-admin" type="button" role="tab" aria-controls="panel-admin" aria-selected="false" hidden>Accounts</button>
 						<span class="tab-indicator" id="app-tab-indicator"></span>
 					</div>
 				</div>
@@ -4307,547 +4300,7 @@
 				</section>
 
 				<!-- ── Tools panel ── -->
-				<section class="panel" id="panel-tools" role="tabpanel" aria-labelledby="tab-tools" hidden>
-
-					<!-- Password Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔐 Password Generator</div>
-						<div class="tool-card-body">
-							<div class="tool-row">
-								<input class="input tool-output" id="tool-pw-output" type="text" readonly placeholder="Click Generate…" aria-label="Generated password" />
-								<button class="btn btn-small" id="tool-pw-copy" type="button">Copy</button>
-							</div>
-							<div class="tool-row" style="gap:14px;flex-wrap:wrap;align-items:center">
-								<label class="tool-label">Length: <span id="tool-pw-len-val">16</span></label>
-								<input type="range" id="tool-pw-len" min="8" max="64" value="16" class="tool-range" aria-label="Password length" />
-							</div>
-							<div class="tool-row tool-check-row">
-								<label class="tool-check"><input type="checkbox" id="tool-pw-upper" checked /> A–Z</label>
-								<label class="tool-check"><input type="checkbox" id="tool-pw-lower" checked /> a–z</label>
-								<label class="tool-check"><input type="checkbox" id="tool-pw-num"   checked /> 0–9</label>
-								<label class="tool-check"><input type="checkbox" id="tool-pw-sym"   checked /> !@#…</label>
-							</div>
-							<div class="tool-row">
-								<button class="btn btn-accent" id="tool-pw-gen" type="button">Generate</button>
-								<span class="tool-pw-strength" id="tool-pw-strength"></span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Text Analyser -->
-					<div class="tool-card">
-						<div class="tool-card-header">📊 Text Analyser</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-wc-input" placeholder="Paste or type text here…" rows="5" aria-label="Text to analyse"></textarea>
-							<div class="tool-stats-row" id="tool-wc-stats">
-								<span class="tool-stat-pill" id="tool-wc-words">0 words</span>
-								<span class="tool-stat-pill" id="tool-wc-chars">0 chars</span>
-								<span class="tool-stat-pill" id="tool-wc-chars-nsp">0 no-space</span>
-								<span class="tool-stat-pill" id="tool-wc-sents">0 sentences</span>
-								<span class="tool-stat-pill" id="tool-wc-paras">0 paragraphs</span>
-								<span class="tool-stat-pill" id="tool-wc-read">~0 min read</span>
-							</div>
-							<div class="tool-row" style="margin-top:2px">
-								<button class="btn btn-small" id="tool-wc-clear" type="button">Clear</button>
-								<button class="btn btn-small" id="tool-wc-copy-stats" type="button">Copy stats</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Pomodoro Timer -->
-					<div class="tool-card">
-						<div class="tool-card-header">🍅 Pomodoro Timer</div>
-						<div class="tool-card-body tool-pomo-body">
-							<div class="tool-pomo-ring-wrap" aria-live="polite" aria-label="Timer">
-								<svg class="tool-pomo-ring" viewBox="0 0 80 80" aria-hidden="true">
-									<circle class="pomo-track" cx="40" cy="40" r="34"/>
-									<circle class="pomo-fill" id="pomo-ring-fill" cx="40" cy="40" r="34"/>
-								</svg>
-								<div class="tool-pomo-inner">
-									<div class="tool-pomo-time" id="pomo-time">25:00</div>
-									<div class="tool-pomo-phase" id="pomo-phase">Work</div>
-								</div>
-							</div>
-							<div class="tool-row tool-pomo-controls">
-								<button class="btn btn-accent" id="btn-pomo-start" type="button">▶ Start</button>
-								<button class="btn btn-small" id="btn-pomo-reset" type="button">↺ Reset</button>
-							</div>
-							<div class="tool-row tool-check-row" style="justify-content:center">
-								<label class="tool-check">Work <input type="number" id="pomo-work-min" value="25" min="1" max="90" class="tool-num-input" aria-label="Work minutes" /> min</label>
-								<label class="tool-check">Break <input type="number" id="pomo-break-min" value="5" min="1" max="30" class="tool-num-input" aria-label="Break minutes" /> min</label>
-							</div>
-							<div class="tool-pomo-log" id="pomo-log"></div>
-						</div>
-					</div>
-
-					<!-- Base64 -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔄 Base64 Encoder / Decoder</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-b64-input" placeholder="Text or Base64 to convert…" rows="3" aria-label="Base64 input" spellcheck="false"></textarea>
-							<div class="tool-row">
-								<button class="btn btn-small btn-accent" id="tool-b64-enc" type="button">Encode →</button>
-								<button class="btn btn-small" id="tool-b64-dec" type="button">← Decode</button>
-								<button class="btn btn-small" id="tool-b64-copy" type="button">Copy</button>
-							</div>
-							<textarea class="input tool-textarea" id="tool-b64-output" rows="3" readonly placeholder="Output…" aria-label="Base64 output" spellcheck="false"></textarea>
-						</div>
-					</div>
-
-					<!-- UUID Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🆔 UUID Generator</div>
-						<div class="tool-card-body">
-							<div class="tool-uuid-list" id="tool-uuid-list"></div>
-							<div class="tool-row" style="margin-top:4px">
-								<button class="btn btn-accent" id="tool-uuid-gen" type="button">Generate</button>
-								<label class="tool-label" style="margin-left:2px">×
-									<select class="tool-select" id="tool-uuid-count" aria-label="How many UUIDs">
-										<option value="1">1</option>
-										<option value="5" selected>5</option>
-										<option value="10">10</option>
-									</select>
-								</label>
-								<button class="btn btn-small" id="tool-uuid-copy-all" type="button">Copy all</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- JSON Formatter -->
-					<div class="tool-card">
-						<div class="tool-card-header">🗂 JSON Formatter</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-json-input" placeholder="Paste JSON here…" rows="5" aria-label="JSON input" spellcheck="false"></textarea>
-							<div class="tool-row">
-								<button class="btn btn-small btn-accent" id="tool-json-fmt" type="button">Format</button>
-								<button class="btn btn-small" id="tool-json-min" type="button">Minify</button>
-								<button class="btn btn-small" id="tool-json-copy" type="button">Copy</button>
-								<span class="tool-json-status" id="tool-json-status"></span>
-							</div>
-							<textarea class="input tool-textarea" id="tool-json-output" rows="5" readonly placeholder="Output…" aria-label="JSON output" spellcheck="false"></textarea>
-						</div>
-					</div>
-
-					<!-- Unix Timestamp -->
-					<div class="tool-card">
-						<div class="tool-card-header">⏱ Unix Timestamp</div>
-						<div class="tool-card-body">
-							<div class="tool-row">
-								<input class="input" id="tool-ts-input" type="text" placeholder="Unix timestamp or date string…" aria-label="Timestamp input" style="flex:1" />
-								<button class="btn btn-small btn-accent" id="tool-ts-now" type="button">Now</button>
-							</div>
-							<div class="tool-ts-results" id="tool-ts-results"></div>
-						</div>
-					</div>
-
-					<!-- Color Converter -->
-					<div class="tool-card">
-						<div class="tool-card-header">🎨 Color Converter</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:10px;align-items:center">
-								<input type="color" id="tool-color-picker" value="#5b6ef5" style="width:44px;height:44px;border:none;background:none;cursor:pointer;padding:0" aria-label="Color picker" />
-								<div class="color-picker-preview" id="tool-color-preview" style="background:#5b6ef5"></div>
-								<input class="input" id="tool-color-hex" type="text" value="#5b6ef5" placeholder="#hex" style="flex:1;font-family:monospace;font-size:0.82rem" />
-							</div>
-							<div class="tool-row" style="gap:6px;margin-top:6px">
-								<input class="input" id="tool-color-rgb" type="text" readonly placeholder="rgb(…)" style="flex:1;font-family:monospace;font-size:0.8rem" />
-								<input class="input" id="tool-color-hsl" type="text" readonly placeholder="hsl(…)" style="flex:1;font-family:monospace;font-size:0.8rem" />
-							</div>
-							<div class="color-history-row" id="tool-color-history"></div>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small" id="tool-color-copy-hex" type="button">Copy HEX</button>
-								<button class="btn btn-small" id="tool-color-copy-rgb" type="button">Copy RGB</button>
-								<button class="btn btn-small" id="tool-color-copy-hsl" type="button">Copy HSL</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Text Case Converter -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔤 Text Case Converter</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-case-input" placeholder="Type or paste text…" rows="3" aria-label="Text for case conversion"></textarea>
-							<div class="tool-row" style="flex-wrap:wrap;gap:5px;margin-top:6px">
-								<button class="btn btn-small" data-case="upper"    type="button">UPPER</button>
-								<button class="btn btn-small" data-case="lower"    type="button">lower</button>
-								<button class="btn btn-small" data-case="title"    type="button">Title Case</button>
-								<button class="btn btn-small" data-case="sentence" type="button">Sentence case</button>
-								<button class="btn btn-small" data-case="camel"    type="button">camelCase</button>
-								<button class="btn btn-small" data-case="pascal"   type="button">PascalCase</button>
-								<button class="btn btn-small" data-case="snake"    type="button">snake_case</button>
-								<button class="btn btn-small" data-case="kebab"    type="button">kebab-case</button>
-								<button class="btn btn-small" data-case="alt"      type="button">aLtErNaTiNg</button>
-							</div>
-							<div class="tool-row" style="margin-top:6px">
-								<input class="input tool-output" id="tool-case-output" type="text" readonly placeholder="Result…" style="flex:1" />
-								<button class="btn btn-small" id="tool-case-copy" type="button">Copy</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Regex Tester -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔍 Regex Tester</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:5px">
-								<span style="font-family:monospace;font-size:1.1rem;color:var(--muted)">/</span>
-								<input class="input" id="tool-regex-pattern" type="text" placeholder="pattern" style="flex:1;font-family:monospace" aria-label="Regex pattern" />
-								<span style="font-family:monospace;font-size:1.1rem;color:var(--muted)">/</span>
-								<input class="input" id="tool-regex-flags" type="text" value="gi" placeholder="flags" style="width:48px;font-family:monospace" aria-label="Regex flags" />
-							</div>
-							<textarea class="input tool-textarea" id="tool-regex-input" placeholder="Test string…" rows="4" style="margin-top:6px" aria-label="Test string"></textarea>
-							<div class="tool-row" style="margin-top:4px">
-								<span class="tool-json-status" id="tool-regex-status"></span>
-							</div>
-							<div id="tool-regex-output" style="font-size:0.8rem;padding:6px 0;color:var(--muted);word-break:break-all">Enter a pattern and test string above.</div>
-						</div>
-					</div>
-
-					<!-- Number Base Converter -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔢 Number Base Converter</div>
-						<div class="tool-card-body">
-							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-								<div class="field" style="margin:0"><label style="font-size:0.78rem">Decimal</label><input class="input" id="tool-base-dec" type="text" placeholder="255" style="font-family:monospace" /></div>
-								<div class="field" style="margin:0"><label style="font-size:0.78rem">Binary</label><input class="input" id="tool-base-bin" type="text" placeholder="11111111" style="font-family:monospace" /></div>
-								<div class="field" style="margin:0"><label style="font-size:0.78rem">Octal</label><input class="input" id="tool-base-oct" type="text" placeholder="377" style="font-family:monospace" /></div>
-								<div class="field" style="margin:0"><label style="font-size:0.78rem">Hexadecimal</label><input class="input" id="tool-base-hex" type="text" placeholder="0xff" style="font-family:monospace" /></div>
-							</div>
-							<p class="hint" style="margin-top:6px;font-size:0.75rem">Type in any field to convert to all bases.</p>
-						</div>
-					</div>
-
-					<!-- Word Frequency Analyser -->
-					<div class="tool-card">
-						<div class="tool-card-header">📊 Word Frequency</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-wfreq-input" placeholder="Paste text to analyse…" rows="4" aria-label="Word frequency input"></textarea>
-							<div class="tool-row" style="margin-top:6px;flex-wrap:wrap;gap:8px">
-								<button class="btn btn-small btn-accent" id="tool-wfreq-run" type="button">Analyse</button>
-								<label class="tool-label">Top <input type="number" id="tool-wfreq-n" value="10" min="5" max="50" class="tool-num-input" /> words</label>
-								<label class="tool-check"><input type="checkbox" id="tool-wfreq-stop" checked /> Skip stopwords</label>
-							</div>
-							<div id="tool-wfreq-output" class="wfreq-bars"></div>
-						</div>
-					</div>
-
-					<!-- URL Encoder / Decoder -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔗 URL Encoder / Decoder</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-url-input" placeholder="URL or text to encode / decode…" rows="3" spellcheck="false"></textarea>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small btn-accent" id="tool-url-enc" type="button">Encode →</button>
-								<button class="btn btn-small" id="tool-url-dec" type="button">← Decode</button>
-								<button class="btn btn-small" id="tool-url-copy" type="button">Copy</button>
-							</div>
-							<textarea class="input tool-textarea" id="tool-url-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
-						</div>
-					</div>
-
-					<!-- Diff Checker -->
-					<div class="tool-card">
-						<div class="tool-card-header">🆚 Diff Checker</div>
-						<div class="tool-card-body">
-							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-								<textarea class="input tool-textarea" id="tool-diff-a" placeholder="Original text…" rows="5" aria-label="Original text"></textarea>
-								<textarea class="input tool-textarea" id="tool-diff-b" placeholder="Modified text…" rows="5" aria-label="Modified text"></textarea>
-							</div>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small btn-accent" id="tool-diff-run" type="button">Compare →</button>
-								<button class="btn btn-small" id="tool-diff-clear" type="button">Clear</button>
-								<span class="tool-json-status" id="tool-diff-status"></span>
-							</div>
-							<div id="tool-diff-output" class="diff-output" style="margin-top:8px;max-height:200px;overflow-y:auto"></div>
-						</div>
-					</div>
-
-					<!-- Morse Code -->
-					<div class="tool-card">
-						<div class="tool-card-header">📡 Morse Code</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-morse-input" placeholder="Text or Morse code (dots &amp; dashes)…" rows="3"></textarea>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small btn-accent" id="tool-morse-enc" type="button">Text → Morse</button>
-								<button class="btn btn-small" id="tool-morse-dec" type="button">Morse → Text</button>
-								<button class="btn btn-small" id="tool-morse-copy" type="button">Copy</button>
-							</div>
-							<textarea class="input tool-textarea morse-output" id="tool-morse-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
-						</div>
-					</div>
-
-					<!-- Lorem Ipsum Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">💬 Lorem Ipsum Generator</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:12px;flex-wrap:wrap;align-items:center">
-								<label class="tool-label">Paragraphs: <input type="number" id="lorem-paras" value="3" min="1" max="20" class="tool-num-input" /></label>
-								<label class="tool-check"><input type="checkbox" id="lorem-start-lorem" checked /> Start with &ldquo;Lorem ipsum&hellip;&rdquo;</label>
-							</div>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-accent" id="tool-lorem-gen" type="button">Generate</button>
-								<button class="btn btn-small" id="tool-lorem-copy" type="button">Copy</button>
-								<button class="btn btn-small" id="tool-lorem-note" type="button">&rarr; New note</button>
-							</div>
-							<textarea class="input tool-textarea" id="tool-lorem-output" rows="5" readonly placeholder="Lorem ipsum will appear here…" spellcheck="false" style="margin-top:6px"></textarea>
-						</div>
-					</div>
-
-					<!-- CSS Box Shadow Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🌑 CSS Box Shadow</div>
-						<div class="tool-card-body">
-							<div class="bsg-preview" id="bsg-preview"></div>
-							<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-								<label class="tool-label">X offset <input type="range" id="bsg-x" min="-40" max="40" value="0" class="tool-range" /> <span id="bsg-x-val">0</span>px</label>
-								<label class="tool-label">Y offset <input type="range" id="bsg-y" min="-40" max="40" value="8" class="tool-range" /> <span id="bsg-y-val">8</span>px</label>
-								<label class="tool-label">Blur <input type="range" id="bsg-blur" min="0" max="80" value="24" class="tool-range" /> <span id="bsg-blur-val">24</span>px</label>
-								<label class="tool-label">Spread <input type="range" id="bsg-spread" min="-20" max="20" value="0" class="tool-range" /> <span id="bsg-spread-val">0</span>px</label>
-							</div>
-							<div class="tool-row" style="margin-top:8px;gap:8px;align-items:center">
-								<input type="color" id="bsg-color" value="#000000" style="width:36px;height:36px;border:none;padding:0;cursor:pointer" />
-								<label class="tool-label" style="margin:0">Opacity <input type="range" id="bsg-opacity" min="0" max="100" value="25" class="tool-range" style="width:80px" /> <span id="bsg-opacity-val">25</span>%</label>
-								<label class="tool-check"><input type="checkbox" id="bsg-inset" /> Inset</label>
-							</div>
-							<div class="bsg-code" id="bsg-code">box-shadow: 0 8px 24px 0 rgba(0,0,0,0.25);</div>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small" id="bsg-copy" type="button">Copy CSS</button>
-								<button class="btn btn-small" id="bsg-reset" type="button">Reset</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Cron Expression Helper -->
-					<div class="tool-card">
-						<div class="tool-card-header">⏰ Cron Expression Helper</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:6px">
-								<input class="input" id="tool-cron-input" type="text" value="0 9 * * 1-5" placeholder="Cron expression…" style="flex:1;font-family:monospace" />
-								<button class="btn btn-small btn-accent" id="tool-cron-parse" type="button">Parse</button>
-							</div>
-							<div id="tool-cron-result" style="margin-top:8px;font-size:0.82rem"></div>
-							<div style="margin-top:10px">
-								<p class="hint" style="font-size:0.75rem;margin-bottom:6px">Quick presets:</p>
-								<div style="display:flex;gap:6px;flex-wrap:wrap">
-									<button class="btn btn-small" data-cron="* * * * *"   type="button">Every min</button>
-									<button class="btn btn-small" data-cron="0 * * * *"   type="button">Hourly</button>
-									<button class="btn btn-small" data-cron="0 0 * * *"   type="button">Daily midnight</button>
-									<button class="btn btn-small" data-cron="0 9 * * 1-5" type="button">Weekdays 9am</button>
-									<button class="btn btn-small" data-cron="0 0 * * 0"   type="button">Weekly (Sun)</button>
-									<button class="btn btn-small" data-cron="0 0 1 * *"   type="button">Monthly</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Markdown Table Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">📋 Markdown Table Generator</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:10px;align-items:center">
-								<label class="tool-label">Cols: <input type="number" id="mdtbl-cols" value="3" min="2" max="10" class="tool-num-input" /></label>
-								<label class="tool-label">Rows: <input type="number" id="mdtbl-rows" value="3" min="1" max="20" class="tool-num-input" /></label>
-								<button class="btn btn-small btn-accent" id="mdtbl-build" type="button">Build table</button>
-							</div>
-							<div id="mdtbl-edit" style="margin-top:8px;overflow-x:auto"></div>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small" id="mdtbl-copy" type="button">Copy Markdown</button>
-								<button class="btn btn-small" id="mdtbl-insert" type="button">&rarr; Insert in note</button>
-							</div>
-							<textarea class="input tool-textarea" id="mdtbl-output" rows="4" readonly placeholder="Markdown table output…" spellcheck="false" style="margin-top:6px;font-family:ui-monospace,monospace;font-size:0.78rem"></textarea>
-						</div>
-					</div>
-
-					<!-- JWT Decoder -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔑 JWT Decoder</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-jwt-input" rows="3" placeholder="Paste JWT token here…" spellcheck="false" style="font-family:ui-monospace,monospace;font-size:0.78rem"></textarea>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small btn-accent" id="tool-jwt-decode" type="button">Decode</button>
-								<button class="btn btn-small" id="tool-jwt-copy-payload" type="button">Copy Payload</button>
-								<span class="tool-json-status" id="tool-jwt-status"></span>
-							</div>
-							<div id="tool-jwt-out" style="margin-top:8px"></div>
-						</div>
-					</div>
-
-					<!-- HTML Entity Encoder / Decoder -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔤 HTML Entity Encoder / Decoder</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-ent-input" rows="3" placeholder="Paste text to encode, or HTML entities to decode…" spellcheck="false"></textarea>
-							<div class="tool-row" style="margin-top:6px">
-								<button class="btn btn-small btn-accent" id="tool-ent-enc" type="button">Encode →</button>
-								<button class="btn btn-small" id="tool-ent-dec" type="button">← Decode</button>
-								<button class="btn btn-small" id="tool-ent-copy" type="button">Copy</button>
-							</div>
-							<textarea class="input tool-textarea" id="tool-ent-output" rows="3" readonly placeholder="Output…" spellcheck="false" style="margin-top:6px"></textarea>
-						</div>
-					</div>
-
-					<!-- QR Code Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔲 QR Code Generator</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:8px">
-								<input class="input" id="tool-qr-input" type="text" placeholder="Text or URL to encode…" style="flex:1" />
-								<button class="btn btn-small btn-accent" id="tool-qr-gen" type="button">Generate</button>
-								<button class="btn btn-small" id="tool-qr-download" type="button">⤓ Save PNG</button>
-							</div>
-							<div id="tool-qr-out" style="margin-top:10px;display:flex;justify-content:center;min-height:32px"></div>
-						</div>
-					</div>
-
-					<!-- Hash Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔏 Hash Generator</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-hash-input" rows="3" placeholder="Text to hash…" style="resize:vertical" spellcheck="false"></textarea>
-							<div class="tool-row" style="gap:8px;margin-top:6px">
-								<select class="tool-select" id="tool-hash-algo">
-									<option value="SHA-256">SHA-256</option>
-									<option value="SHA-512">SHA-512</option>
-									<option value="SHA-384">SHA-384</option>
-									<option value="SHA-1">SHA-1</option>
-								</select>
-								<button class="btn btn-small btn-accent" id="tool-hash-gen" type="button">Hash</button>
-								<button class="btn btn-small" id="tool-hash-copy" type="button" style="display:none">Copy</button>
-							</div>
-							<div id="tool-hash-out" style="margin-top:8px;font-family:monospace;font-size:0.75rem;word-break:break-all;min-height:18px;color:var(--muted)"></div>
-						</div>
-					</div>
-
-					<!-- Unit Converter -->
-					<div class="tool-card">
-						<div class="tool-card-header">📐 Unit Converter</div>
-						<div class="tool-card-body">
-							<select class="tool-select" id="tool-unit-cat" style="width:100%;margin-bottom:6px">
-								<option value="temp">Temperature</option>
-								<option value="length">Length</option>
-								<option value="weight">Weight / Mass</option>
-								<option value="volume">Volume</option>
-								<option value="speed">Speed</option>
-								<option value="area">Area</option>
-							</select>
-							<div class="tool-row" style="gap:8px">
-								<input class="input" id="tool-unit-val" type="number" placeholder="Value" style="flex:1;min-width:70px" />
-								<select class="tool-select" id="tool-unit-from" style="flex:1"></select>
-								<span style="align-self:center;opacity:0.45;font-size:1.1rem">→</span>
-								<select class="tool-select" id="tool-unit-to" style="flex:1"></select>
-							</div>
-							<div id="tool-unit-out" style="margin-top:8px;font-size:0.9rem;font-weight:600;min-height:20px"></div>
-						</div>
-					</div>
-
-					<!-- Line Tools -->
-					<div class="tool-card">
-						<div class="tool-card-header">↕ Line Tools</div>
-						<div class="tool-card-body">
-							<textarea class="input tool-textarea" id="tool-line-input" rows="4" placeholder="Paste lines here…" style="resize:vertical" spellcheck="false"></textarea>
-							<div class="tool-row" style="gap:5px;flex-wrap:wrap;margin-top:6px">
-								<button class="btn btn-small" data-line="sort-az" type="button">A–Z</button>
-								<button class="btn btn-small" data-line="sort-za" type="button">Z–A</button>
-								<button class="btn btn-small" data-line="dedupe" type="button">Dedupe</button>
-								<button class="btn btn-small" data-line="reverse" type="button">Reverse</button>
-								<button class="btn btn-small" data-line="trim" type="button">Trim</button>
-								<button class="btn btn-small" data-line="shuffle" type="button">Shuffle</button>
-								<button class="btn btn-small" data-line="upper" type="button">UPPER</button>
-								<button class="btn btn-small" data-line="lower" type="button">lower</button>
-								<button class="btn btn-small btn-accent" data-line="copy" type="button">Copy</button>
-							</div>
-							<div id="tool-line-count" style="margin-top:4px;font-size:0.75rem;color:var(--muted)"></div>
-						</div>
-					</div>
-
-					<!-- CSS Gradient Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🌈 CSS Gradient</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:8px;flex-wrap:wrap">
-								<select class="tool-select" id="tool-grad-type">
-									<option value="linear">Linear</option>
-									<option value="radial">Radial</option>
-									<option value="conic">Conic</option>
-								</select>
-								<input type="range" id="tool-grad-angle" min="0" max="360" value="135" style="flex:1" />
-								<span id="tool-grad-angle-val" style="min-width:34px;font-size:0.8rem;opacity:0.65">135°</span>
-							</div>
-							<div class="tool-row" style="gap:10px;margin-top:6px;align-items:center">
-								<label style="font-size:0.78rem;opacity:0.6">C1</label>
-								<input type="color" id="tool-grad-c1" value="#6366f1" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
-								<label style="font-size:0.78rem;opacity:0.6">C2</label>
-								<input type="color" id="tool-grad-c2" value="#a855f7" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
-								<label style="font-size:0.78rem;opacity:0.6">C3</label>
-								<input type="color" id="tool-grad-c3" value="#ec4899" style="width:36px;height:26px;cursor:pointer;border:none;background:none" />
-							</div>
-							<div id="tool-grad-preview" style="margin-top:8px;height:44px;border-radius:8px"></div>
-							<div class="tool-row" style="margin-top:8px;gap:6px">
-								<input class="input" id="tool-grad-out" type="text" readonly style="flex:1;font-size:0.75rem;font-family:monospace" />
-								<button class="btn btn-small btn-accent" id="tool-grad-copy" type="button">Copy</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Slug Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🔗 Slug Generator</div>
-						<div class="tool-card-body">
-							<input class="input" id="tool-slug-input" type="text" placeholder="My Blog Post Title!" />
-							<div id="tool-slug-out" style="margin-top:8px;display:flex;flex-direction:column;gap:5px"></div>
-						</div>
-					</div>
-
-					<!-- Aspect Ratio Calculator -->
-					<div class="tool-card">
-						<div class="tool-card-header">⬜ Aspect Ratio</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:8px;flex-wrap:wrap">
-								<input class="input" id="tool-ar-w" type="number" placeholder="Width" style="flex:1;min-width:80px" />
-								<span style="align-self:center;opacity:0.45">×</span>
-								<input class="input" id="tool-ar-h" type="number" placeholder="Height" style="flex:1;min-width:80px" />
-								<button class="btn btn-small btn-accent" id="tool-ar-calc" type="button">Calculate</button>
-							</div>
-							<div id="tool-ar-out" style="margin-top:10px;font-size:0.82rem;line-height:1.8"></div>
-						</div>
-					</div>
-
-					<!-- Stopwatch -->
-					<div class="tool-card">
-						<div class="tool-card-header">⏱ Stopwatch</div>
-						<div class="tool-card-body" style="text-align:center">
-							<div id="tool-sw-display" style="font-size:2rem;font-family:ui-monospace,monospace;letter-spacing:0.06em;margin-bottom:10px">00:00.000</div>
-							<div class="tool-row" style="gap:8px;justify-content:center">
-								<button class="btn btn-accent" id="tool-sw-start" type="button">▶ Start</button>
-								<button class="btn btn-small" id="tool-sw-lap" type="button" disabled>⬤ Lap</button>
-								<button class="btn btn-small" id="tool-sw-reset" type="button">↺ Reset</button>
-							</div>
-							<div id="tool-sw-laps" style="margin-top:8px;max-height:100px;overflow-y:auto;font-size:0.78rem;font-family:monospace;text-align:left"></div>
-						</div>
-					</div>
-
-					<!-- Color Palette Generator -->
-					<div class="tool-card">
-						<div class="tool-card-header">🎨 Color Palette</div>
-						<div class="tool-card-body">
-							<div class="tool-row" style="gap:8px">
-								<input type="color" id="tool-pal-base" value="#6366f1" style="width:40px;height:32px;cursor:pointer;border:none;background:none;flex-shrink:0" />
-								<select class="tool-select" id="tool-pal-mode" style="flex:1">
-									<option value="complementary">Complementary</option>
-									<option value="triadic">Triadic</option>
-									<option value="analogous">Analogous</option>
-									<option value="split">Split-complementary</option>
-									<option value="tetradic">Tetradic</option>
-									<option value="mono">Monochromatic</option>
-								</select>
-								<button class="btn btn-small btn-accent" id="tool-pal-gen" type="button">Go</button>
-							</div>
-							<div id="tool-pal-out" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"></div>
-						</div>
-					</div>
-
-				</section>
-
+				
 				<!-- ── HP PartSurfer panel ── -->
 				<section class="panel" id="panel-hp" role="tabpanel" aria-labelledby="tab-hp" hidden>
 					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">HP PartSurfer</p>
@@ -4953,142 +4406,238 @@
 					</div>
 				</section>
 
-				<!-- ── Work panel ── -->
-				<section class="panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work" hidden>
+				<!-- ── Scanner panel ── -->
+				<section class="panel" id="panel-scanner" role="tabpanel" aria-labelledby="tab-scanner" hidden>
+					<p class="subtitle" style="margin-top:4px;margin-bottom:2px">Scanner &amp; Labels</p>
+					<p class="hint" style="font-size:0.82rem;color:var(--muted);margin-top:0">Generate QR and 1D barcodes, print label sheets, and scan codes with your camera or from images.</p>
 
-					<!-- Ticket / Job Log -->
 					<div class="tool-card">
-						<div class="tool-card-header">🎫 Ticket / Job Log</div>
+						<div class="tool-card-header">🔲 QR Code Generator</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="gap:8px">
+								<input class="input" id="tool-qr-input" type="text" placeholder="Text or URL to encode…" style="flex:1" />
+								<button class="btn btn-small btn-accent" id="tool-qr-gen" type="button">Generate</button>
+								<button class="btn btn-small" id="tool-qr-download" type="button">⤓ Save PNG</button>
+							</div>
+							<div id="tool-qr-out" style="margin-top:10px;display:flex;justify-content:center;min-height:32px"></div>
+						</div>
+					</div>
+
+					<div class="tool-card">
+						<div class="tool-card-header">🏷️ Bulk QR Code maker</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="bq-input" rows="4" placeholder="One per line. Optional label — use  label | content&#10;Laptop A12 | https://portal/item/123&#10;https://example.com/shelf-4"></textarea>
+							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+								<label class="tool-label">Columns <input class="input" id="bq-cols" type="number" min="1" max="8" value="4" style="width:70px" /></label>
+								<label class="tool-label">Size
+									<select class="tool-select" id="bq-size">
+										<option value="22">Small (22 mm)</option>
+										<option value="30" selected>Medium (30 mm)</option>
+										<option value="40">Large (40 mm)</option>
+									</select>
+								</label>
+								<label class="tool-check"><input type="checkbox" id="bq-label" checked /> Show label text</label>
+								<label class="tool-check"><input type="checkbox" id="bq-border" checked /> Cell border</label>
+							</div>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="bq-generate" type="button">Generate sheet</button>
+								<button class="btn" id="bq-print" type="button" disabled>🖨 Print sheet</button>
+								<button class="btn btn-small" id="bq-clear" type="button">Clear</button>
+								<span class="tool-label" id="bq-status"></span>
+							</div>
+							<div id="bq-preview" style="margin-top:10px"></div>
+						</div>
+					</div>
+
+					<div class="tool-card">
+						<div class="tool-card-header">📊 Bulk 1D barcode maker</div>
+						<div class="tool-card-body">
+							<textarea class="input tool-textarea" id="bb-input" rows="4" placeholder="One per line. Optional label — use  label | content&#10;Shelf A-12 | 123456789012"></textarea>
+							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+								<label class="tool-label">Type
+									<select class="tool-select" id="bb-format">
+										<option value="CODE128">Code 128</option>
+										<option value="EAN13">EAN-13</option>
+										<option value="UPC">UPC-A</option>
+										<option value="CODE39">Code 39</option>
+										<option value="ITF14">ITF-14</option>
+									</select>
+								</label>
+								<label class="tool-label">Columns <input class="input" id="bb-cols" type="number" min="1" max="8" value="3" style="width:70px" /></label>
+								<label class="tool-label">Width
+									<select class="tool-select" id="bb-size"><option value="40">Small</option><option value="55" selected>Medium</option><option value="70">Large</option></select>
+								</label>
+								<label class="tool-check"><input type="checkbox" id="bb-label" checked /> Show label</label>
+								<label class="tool-check"><input type="checkbox" id="bb-border" checked /> Border</label>
+							</div>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="bb-generate" type="button">Generate sheet</button>
+								<button class="btn" id="bb-print" type="button" disabled>🖨 Print sheet</button>
+								<button class="btn btn-small" id="bb-clear" type="button">Clear</button>
+								<span class="tool-label" id="bb-status"></span>
+							</div>
+							<div id="bb-preview" style="margin-top:10px"></div>
+						</div>
+					</div>
+
+					<div class="tool-card">
+						<div class="tool-card-header">✨ Templates (Wi-Fi, contact, etc.)</div>
+						<div class="tool-card-body">
+							<div class="tool-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+								<label class="tool-label">Type
+									<select class="tool-select" id="bt-type">
+										<option value="wifi">Wi-Fi</option>
+										<option value="vcard">Contact (vCard)</option>
+										<option value="email">Email</option>
+										<option value="sms">SMS</option>
+										<option value="phone">Phone</option>
+										<option value="geo">Location</option>
+									</select>
+								</label>
+							</div>
+							<div id="bt-wifi">
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-wifi-ssid" placeholder="Network name (SSID)" style="flex:1;min-width:150px" />
+									<input class="input" id="bt-wifi-pass" placeholder="Password" style="flex:1;min-width:150px" />
+									<select class="tool-select" id="bt-wifi-sec"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">Open</option></select>
+									<label class="tool-check"><input type="checkbox" id="bt-wifi-hidden" /> Hidden</label>
+								</div>
+							</div>
+							<div id="bt-vcard" hidden>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-vc-name" placeholder="Full name" style="flex:1;min-width:140px" />
+									<input class="input" id="bt-vc-org" placeholder="Company" style="flex:1;min-width:140px" />
+								</div>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-vc-phone" placeholder="Phone" style="flex:1;min-width:120px" />
+									<input class="input" id="bt-vc-email" placeholder="Email" style="flex:1;min-width:140px" />
+									<input class="input" id="bt-vc-url" placeholder="Website" style="flex:1;min-width:140px" />
+								</div>
+							</div>
+							<div id="bt-email" hidden>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-em-to" placeholder="To (email)" style="flex:1;min-width:150px" />
+									<input class="input" id="bt-em-subject" placeholder="Subject" style="flex:1;min-width:150px" />
+								</div>
+								<textarea class="input tool-textarea" id="bt-em-body" rows="2" placeholder="Body"></textarea>
+							</div>
+							<div id="bt-sms" hidden>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-sms-to" placeholder="Phone number" style="flex:1;min-width:150px" />
+								</div>
+								<textarea class="input tool-textarea" id="bt-sms-body" rows="2" placeholder="Message"></textarea>
+							</div>
+							<div id="bt-phone" hidden>
+								<input class="input" id="bt-tel" placeholder="Phone number" style="width:100%" />
+							</div>
+							<div id="bt-geo" hidden>
+								<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+									<input class="input" id="bt-geo-lat" placeholder="Latitude" style="flex:1;min-width:120px" />
+									<input class="input" id="bt-geo-lng" placeholder="Longitude" style="flex:1;min-width:120px" />
+								</div>
+							</div>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="bt-generate" type="button">Generate QR</button>
+								<button class="btn btn-small" id="bt-download" type="button" disabled>⤓ Save PNG</button>
+								<span class="tool-label" id="bt-status"></span>
+							</div>
+							<div id="bt-out" style="margin-top:8px;display:flex;justify-content:center"></div>
+						</div>
+					</div>
+
+					<div class="tool-card">
+						<div class="tool-card-header">🔢 Sequential asset tags</div>
 						<div class="tool-card-body">
 							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
-								<input class="input" id="work-ticket-id" type="text" placeholder="Ticket # or device name" style="flex:1;min-width:120px" aria-label="Ticket ID" />
-								<select class="tool-select" id="work-ticket-status" aria-label="Status">
-									<option value="open">🔴 Open</option>
-									<option value="inprog">🟡 In Progress</option>
-									<option value="waiting">🔵 Waiting on parts</option>
-									<option value="done">🟢 Done</option>
-								</select>
-								<select class="tool-select" id="work-ticket-type" aria-label="Job type">
-									<option value="diag">Diagnostics</option>
-									<option value="os">OS / Software</option>
-									<option value="hw">Hardware repair</option>
-									<option value="net">Network / Wi-Fi</option>
-									<option value="data">Data recovery</option>
-									<option value="virus">Virus / Malware</option>
-									<option value="setup">New device setup</option>
-									<option value="other">Other</option>
-								</select>
+								<input class="input" id="sq-prefix" placeholder="Prefix (e.g. ECTL-)" style="flex:1;min-width:120px" />
+								<label class="tool-label">Start <input class="input" id="sq-start" type="number" value="1" style="width:80px" /></label>
+								<label class="tool-label">Count <input class="input" id="sq-count" type="number" value="10" min="1" style="width:80px" /></label>
+								<label class="tool-label">Step <input class="input" id="sq-step" type="number" value="1" style="width:70px" /></label>
+								<label class="tool-label">Pad <input class="input" id="sq-pad" type="number" value="4" min="0" style="width:70px" /></label>
+								<label class="tool-label">Type
+									<select class="tool-select" id="sq-type"><option value="qr">QR</option><option value="CODE128">Code 128</option></select>
+								</label>
+								<label class="tool-label">Columns <input class="input" id="sq-cols" type="number" value="4" min="1" max="8" style="width:70px" /></label>
+								<label class="tool-label">Size
+									<select class="tool-select" id="sq-size"><option value="22">Small</option><option value="30" selected>Medium</option><option value="40">Large</option></select>
+								</label>
 							</div>
-							<textarea class="input tool-textarea" id="work-ticket-notes" placeholder="Notes about the job, findings, parts needed…" rows="3" aria-label="Ticket notes"></textarea>
-							<div class="tool-row">
-								<button class="btn btn-accent" id="btn-work-ticket-add" type="button">+ Add entry</button>
-								<button class="btn btn-small" id="btn-work-ticket-export" type="button">Export CSV</button>
-								<span class="work-ticket-count" id="work-ticket-count"></span>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="sq-generate" type="button">Generate</button>
+								<button class="btn" id="sq-print" type="button" disabled>🖨 Print</button>
+								<span class="tool-label" id="sq-status"></span>
 							</div>
-							<div class="work-ticket-list" id="work-ticket-list"></div>
+							<div id="sq-preview" style="margin-top:10px"></div>
 						</div>
 					</div>
 
-					<!-- Network Toolkit -->
 					<div class="tool-card">
-						<div class="tool-card-header">🌐 Network Toolkit</div>
+						<div class="tool-card-header">🧪 Scanner test sheet</div>
 						<div class="tool-card-body">
-							<!-- Subnet Calculator -->
-							<div class="work-subsection-label">Subnet Calculator</div>
-							<div class="tool-row" style="flex-wrap:wrap">
-								<input class="input" id="work-subnet-ip" type="text" placeholder="IP address (e.g. 192.168.1.1)" style="flex:2;min-width:140px" aria-label="IP address" />
-								<input class="input" id="work-subnet-cidr" type="text" placeholder="CIDR (e.g. 24)" style="flex:1;min-width:60px;max-width:90px" aria-label="CIDR prefix" />
-								<button class="btn btn-small btn-accent" id="btn-work-subnet-calc" type="button">Calculate</button>
+							<p class="hint" style="margin:0;font-size:0.8rem">A set of QR + 1D codes to check scan range/quality on your scanner.</p>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="ts-generate" type="button">Build test sheet</button>
+								<button class="btn" id="ts-print" type="button" disabled>🖨 Print</button>
+								<span class="tool-label" id="ts-status"></span>
 							</div>
-							<div class="work-subnet-results" id="work-subnet-results"></div>
-							<!-- Common ports quick-ref -->
-							<div class="work-subsection-label" style="margin-top:12px">Common Ports</div>
-							<div class="work-ports-grid" id="work-ports-grid"></div>
-							<!-- IP class lookup -->
-							<div class="work-subsection-label" style="margin-top:12px">Private IP Ranges</div>
-							<div class="work-ip-ranges" id="work-ip-ranges"></div>
+							<div id="ts-preview" style="margin-top:10px"></div>
 						</div>
 					</div>
 
-					<!-- System Checklist -->
 					<div class="tool-card">
-						<div class="tool-card-header">✅ Repair Checklist</div>
+						<div class="tool-card-header">📷 Scan to list (camera)</div>
 						<div class="tool-card-body">
-							<div class="tool-row" style="flex-wrap:wrap;gap:6px">
-								<select class="tool-select" id="work-checklist-type" aria-label="Checklist template">
-									<option value="general">General PC repair</option>
-									<option value="virus">Virus / Malware removal</option>
-									<option value="os">Windows reinstall</option>
-									<option value="laptop">Laptop hardware repair</option>
-									<option value="network">Network troubleshoot</option>
-									<option value="data">Data recovery</option>
-								</select>
-								<button class="btn btn-small btn-accent" id="btn-work-checklist-load" type="button">Load</button>
-								<button class="btn btn-small" id="btn-work-checklist-reset" type="button">Reset</button>
-								<button class="btn btn-small" id="btn-work-checklist-copy" type="button">Copy</button>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="sc-start" type="button">Start camera</button>
+								<button class="btn" id="sc-stop" type="button" disabled>Stop</button>
+								<button class="btn btn-small" id="sc-copy" type="button">Copy CSV</button>
+								<button class="btn btn-small" id="sc-clear" type="button">Clear</button>
+								<span class="tool-label" id="sc-status"></span>
 							</div>
-							<div class="work-checklist" id="work-checklist"></div>
+							<video id="sc-video" playsinline muted style="width:100%;max-width:420px;border-radius:var(--radius-md);background:#000;margin-top:8px;display:none"></video>
+							<div id="sc-list" style="margin-top:8px;max-height:220px;overflow:auto;font-size:0.8rem;font-family:monospace"></div>
 						</div>
 					</div>
 
-					<!-- Storage & RAM Quick Calc -->
 					<div class="tool-card">
-						<div class="tool-card-header">💾 Storage / RAM Converter</div>
+						<div class="tool-card-header">🖼️ Bulk decode images</div>
 						<div class="tool-card-body">
-							<div class="tool-row" style="flex-wrap:wrap">
-								<input class="input" id="work-storage-val" type="number" placeholder="Value" min="0" style="flex:1;min-width:80px" aria-label="Storage value" />
-								<select class="tool-select" id="work-storage-from" aria-label="From unit">
-									<option value="B">Bytes</option>
-									<option value="KB">KB</option>
-									<option value="MB" selected>MB</option>
-									<option value="GB">GB</option>
-									<option value="TB">TB</option>
-									<option value="KiB">KiB</option>
-									<option value="MiB">MiB</option>
-									<option value="GiB">GiB</option>
-									<option value="TiB">TiB</option>
-								</select>
-								<span class="tool-label">→</span>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<input type="file" id="bd-files" accept="image/*" multiple />
+								<button class="btn btn-small" id="bd-copy" type="button">Copy CSV</button>
+								<button class="btn btn-small" id="bd-clear" type="button">Clear</button>
+								<span class="tool-label" id="bd-status"></span>
 							</div>
-							<div class="work-storage-results" id="work-storage-results"></div>
+							<div id="bd-list" style="margin-top:8px;max-height:220px;overflow:auto;font-size:0.8rem;font-family:monospace"></div>
 						</div>
 					</div>
 
-					<!-- Windows CMD Quick Reference -->
 					<div class="tool-card">
-						<div class="tool-card-header">💻 Windows / CMD Quick Reference</div>
+						<div class="tool-card-header">📑 CSV → QR</div>
 						<div class="tool-card-body">
-							<input class="input" id="work-cmd-search" type="search" placeholder="Search commands…" aria-label="Search commands" />
-							<div class="work-cmd-grid" id="work-cmd-grid"></div>
-						</div>
-					</div>
-
-					<!-- Chromebook Quick Reference -->
-					<div class="tool-card">
-						<div class="tool-card-header">🐧 Chromebook / ChromeOS Quick Reference</div>
-						<div class="tool-card-body">
-							<input class="input" id="work-crosh-search" type="search" placeholder="Search commands…" aria-label="Search Chromebook commands" />
-							<div class="work-cmd-grid" id="work-crosh-grid"></div>
-						</div>
-					</div>
-
-					<!-- Client-ready Report Generator moved to panel-reports -->
-
-					<!-- Habit Tracker -->
-					<div class="tool-card">
-						<div class="tool-card-header">✅ Habit Tracker</div>
-						<div class="tool-card-body">
-							<div id="habit-list"></div>
-							<div class="habit-new-row">
-								<input class="input" id="habit-new-input" type="text" placeholder="New habit (e.g. Read 20 min)" maxlength="60" />
-								<button class="btn btn-small btn-accent" id="habit-add-btn" type="button">Add</button>
+							<textarea class="input tool-textarea" id="cv-text" rows="3" placeholder="Paste CSV here (or load a file)"></textarea>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px;align-items:flex-end">
+								<input type="file" id="cv-file" accept=".csv,.txt" />
+								<label class="tool-check"><input type="checkbox" id="cv-header" checked /> First row is header</label>
+								<label class="tool-label">Content <select class="tool-select" id="cv-content-col"></select></label>
+								<label class="tool-label">Label <select class="tool-select" id="cv-label-col"></select></label>
+								<label class="tool-label">Columns <input class="input" id="cv-cols" type="number" value="4" min="1" max="8" style="width:70px" /></label>
+								<label class="tool-label">Size
+									<select class="tool-select" id="cv-size"><option value="22">Small</option><option value="30" selected>Medium</option><option value="40">Large</option></select>
+								</label>
 							</div>
-							<p class="hint" style="margin-top:6px;font-size:0.75rem">Track the last 7 days. Click a day to mark done. Saved locally.</p>
+							<div class="tool-row" style="flex-wrap:wrap;gap:8px">
+								<button class="btn btn-accent" id="cv-generate" type="button">Generate sheet</button>
+								<button class="btn" id="cv-print" type="button" disabled>🖨 Print</button>
+								<span class="tool-label" id="cv-status"></span>
+							</div>
+							<div id="cv-preview" style="margin-top:10px"></div>
 						</div>
 					</div>
-
 				</section>
 
+				<!-- ── Work panel ── -->
+				
 				<!-- Reports panel -->
 				<section class="panel" id="panel-reports" role="tabpanel" aria-labelledby="tab-reports" hidden>
 
@@ -6684,71 +6233,11 @@
 				</section>
 
 				<!-- Canvas / Whiteboard panel -->
-				<section class="panel" id="panel-canvas" role="tabpanel" aria-labelledby="tab-canvas" hidden>
-					<div class="canvas-toolbar">
-						<button class="btn btn-accent btn-small" id="btn-canvas-add" type="button">＋ Add note</button>
-						<select class="input" id="canvas-color-pick" style="width:auto;padding:4px 8px;font-size:0.82rem" title="Sticky note colour">
-							<option value="#fde68a">🟡 Yellow</option>
-							<option value="#bbf7d0">🟢 Green</option>
-							<option value="#bfdbfe">🔵 Blue</option>
-							<option value="#fecaca">🔴 Red</option>
-							<option value="#e9d5ff">🟣 Purple</option>
-							<option value="#fed7aa">🟠 Orange</option>
-						</select>
-						<button class="btn btn-small" id="btn-canvas-clear" type="button" title="Clear all notes">🗑 Clear all</button>
-					</div>
-					<div id="canvas-board">
-						<div class="canvas-empty-hint" id="canvas-empty-hint">Click "＋ Add note" to place your first sticky note</div>
-					</div>
-				</section>
-
+				
 				<!-- Bookmarks panel -->
-				<section class="panel" id="panel-bookmarks" role="tabpanel" aria-labelledby="tab-bookmarks" hidden>
-					<div class="snip-toolbar">
-						<input class="input snip-search" id="bm-search" type="search" placeholder="Search bookmarks…" autocomplete="off" />
-						<button class="btn btn-accent btn-small" id="btn-bm-new" type="button">＋ Add</button>
-					</div>
-					<div id="bm-add-form" hidden style="padding:10px 0 8px;display:flex;flex-direction:column;gap:7px">
-						<input class="input" id="bm-form-url" type="url" placeholder="https://…" autocomplete="off" />
-						<input class="input" id="bm-form-title" type="text" placeholder="Title (optional)" autocomplete="off" />
-						<input class="input" id="bm-form-desc" type="text" placeholder="Description (optional)" autocomplete="off" />
-						<div style="display:flex;gap:6px">
-							<button class="btn btn-small btn-accent" id="btn-bm-save" type="button">Save</button>
-							<button class="btn btn-small" id="btn-bm-cancel" type="button">Cancel</button>
-						</div>
-					</div>
-					<div id="bm-list" class="snip-list"></div>
-				</section>
-
+				
 				<!-- Flashcards panel -->
-				<section class="panel" id="panel-flash" role="tabpanel" aria-labelledby="tab-flash" hidden>
-					<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-						<div style="display:flex;gap:6px;flex-wrap:wrap">
-							<button class="btn btn-accent btn-small" id="btn-flash-new" type="button">＋ New card</button>
-							<button class="btn btn-small" id="btn-flash-study" type="button">▶ Study</button>
-						</div>
-						<span id="flash-count" style="font-size:0.82rem;color:var(--muted)">0 cards</span>
-					</div>
-					<!-- Study mode -->
-					<div id="flash-study-area" hidden>
-						<div class="flashcard" id="flashcard-item">
-							<div class="flashcard-inner" id="flashcard-inner">
-								<div class="flashcard-front" id="flashcard-front"></div>
-								<div class="flashcard-back" id="flashcard-back"></div>
-							</div>
-						</div>
-						<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
-							<button class="btn btn-small" id="btn-flash-flip" type="button">Flip</button>
-							<button class="btn btn-small" id="btn-flash-prev" type="button">← Prev</button>
-							<button class="btn btn-small btn-accent" id="btn-flash-next" type="button">Next →</button>
-							<button class="btn btn-small" id="btn-flash-end" type="button">✕ Exit</button>
-						</div>
-						<div id="flash-progress" style="text-align:center;font-size:0.82rem;color:var(--muted);margin-top:8px"></div>
-					</div>
-					<!-- Card list -->
-					<div id="flash-list" class="snip-list"></div>
-				</section>
-
+				
 				<!-- Account Manager panel -->
 				<section class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin" hidden>
 					<div class="tools-grid">
@@ -6777,165 +6266,21 @@
 				</section>
 
 		<!-- ══ DASHBOARD PANEL ══════════════════════════════════════════ -->
-		<section class="panel" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
-			<div class="settings-section" style="padding:0">
-				<div class="dash-stats-row" id="dash-stats-row"></div>
-				<div class="settings-section">
-					<p class="settings-section-title">Writing Activity (last 12 weeks)</p>
-					<div id="dash-heatmap" style="margin-top:6px"></div>
-					<div id="dash-heatmap-legend" style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:0.7rem;color:var(--muted)">Less <div class="dash-hm-cell"></div><div class="dash-hm-cell lv1"></div><div class="dash-hm-cell lv2"></div><div class="dash-hm-cell lv3"></div><div class="dash-hm-cell lv4"></div> More</div>
-				</div>
-				<div class="settings-section">
-					<p class="settings-section-title">Tag Cloud</p>
-					<div id="dash-tagcloud" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
-				</div>
-				<div class="settings-section">
-					<p class="settings-section-title">Top Notes by Word Count</p>
-					<div id="dash-wordchart" style="margin-top:6px"></div>
-				</div>
-			</div>
-		</section>
-
+		
 		<!-- ══ KANBAN PANEL ══════════════════════════════════════════════ -->
-		<section class="panel" id="panel-kanban" role="tabpanel" aria-labelledby="tab-kanban" hidden>
-			<div class="kanban-toolbar">
-				<button class="btn btn-accent btn-small" id="btn-kanban-add-col" type="button">+ Column</button>
-				<input class="input" id="kanban-new-col-name" type="text" placeholder="Column name…" style="width:140px;font-size:0.82rem" />
-				<button class="btn btn-small" id="btn-kanban-save" type="button" title="Save board to notes">&#128190; Save</button>
-				<button class="btn btn-small" id="btn-kanban-reset" type="button">Reset</button>
-			</div>
-			<div id="kanban-board" class="kanban-board">
-				<p style="color:var(--muted);font-size:0.82rem;padding:12px 0">Loading…</p>
-			</div>
-		</section>
-
+		
 		<!-- ══ ADVANCED SEARCH PANEL ═════════════════════════════════════ -->
-		<section class="panel" id="panel-advsearch" role="tabpanel" aria-labelledby="tab-advsearch" hidden>
-			<div class="settings-section" style="padding:12px 0">
-				<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-					<input class="input" id="adv-q" type="text" placeholder="Text in title or body…" style="flex:1;min-width:140px" />
-					<input class="input" id="adv-tag" type="text" placeholder="#tag" style="width:90px" />
-					<input class="input" id="adv-from" type="date" style="width:140px" title="Modified after" />
-					<input class="input" id="adv-to"   type="date" style="width:140px" title="Modified before" />
-				</div>
-				<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-					<select class="input" id="adv-status" style="width:auto;font-size:0.82rem">
-						<option value="">Any status</option>
-						<option value="normal">Normal</option>
-						<option value="archived">Archived</option>
-						<option value="trashed">Trashed</option>
-						<option value="pinned">Pinned</option>
-						<option value="encrypted">Encrypted</option>
-					</select>
-					<input class="input" id="adv-minwords" type="number" min="0" placeholder="Min words" style="width:96px" />
-					<input class="input" id="adv-maxwords" type="number" min="0" placeholder="Max words" style="width:96px" />
-					<button class="btn btn-accent" id="btn-adv-search" type="button">Search</button>
-					<span id="adv-count" style="font-size:0.78rem;color:var(--muted)"></span>
-				</div>
-			</div>
-			<div id="adv-results"></div>
-		</section>
-
+		
 		<!-- ══ TIME TRACKER PANEL ════════════════════════════════════════ -->
-		<section class="panel" id="panel-timetrack" role="tabpanel" aria-labelledby="tab-timetrack" hidden>
-			<div class="settings-section">
-				<p class="settings-section-title">Active Timer</p>
-				<div class="timer-row">
-					<span id="timer-note-label" style="flex:1;font-size:0.88rem;color:var(--muted)">No note open</span>
-					<span id="timer-display" class="timer-display">00:00:00</span>
-					<button class="btn btn-accent btn-small" id="btn-timer-start" type="button">&#9654; Start</button>
-					<button class="btn btn-small" id="btn-timer-stop" type="button" disabled>&#9632; Stop</button>
-				</div>
-			</div>
-			<div class="settings-section">
-				<p class="settings-section-title">Session Log</p>
-				<div id="timer-log" style="max-height:300px;overflow-y:auto"></div>
-				<div style="display:flex;gap:8px;margin-top:8px">
-					<button class="btn btn-small" id="btn-timer-export" type="button">Export CSV</button>
-					<button class="btn btn-small" id="btn-timer-clear" type="button">Clear log</button>
-				</div>
-			</div>
-		</section>
-
+		
 		<!-- ══ GOALS / OKR PANEL ═════════════════════════════════════════ -->
-		<section class="panel" id="panel-goals" role="tabpanel" aria-labelledby="tab-goals" hidden>
-			<div class="settings-section">
-				<div id="goal-add-form" class="goal-add-form" hidden>
-					<input class="input" id="goal-title-input" type="text" placeholder="Goal title…" />
-					<div style="display:flex;gap:8px">
-						<input class="input" id="goal-target-input" type="number" min="1" placeholder="Target (e.g. 10000 words)" style="flex:1" />
-						<input class="input" id="goal-unit-input" type="text" placeholder="Unit (words, notes…)" style="flex:1" />
-					</div>
-					<input class="input" id="goal-deadline-input" type="date" />
-					<div style="display:flex;gap:8px">
-						<button class="btn btn-accent btn-small" id="btn-goal-save" type="button">Save goal</button>
-						<button class="btn btn-small" id="btn-goal-cancel" type="button">Cancel</button>
-					</div>
-				</div>
-				<button class="btn btn-accent btn-small" id="btn-goal-add" type="button" style="margin-bottom:12px">+ Add Goal</button>
-				<div id="goals-list"></div>
-			</div>
-		</section>
-
+		
 		<!-- ══ PASSWORD VAULT PANEL ══════════════════════════════════════ -->
-		<section class="panel" id="panel-passwords" role="tabpanel" aria-labelledby="tab-passwords" hidden>
-			<div class="settings-section">
-				<div id="vault-locked-view" style="text-align:center;padding:32px 0">
-					<div style="font-size:2rem;margin-bottom:10px">&#128274;</div>
-					<p style="color:var(--muted);margin:0 0 12px;font-size:0.88rem">Vault is locked. Enter your master password.</p>
-					<input class="input" id="vault-master-input" type="password" placeholder="Master password…" style="max-width:280px;margin:0 auto 12px;display:block" autocomplete="current-password" />
-					<div style="display:flex;gap:8px;justify-content:center">
-						<button class="btn btn-accent" id="btn-vault-unlock" type="button">Unlock</button>
-						<button class="btn btn-small" id="btn-vault-set-master" type="button">Set master password</button>
-					</div>
-					<p id="vault-lock-err" style="font-size:0.78rem;color:var(--error,#dc2626);margin-top:8px;min-height:16px"></p>
-				</div>
-				<div id="vault-open-view" hidden>
-					<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-						<input class="input" id="vault-search" type="search" placeholder="Search vault…" style="flex:1;min-width:120px" />
-						<button class="btn btn-accent btn-small" id="btn-vault-add" type="button">+ Entry</button>
-						<button class="btn btn-small" id="btn-vault-lock" type="button">&#128274; Lock</button>
-					</div>
-					<div id="vault-list"></div>
-				</div>
-			</div>
-		</section>
-
+		
 		<!-- ══ SPREADSHEET PANEL ═════════════════════════════════════════ -->
-		<section class="panel" id="panel-sheet" role="tabpanel" aria-labelledby="tab-sheet" hidden>
-			<div class="settings-section">
-				<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
-					<input class="input" id="sheet-formula-bar" type="text" placeholder="Cell value or =SUM(A1:B3)…" style="flex:1;font-family:ui-monospace,monospace;font-size:0.85rem" />
-					<select class="input" id="sheet-rows-sel" style="width:auto;font-size:0.82rem" title="Rows">
-						<option value="10">10 rows</option>
-						<option value="20" selected>20 rows</option>
-						<option value="50">50 rows</option>
-					</select>
-					<select class="input" id="sheet-cols-sel" style="width:auto;font-size:0.82rem" title="Columns">
-						<option value="5">5 cols</option>
-						<option value="8" selected>8 cols</option>
-						<option value="13">13 cols</option>
-					</select>
-					<button class="btn btn-small" id="btn-sheet-export" type="button">Export CSV</button>
-					<button class="btn btn-small" id="btn-sheet-clear" type="button">Clear</button>
-				</div>
-				<div id="sheet-container"></div>
-				<p class="hint" style="margin-top:6px;font-size:0.74rem">Formulas: =SUM(A1:A5) =AVG(B1:B3) =COUNT(A1:C1) =MAX(A1:A5) =MIN(A1:A5)</p>
-			</div>
-		</section>
-
+		
 		<!-- ══ CLIPBOARD HISTORY PANEL ════════════════════════════════════ -->
-		<section class="panel" id="panel-clipboard" role="tabpanel" aria-labelledby="tab-clipboard" hidden>
-			<div class="settings-section">
-				<div style="display:flex;gap:8px;margin-bottom:10px">
-					<input class="input" id="clip-search" type="search" placeholder="Search clipboard history…" style="flex:1" />
-					<button class="btn btn-small" id="btn-clip-clear" type="button">Clear all</button>
-				</div>
-				<p class="hint" style="margin:0 0 10px;font-size:0.74rem">Captures text you copy while ectl is open (max 100 items).</p>
-				<div id="clip-list"></div>
-			</div>
-		</section>
-
+		
 		<!-- ══ ZPL CONVERTER PANEL ════════════════════════════════════════ -->
 		<section class="panel" id="panel-zpl" role="tabpanel" aria-labelledby="tab-zpl" hidden>
 			<h2 style="margin:0 0 8px">PDF → ZPL Converter</h2>
@@ -6969,35 +6314,7 @@
 		</section>
 
 		<!-- ══ WORLD CLOCK PANEL ══════════════════════════════════════════ -->
-		<section class="panel" id="panel-worldclock" role="tabpanel" aria-labelledby="tab-worldclock" hidden>
-			<div class="settings-section">
-				<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-					<input class="input" id="clock-tz-input" type="text" placeholder="Timezone, e.g. America/New_York or Europe/Paris…" style="flex:1;min-width:200px" list="tz-datalist" />
-					<button class="btn btn-accent btn-small" id="btn-clock-add" type="button">+ Add</button>
-				</div>
-				<datalist id="tz-datalist">
-					<option value="America/New_York" /><option value="America/Los_Angeles" /><option value="America/Chicago" />
-					<option value="America/Denver" /><option value="America/Sao_Paulo" /><option value="Europe/London" />
-					<option value="Europe/Paris" /><option value="Europe/Berlin" /><option value="Europe/Moscow" />
-					<option value="Asia/Dubai" /><option value="Asia/Kolkata" /><option value="Asia/Shanghai" />
-					<option value="Asia/Tokyo" /><option value="Asia/Singapore" /><option value="Australia/Sydney" />
-					<option value="Pacific/Auckland" /><option value="UTC" />
-				</datalist>
-				<div id="clock-list" class="clock-list"></div>
-			</div>
-			<div class="settings-section">
-				<p class="settings-section-title">Time Zone Converter</p>
-				<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-					<input class="input" id="tzconv-time" type="datetime-local" style="flex:1;min-width:160px" />
-					<select class="input" id="tzconv-from" style="flex:1;min-width:130px"></select>
-					<span style="color:var(--muted);font-size:0.9rem">&#8594;</span>
-					<select class="input" id="tzconv-to"   style="flex:1;min-width:130px"></select>
-					<button class="btn btn-small" id="btn-tzconv" type="button">Convert</button>
-				</div>
-				<div id="tzconv-result" style="margin-top:8px;font-size:0.9rem;font-weight:600;color:var(--accent);min-height:20px"></div>
-			</div>
-		</section>
-
+		
 				<!-- File preview lightbox -->
 				<div class="lightbox-overlay" id="lightbox-overlay" hidden role="dialog" aria-modal="true" aria-label="File preview">
 					<div class="lightbox-inner" id="lightbox-inner">
@@ -7051,24 +6368,7 @@
 
 	<!-- Keyboard shortcuts modal -->
 	<!-- More tabs modal -->
-	<div class="tab-more-overlay" id="tab-more-overlay" hidden role="dialog" aria-modal="true" aria-label="More tabs">
-		<div class="tab-more-modal">
-			<h2>More tabs</h2>
-			<div class="tab-more-grid">
-				<button class="tab-more-item" id="tab-dashboard"  type="button" role="tab" aria-controls="panel-dashboard"  aria-selected="false">Dash</button>
-				<button class="tab-more-item" id="tab-kanban"     type="button" role="tab" aria-controls="panel-kanban"     aria-selected="false">Kanban</button>
-				<button class="tab-more-item" id="tab-advsearch"  type="button" role="tab" aria-controls="panel-advsearch"  aria-selected="false">Search</button>
-				<button class="tab-more-item" id="tab-timetrack"  type="button" role="tab" aria-controls="panel-timetrack"  aria-selected="false">Timer</button>
-				<button class="tab-more-item" id="tab-goals"      type="button" role="tab" aria-controls="panel-goals"      aria-selected="false">Goals</button>
-				<button class="tab-more-item" id="tab-passwords"  type="button" role="tab" aria-controls="panel-passwords"  aria-selected="false">Vault</button>
-				<button class="tab-more-item" id="tab-sheet"      type="button" role="tab" aria-controls="panel-sheet"      aria-selected="false">Sheet</button>
-			<button class="tab-more-item" id="tab-clipboard"  type="button" role="tab" aria-controls="panel-clipboard"  aria-selected="false">Clips</button>
-			<button class="tab-more-item" id="tab-worldclock" type="button" role="tab" aria-controls="panel-worldclock" aria-selected="false">Clocks</button>
-			</div>
-			<div style="text-align:right"><button class="btn btn-small" id="btn-more-close" type="button">Close</button></div>
-		</div>
-	</div>
-
+	
 	<div class="kb-modal-overlay" id="kb-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
 		<div class="kb-modal" id="kb-modal">
 						<h2>⌨ Keyboard Shortcuts</h2>
@@ -7350,17 +6650,13 @@
 				{ tab: document.getElementById('tab-notes'),    panel: document.getElementById('panel-notes') },
 				{ tab: document.getElementById('tab-settings'), panel: document.getElementById('panel-settings') },
 				{ tab: document.getElementById('tab-files'),    panel: document.getElementById('panel-files') },
-				{ tab: document.getElementById('tab-tools'),    panel: document.getElementById('panel-tools') },
-				{ tab: document.getElementById('tab-work'),     panel: document.getElementById('panel-work') },
 				{ tab: document.getElementById('tab-reports'),  panel: document.getElementById('panel-reports') },
 				{ tab: document.getElementById('tab-snippets'), panel: document.getElementById('panel-snippets') },
-				{ tab: document.getElementById('tab-canvas'),   panel: document.getElementById('panel-canvas') },
-				{ tab: document.getElementById('tab-bookmarks'),panel: document.getElementById('panel-bookmarks') },
-			{ tab: document.getElementById('tab-flash'),    panel: document.getElementById('panel-flash') },
 			{ tab: document.getElementById('tab-zpl'),      panel: document.getElementById('panel-zpl') },
 			{ tab: document.getElementById('tab-video'),    panel: document.getElementById('panel-video') },
 			{ tab: document.getElementById('tab-hp'),       panel: document.getElementById('panel-hp') },
 			{ tab: document.getElementById('tab-repair'),   panel: document.getElementById('panel-repair') },
+			{ tab: document.getElementById('tab-scanner'),  panel: document.getElementById('panel-scanner') },
 			{ tab: document.getElementById('tab-admin'),    panel: document.getElementById('panel-admin') },
 			];
 
@@ -14213,6 +13509,388 @@ body {
 				document.getElementById('tool-qr-input')?.addEventListener('keydown', e => {
 					if (e.key === 'Enter') document.getElementById('tool-qr-gen')?.click();
 				});
+
+				// ── Bulk QR Code maker ────────────────────────────────────────
+				(function() {
+					const input = document.getElementById('bq-input');
+					if (!input) return;
+					const colsEl = document.getElementById('bq-cols');
+					const sizeEl = document.getElementById('bq-size');
+					const labelEl = document.getElementById('bq-label');
+					const borderEl = document.getElementById('bq-border');
+					const genBtn = document.getElementById('bq-generate');
+					const printBtn = document.getElementById('bq-print');
+					const clearBtn = document.getElementById('bq-clear');
+					const statusEl = document.getElementById('bq-status');
+					const previewEl = document.getElementById('bq-preview');
+					const MAX = 300;
+					let items = [];
+					const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+					const setStatus = (t) => { if (statusEl) statusEl.textContent = t; };
+
+					function parse() {
+						const lines = String(input.value || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+						return lines.map((line) => {
+							let label = line, content = line;
+							const m = line.match(/^(.*?)\s*(?:\t| \| )\s*(.+)$/);
+							if (m) { label = m[1].trim(); content = m[2].trim(); }
+							return { label: label, content: content };
+						});
+					}
+					function opts() {
+						return {
+							cols: Math.min(8, Math.max(1, parseInt(colsEl.value || '4', 10) || 4)),
+							sizeMm: parseInt(sizeEl.value || '30', 10) || 30,
+							showLabel: !!labelEl.checked,
+							border: !!borderEl.checked
+						};
+					}
+					function qrDataUrl(text) {
+						const canvas = document.createElement('canvas');
+						_QR.toCanvas(canvas, text, { width: 600, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+						return canvas.toDataURL('image/png');
+					}
+
+					function build() {
+						const list = parse();
+						if (!list.length) { setStatus('Add at least one line.'); return; }
+						if (list.length > MAX) { setStatus('Too many (' + list.length + ') — max ' + MAX + '.'); return; }
+						const o = opts();
+						items = []; const bad = [];
+						for (const it of list) {
+							try { items.push({ label: it.label, content: it.content, dataUrl: qrDataUrl(it.content) }); }
+							catch (e) { bad.push(it.content); }
+						}
+						renderPreview(o);
+						if (printBtn) printBtn.disabled = !items.length;
+						setStatus(items.length + ' code(s) ready' + (bad.length ? ' · ' + bad.length + ' skipped (too long)' : '') + '.');
+					}
+
+					function renderPreview(o) {
+						if (!previewEl) return;
+						if (!items.length) { previewEl.innerHTML = ''; return; }
+						const cells = items.map((it) =>
+							'<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;' + (o.border ? 'border:1px solid var(--panel-border);' : '') + 'border-radius:var(--radius-sm)">' +
+							'<img src="' + it.dataUrl + '" alt="QR" style="width:' + o.sizeMm + 'mm;height:' + o.sizeMm + 'mm;max-width:100%" />' +
+							(o.showLabel ? '<div style="font-size:0.7rem;text-align:center;word-break:break-word;line-height:1.1">' + esc(it.label) + '</div>' : '') +
+							'</div>').join('');
+						previewEl.innerHTML = '<div style="display:grid;grid-template-columns:repeat(' + o.cols + ',1fr);gap:6px">' + cells + '</div>';
+					}
+
+					function printSheet() {
+						if (!items.length) return;
+						const o = opts();
+						const cells = items.map((it) =>
+							'<div class="cell" style="' + (o.border ? 'border:1px solid #bbb;' : 'border:none;') + '">' +
+							'<img src="' + it.dataUrl + '" alt="QR" />' +
+							(o.showLabel ? '<div class="label">' + esc(it.label) + '</div>' : '') +
+							'</div>').join('');
+						const html = '<!doctype html><html><head><meta charset="utf-8"><title>QR sheet</title><style>' +
+							'@page{size:A4;margin:10mm}' +
+							'*{box-sizing:border-box}' +
+							'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#000}' +
+							'.grid{display:grid;grid-template-columns:repeat(' + o.cols + ',1fr);gap:6mm}' +
+							'.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm;border-radius:2mm;page-break-inside:avoid;break-inside:avoid}' +
+							'.cell img{width:' + o.sizeMm + 'mm;height:' + o.sizeMm + 'mm;display:block}' +
+							'.label{font-size:8pt;text-align:center;word-break:break-word;margin-top:1mm;line-height:1.1}' +
+							'</style></head><body><div class="grid">' + cells + '</div></body></html>';
+						const w = window.open('', '_blank');
+						if (!w) { setStatus('Popup blocked — allow popups to print.'); return; }
+						w.document.open(); w.document.write(html); w.document.close();
+						setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 400);
+					}
+
+					genBtn?.addEventListener('click', build);
+					printBtn?.addEventListener('click', printSheet);
+					clearBtn?.addEventListener('click', () => { input.value = ''; items = []; if (previewEl) previewEl.innerHTML = ''; if (printBtn) printBtn.disabled = true; setStatus(''); });
+				})();
+
+				// ── SCANNER TAB ──────────────────────────────────────────────
+				(function() {
+					const panel = document.getElementById('panel-scanner');
+					if (!panel) return;
+					const $ = (id) => document.getElementById(id);
+					const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+					const setStatus = (el, t) => { if (el) el.textContent = t; };
+
+					// JsBarcode loaded lazily from CDN.
+					let _bcP = null;
+					function ensureBarcode() {
+						if (window.JsBarcode) return Promise.resolve();
+						if (_bcP) return _bcP;
+						_bcP = new Promise((res, rej) => {
+							const s = document.createElement('script');
+							s.src = 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js';
+							s.crossOrigin = 'anonymous';
+							s.onload = () => res();
+							s.onerror = () => rej(new Error('Could not load barcode library'));
+							document.head.appendChild(s);
+						});
+						return _bcP;
+					}
+					function qrUrl(text) {
+						const c = document.createElement('canvas');
+						_QR.toCanvas(c, text, { width: 600, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+						return c.toDataURL('image/png');
+					}
+					function bcUrl(value, format) {
+						const c = document.createElement('canvas');
+						window.JsBarcode(c, value, { format: format, displayValue: false, margin: 10, background: '#ffffff', lineColor: '#000000', width: 2, height: 90 });
+						return c.toDataURL('image/png');
+					}
+					function parseLines(text) {
+						return String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((line) => {
+							let label = line, content = line;
+							const m = line.match(/^(.*?)\s*(?:\t| \| )\s*(.+)$/);
+							if (m) { label = m[1].trim(); content = m[2].trim(); }
+							return { label: label, content: content };
+						});
+					}
+					function imgTag(url, sizeMm, square) {
+						return '<img src="' + url + '" style="' + (square ? ('width:' + sizeMm + 'mm;height:' + sizeMm + 'mm;') : ('width:' + sizeMm + 'mm;height:auto;')) + 'max-width:100%;display:block" />';
+					}
+					function renderPreview(el, items, cols, sizeMm, o) {
+						if (!el) return;
+						if (!items.length) { el.innerHTML = ''; return; }
+						const cells = items.map((it) => '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;' + (o.border ? 'border:1px solid var(--panel-border);' : '') + 'border-radius:var(--radius-sm)">' + imgTag(it.url, sizeMm, o.square) + (o.showLabel ? '<div style="font-size:0.7rem;text-align:center;word-break:break-word;line-height:1.1">' + esc(it.label) + '</div>' : '') + '</div>').join('');
+						el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:6px">' + cells + '</div>';
+					}
+					function printItems(items, cols, sizeMm, o, title) {
+						if (!items.length) return;
+						const cells = items.map((it) => '<div class="cell" style="' + (o.border ? 'border:1px solid #bbb;' : 'border:none;') + '"><img class="' + (o.square ? 'sq' : '') + '" src="' + it.url + '" />' + (o.showLabel ? '<div class="label">' + esc(it.label) + '</div>' : '') + '</div>').join('');
+						const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + esc(title || 'Codes') + '</title><style>' +
+							'@page{size:A4;margin:10mm}*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#000}' +
+							'.grid{display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:6mm}' +
+							'.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm;border-radius:2mm;page-break-inside:avoid;break-inside:avoid}' +
+							'.cell img{width:' + sizeMm + 'mm;height:auto;display:block}.cell img.sq{height:' + sizeMm + 'mm}' +
+							'.label{font-size:8pt;text-align:center;word-break:break-word;margin-top:1mm;line-height:1.1}' +
+							'</style></head><body><div class="grid">' + cells + '</div></body></html>';
+						const w = window.open('', '_blank');
+						if (!w) { return false; }
+						w.document.open(); w.document.write(html); w.document.close();
+						setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 400);
+						return true;
+					}
+
+					// ── Bulk 1D barcode ──
+					let bbItems = [];
+					$('bb-generate')?.addEventListener('click', async () => {
+						const lines = parseLines($('bb-input').value);
+						if (!lines.length) { setStatus($('bb-status'), 'Add at least one line.'); return; }
+						if (lines.length > 300) { setStatus($('bb-status'), 'Too many (max 300).'); return; }
+						const fmt = $('bb-format').value;
+						const o = { cols: Math.min(8, Math.max(1, parseInt($('bb-cols').value || '3', 10) || 3)), sizeMm: parseInt($('bb-size').value || '55', 10) || 55, showLabel: $('bb-label').checked, border: $('bb-border').checked, square: false };
+						setStatus($('bb-status'), 'Loading barcode library…');
+						try { await ensureBarcode(); } catch (e) { setStatus($('bb-status'), e.message); return; }
+						bbItems = []; const bad = [];
+						for (const it of lines) { try { bbItems.push({ label: it.label, url: bcUrl(it.content, fmt) }); } catch (e) { bad.push(it.content); } }
+						renderPreview($('bb-preview'), bbItems, o.cols, o.sizeMm, o);
+						if ($('bb-print')) $('bb-print').disabled = !bbItems.length;
+						setStatus($('bb-status'), bbItems.length + ' code(s) ready' + (bad.length ? (' · ' + bad.length + ' invalid for ' + fmt) : '') + '.');
+					});
+					$('bb-print')?.addEventListener('click', () => { const o = { cols: parseInt($('bb-cols').value || '3', 10) || 3, sizeMm: parseInt($('bb-size').value || '55', 10) || 55, showLabel: $('bb-label').checked, border: $('bb-border').checked, square: false }; if (!printItems(bbItems, o.cols, o.sizeMm, o, 'Barcode sheet')) setStatus($('bb-status'), 'Popup blocked.'); });
+					$('bb-clear')?.addEventListener('click', () => { $('bb-input').value = ''; bbItems = []; renderPreview($('bb-preview'), [], 3, 55, {}); if ($('bb-print')) $('bb-print').disabled = true; setStatus($('bb-status'), ''); });
+					$('bb-format')?.addEventListener('change', () => { bbItems = []; if ($('bb-print')) $('bb-print').disabled = true; renderPreview($('bb-preview'), [], 3, 55, {}); });
+
+					// ── Templates (QR) ──
+					let btUrl = '';
+					function showTemplate() {
+						const t = $('bt-type').value;
+						for (const k of ['wifi', 'vcard', 'email', 'sms', 'phone', 'geo']) { const el = $('bt-' + k); if (el) el.hidden = (k !== t); }
+					}
+					$('bt-type')?.addEventListener('change', showTemplate);
+					$('bt-generate')?.addEventListener('click', () => {
+						const t = $('bt-type').value;
+						let data = '';
+						const escSpec = (s) => String(s == null ? '' : s).replace(/([\\;,:])/g, '\\$1');
+						if (t === 'wifi') {
+							const sec = $('bt-wifi-sec').value;
+							data = 'WIFI:T:' + sec + ';S:' + escSpec($('bt-wifi-ssid').value) + ';' + (sec === 'nopass' ? '' : ('P:' + escSpec($('bt-wifi-pass').value) + ';')) + ($('bt-wifi-hidden').checked ? 'H:true;' : '') + ';';
+						} else if (t === 'vcard') {
+							data = 'BEGIN:VCARD\nVERSION:3.0\nFN:' + $('bt-vc-name').value + '\nORG:' + $('bt-vc-org').value + '\nTEL:' + $('bt-vc-phone').value + '\nEMAIL:' + $('bt-vc-email').value + '\nURL:' + $('bt-vc-url').value + '\nEND:VCARD';
+						} else if (t === 'email') {
+							data = 'mailto:' + $('bt-em-to').value + '?subject=' + encodeURIComponent($('bt-em-subject').value) + '&body=' + encodeURIComponent($('bt-em-body').value);
+						} else if (t === 'sms') {
+							data = 'SMSTO:' + $('bt-sms-to').value + ':' + $('bt-sms-body').value;
+						} else if (t === 'phone') {
+							data = 'tel:' + $('bt-tel').value;
+						} else if (t === 'geo') {
+							data = 'geo:' + $('bt-geo-lat').value + ',' + $('bt-geo-lng').value;
+						}
+						if (!data) { setStatus($('bt-status'), 'Fill the fields first.'); return; }
+						try {
+							btUrl = qrUrl(data);
+							const out = $('bt-out'); if (out) out.innerHTML = '<img src="' + btUrl + '" style="width:200px;height:200px" />';
+							if ($('bt-download')) $('bt-download').disabled = false;
+							setStatus($('bt-status'), 'QR ready.');
+						} catch (e) { setStatus($('bt-status'), e.message); }
+					});
+					$('bt-download')?.addEventListener('click', () => { if (!btUrl) return; const a = document.createElement('a'); a.href = btUrl; a.download = 'qr-template.png'; a.click(); });
+
+					// ── Sequential asset tags ──
+					let sqItems = [];
+					$('sq-generate')?.addEventListener('click', async () => {
+						const prefix = $('sq-prefix').value || '';
+						const start = parseInt($('sq-start').value || '1', 10);
+						const count = Math.min(300, Math.max(1, parseInt($('sq-count').value || '10', 10)));
+						const step = Math.max(1, parseInt($('sq-step').value || '1', 10));
+						const pad = Math.max(0, parseInt($('sq-pad').value || '0', 10));
+						const type = $('sq-type').value;
+						const o = { cols: Math.min(8, Math.max(1, parseInt($('sq-cols').value || '4', 10) || 4)), sizeMm: parseInt($('sq-size').value || '30', 10) || 30, showLabel: true, border: true, square: type === 'qr' };
+						if (type !== 'qr') { try { await ensureBarcode(); } catch (e) { setStatus($('sq-status'), e.message); return; } }
+						sqItems = [];
+						for (let i = 0; i < count; i++) {
+							const n = start + i * step;
+							const content = prefix + (pad > 0 ? String(n).padStart(pad, '0') : String(n));
+							try { sqItems.push({ label: content, url: type === 'qr' ? qrUrl(content) : bcUrl(content, type) }); } catch (e) {}
+						}
+						renderPreview($('sq-preview'), sqItems, o.cols, o.sizeMm, o);
+						if ($('sq-print')) $('sq-print').disabled = !sqItems.length;
+						setStatus($('sq-status'), sqItems.length + ' tag(s) ready.');
+					});
+					$('sq-print')?.addEventListener('click', () => { const type = $('sq-type').value; const o = { cols: parseInt($('sq-cols').value || '4', 10) || 4, sizeMm: parseInt($('sq-size').value || '30', 10) || 30, showLabel: true, border: true, square: type === 'qr' }; if (!printItems(sqItems, o.cols, o.sizeMm, o, 'Asset tags')) setStatus($('sq-status'), 'Popup blocked.'); });
+
+					// ── Scanner test sheet ──
+					let tsItems = [];
+					$('ts-generate')?.addEventListener('click', async () => {
+						try { await ensureBarcode(); } catch (e) { setStatus($('ts-status'), e.message); return; }
+						try {
+							tsItems = [
+								{ label: 'QR — HELLO-123', url: qrUrl('HELLO-123') },
+								{ label: 'Code 128 — TEST-123', url: bcUrl('TEST-123', 'CODE128') },
+								{ label: 'EAN-13 — 5901234123457', url: bcUrl('5901234123457', 'EAN13') },
+								{ label: 'UPC-A — 036000291452', url: bcUrl('036000291452', 'UPC') },
+								{ label: 'Code 39 — CODE39', url: bcUrl('CODE39', 'CODE39') }
+							];
+							const o = { cols: 2, sizeMm: 45, showLabel: true, border: true, square: false };
+							renderPreview($('ts-preview'), tsItems, 2, 45, o);
+							if ($('ts-print')) $('ts-print').disabled = false;
+							setStatus($('ts-status'), 'Test sheet ready.');
+						} catch (e) { setStatus($('ts-status'), e.message); }
+					});
+					$('ts-print')?.addEventListener('click', () => { if (!printItems(tsItems, 2, 45, { showLabel: true, border: true, square: false }, 'Scanner test sheet')) setStatus($('ts-status'), 'Popup blocked.'); });
+
+					// ── Shared BarcodeDetector helpers ──
+					async function makeDetector() {
+						if (!('BarcodeDetector' in window)) throw new Error('BarcodeDetector not supported in this browser (use Chrome/Edge).');
+						let formats = [];
+						try { formats = await window.BarcodeDetector.getSupportedFormats(); } catch (e) {}
+						return new window.BarcodeDetector(formats.length ? { formats: formats } : undefined);
+					}
+					function rowsToCsv(rows) { return rows.map((r) => r.map((c) => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(',')).join('\n'); }
+
+					// ── Scan to list (camera) ──
+					let scStream = null, scTimer = null, scDetector = null;
+					const scSeen = new Map();
+					function renderScanList() {
+						const el = $('sc-list'); if (!el) return;
+						const rows = [...scSeen.values()];
+						el.innerHTML = rows.length ? rows.map((r) => '<div>' + esc(r.time) + ' &nbsp; <b>' + esc(r.format) + '</b> &nbsp; ' + esc(r.value) + '</div>').join('') : '<span class="tool-label">No scans yet.</span>';
+					}
+					$('sc-start')?.addEventListener('click', async () => {
+						try {
+							scDetector = await makeDetector();
+							scStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+							const v = $('sc-video'); v.srcObject = scStream; v.style.display = 'block'; await v.play();
+							if ($('sc-start')) $('sc-start').disabled = true; if ($('sc-stop')) $('sc-stop').disabled = false;
+							setStatus($('sc-status'), 'Scanning…');
+							const tick = async () => {
+								if (!scStream) return;
+								try {
+									const codes = await scDetector.detect(v);
+									for (const c of codes) {
+										const key = c.format + '|' + c.rawValue;
+										if (!scSeen.has(key)) { scSeen.set(key, { value: c.rawValue, format: c.format, time: new Date().toLocaleTimeString('sv-SE') }); renderScanList(); }
+									}
+								} catch (e) {}
+								scTimer = setTimeout(tick, 350);
+							};
+							tick();
+						} catch (e) { setStatus($('sc-status'), 'Camera error: ' + e.message); }
+					});
+					function stopScan() { if (scTimer) { clearTimeout(scTimer); scTimer = null; } if (scStream) { scStream.getTracks().forEach((t) => t.stop()); scStream = null; } const v = $('sc-video'); if (v) { v.srcObject = null; v.style.display = 'none'; } if ($('sc-start')) $('sc-start').disabled = false; if ($('sc-stop')) $('sc-stop').disabled = true; setStatus($('sc-status'), 'Stopped.'); }
+					$('sc-stop')?.addEventListener('click', stopScan);
+					$('sc-copy')?.addEventListener('click', () => { const rows = [['value', 'format', 'time']].concat([...scSeen.values()].map((r) => [r.value, r.format, r.time])); navigator.clipboard?.writeText(rowsToCsv(rows)).catch(() => {}); setStatus($('sc-status'), 'CSV copied.'); });
+					$('sc-clear')?.addEventListener('click', () => { scSeen.clear(); renderScanList(); });
+
+					// ── Bulk decode images ──
+					const bdRows = [];
+					function renderBd() {
+						const el = $('bd-list'); if (!el) return;
+						el.innerHTML = bdRows.length ? bdRows.map((r) => '<div>' + esc(r.file) + ' &nbsp; <b>' + esc(r.format) + '</b> &nbsp; ' + esc(r.value) + '</div>').join('') : '<span class="tool-label">No decoded codes yet.</span>';
+					}
+					$('bd-files')?.addEventListener('change', async (e) => {
+						const files = Array.from(e.target.files || []);
+						if (!files.length) return;
+						let det;
+						try { det = await makeDetector(); } catch (err) { setStatus($('bd-status'), err.message); return; }
+						setStatus($('bd-status'), 'Decoding ' + files.length + ' image(s)…');
+						for (const f of files) {
+							try {
+								const bmp = await createImageBitmap(f);
+								const codes = await det.detect(bmp);
+								if (!codes.length) bdRows.push({ file: f.name, format: '—', value: '(no code found)' });
+								for (const c of codes) bdRows.push({ file: f.name, format: c.format, value: c.rawValue });
+								try { bmp.close(); } catch (err) {}
+							} catch (err) { bdRows.push({ file: f.name, format: '—', value: 'error: ' + err.message }); }
+						}
+						renderBd();
+						setStatus($('bd-status'), 'Done. ' + bdRows.length + ' result(s).');
+						e.target.value = '';
+					});
+					$('bd-copy')?.addEventListener('click', () => { const rows = [['file', 'format', 'value']].concat(bdRows.map((r) => [r.file, r.format, r.value])); navigator.clipboard?.writeText(rowsToCsv(rows)).catch(() => {}); setStatus($('bd-status'), 'CSV copied.'); });
+					$('bd-clear')?.addEventListener('click', () => { bdRows.length = 0; renderBd(); setStatus($('bd-status'), ''); });
+
+					// ── CSV → QR ──
+					let cvRows = [], cvItems = [];
+					function parseCsv(text) {
+						const rows = []; let row = [], cell = '', q = false;
+						for (let i = 0; i < text.length; i++) {
+							const ch = text[i];
+							if (q) { if (ch === '"' && text[i + 1] === '"') { cell += '"'; i++; } else if (ch === '"') q = false; else cell += ch; }
+							else if (ch === '"') q = true;
+							else if (ch === ',' || ch === ';') { row.push(cell); cell = ''; }
+							else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+							else if (ch !== '\r') cell += ch;
+						}
+						if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+						return rows.filter((r) => r.some((c) => String(c).trim() !== ''));
+					}
+					function fillCvCols() {
+						const header = $('cv-header') && $('cv-header').checked;
+						const cols = cvRows.length ? cvRows[0].length : 0;
+						const names = [];
+						for (let i = 0; i < cols; i++) names.push(header ? (cvRows[0][i] || ('Column ' + (i + 1))) : ('Column ' + (i + 1)));
+						const cSel = $('cv-content-col'), lSel = $('cv-label-col');
+						const opts = names.map((n, i) => '<option value="' + i + '">' + esc(n) + '</option>').join('');
+						if (cSel) cSel.innerHTML = opts;
+						if (lSel) lSel.innerHTML = '<option value="-1">(none)</option>' + opts;
+						if (lSel) lSel.value = '-1';
+					}
+					function loadCvText(text) { cvRows = parseCsv(text); fillCvCols(); setStatus($('cv-status'), cvRows.length ? (cvRows.length + ' row(s) loaded.') : 'No rows found.'); }
+					$('cv-text')?.addEventListener('input', () => { /* parse on generate to avoid thrash */ });
+					$('cv-file')?.addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { const t = String(r.result || ''); if ($('cv-text')) $('cv-text').value = t; loadCvText(t); }; r.readAsText(f); });
+					$('cv-header')?.addEventListener('change', fillCvCols);
+					$('cv-generate')?.addEventListener('click', () => {
+						loadCvText($('cv-text').value);
+						const header = $('cv-header') && $('cv-header').checked;
+						const dataRows = header ? cvRows.slice(1) : cvRows;
+						const ci = parseInt($('cv-content-col').value || '0', 10);
+						const li = parseInt($('cv-label-col').value || '-1', 10);
+						const o = { cols: Math.min(8, Math.max(1, parseInt($('cv-cols').value || '4', 10) || 4)), sizeMm: parseInt($('cv-size').value || '30', 10) || 30, showLabel: true, border: true, square: true };
+						cvItems = []; const bad = [];
+						for (const r of dataRows.slice(0, 300)) {
+							const content = r[ci] != null ? String(r[ci]).trim() : '';
+							if (!content) continue;
+							const label = (li >= 0 && r[li] != null) ? String(r[li]).trim() : content;
+							try { cvItems.push({ label: label, url: qrUrl(content) }); } catch (e) { bad.push(content); }
+						}
+						renderPreview($('cv-preview'), cvItems, o.cols, o.sizeMm, o);
+						if ($('cv-print')) $('cv-print').disabled = !cvItems.length;
+						setStatus($('cv-status'), cvItems.length + ' QR(s) ready' + (bad.length ? (' · ' + bad.length + ' skipped') : '') + '.');
+					});
+					$('cv-print')?.addEventListener('click', () => { const o = { cols: parseInt($('cv-cols').value || '4', 10) || 4, sizeMm: parseInt($('cv-size').value || '30', 10) || 30, showLabel: true, border: true, square: true }; if (!printItems(cvItems, o.cols, o.sizeMm, o, 'QR sheet')) setStatus($('cv-status'), 'Popup blocked.'); });
+				})();
 
 				document.getElementById('snip-search')?.addEventListener('input', renderSnippets);
 				document.getElementById('snip-tag-bar')?.addEventListener('click', e => {
