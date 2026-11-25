@@ -3925,6 +3925,11 @@ header { align-items: center; }
 .tool-page { display: none; }
 .tool-page.active { display: block; }
 		</style>
+		<style id="wordmark">
+.brand-tl { color: #d97706; }
+body.theme-dark .brand-tl { color: #f59e0b; }
+@media (prefers-color-scheme: dark) { body:not(.theme-light) .brand-tl { color: #f59e0b; } }
+		</style>
 	</head>
 
 	<body>
@@ -3943,7 +3948,7 @@ header { align-items: center; }
 				<header>
 					<div class="mark" aria-hidden="true"><svg class="ectl-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect class="lg-bg" width="32" height="32" rx="6"/><text class="lg-top" x="16" y="14.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">ec</text><text class="lg-bot" x="16" y="26.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">tl</text></svg></div>
 					<div>
-						<h1>ectl.me</h1>
+						<h1>ec<span class="brand-tl">tl</span>.me</h1>
 						<p class="subtitle">Log in to continue.</p>
 					</div>
 				</header>
@@ -4006,7 +4011,7 @@ header { align-items: center; }
 				<header>
 					<div class="mark" aria-hidden="true"><svg class="ectl-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect class="lg-bg" width="32" height="32" rx="6"/><text class="lg-top" x="16" y="14.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">ec</text><text class="lg-bot" x="16" y="26.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" text-anchor="middle" letter-spacing="0.5">tl</text></svg></div>
 					<div>
-						<h1>ectl.me</h1>
+						<h1>ec<span class="brand-tl">tl</span>.me</h1>
 					</div>
 						<div class="header-actions" style="display:flex;gap:8px;align-items:center;">
 							<button class="btn btn-small" id="btn-theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">🌙</button>
