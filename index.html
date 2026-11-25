@@ -3930,6 +3930,7 @@ header { align-items: center; }
 body.theme-dark .brand-tl { color: #f59e0b; }
 @media (prefers-color-scheme: dark) { body:not(.theme-light) .brand-tl { color: #f59e0b; } }
 		</style>
+		<script src="/qrcode.min.js"></script>
 	</head>
 
 	<body>
@@ -13736,6 +13737,26 @@ body {
 					};
 				})();
 
+				// Use a known-good encoder (qrcode-generator); the previous built-in one produced unscannable codes.
+				_QR.toCanvas = function (canvas, text, opts = {}) {
+					if (typeof window.qrcode !== 'function') throw new Error('QR library not loaded');
+					const qr = window.qrcode(0, 'M');
+					qr.addData(String(text == null ? '' : text));
+					qr.make();
+					const n = qr.getModuleCount();
+					const margin = Math.max(4, opts.margin !== undefined ? opts.margin : 4);
+					const scale = opts.scale || Math.max(2, Math.floor((opts.width || 200) / (n + margin * 2)));
+					const total = (n + margin * 2) * scale;
+					canvas.width = canvas.height = total;
+					const ctx = canvas.getContext('2d');
+					ctx.fillStyle = (opts.color && opts.color.light) || '#ffffff';
+					ctx.fillRect(0, 0, total, total);
+					ctx.fillStyle = (opts.color && opts.color.dark) || '#000000';
+					for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+						if (qr.isDark(r, c)) ctx.fillRect((c + margin) * scale, (r + margin) * scale, scale, scale);
+					}
+				};
+
 				document.getElementById('tool-qr-gen')?.addEventListener('click', () => {
 					const text  = (document.getElementById('tool-qr-input')?.value || '').trim();
 					const out   = document.getElementById('tool-qr-out');
@@ -13748,7 +13769,7 @@ body {
 				(!document.body.classList.contains('theme-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 						_QR.toCanvas(canvas, text, {
 							width: 220,
-							color: { dark: isDark ? '#c7d2fe' : '#1e1b4b', light: isDark ? '#1e1b4b' : '#ffffff' }
+							color: { dark: '#000000', light: '#ffffff' }
 						});
 						out.innerHTML = '';
 						out.appendChild(canvas);
