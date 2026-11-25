@@ -13275,6 +13275,57 @@ body {
 					try { return JSON.parse(localStorage.getItem(SNIP_KEY) || '[]'); } catch { return []; }
 				}
 				function saveSnippets(arr) { localStorage.setItem(SNIP_KEY, JSON.stringify(arr)); }
+				// Print a snippet as QR codes: one per non-empty line (long lines chunked)
+				function printSnippetQr(s) {
+					if (!s) return;
+					const clean = (line) => line
+						.replace(/^#{1,3}\s+/, '')
+						.replace(/\*\*([^*]+)\*\*/g, '$1')
+						.replace(/~~([^~]+)~~/g, '$1')
+						.replace(/_([^_]+)_/g, '$1')
+						.replace(/`([^`]+)`/g, '$1')
+						.replace(/^\s*[-*]\s+/, '')
+						.replace(/^\s*\d+\.\s+/, '')
+						.trim();
+					const lines = String(s.body || '').split(/\r?\n/).map(clean).filter(Boolean);
+					if (!lines.length) { showToast?.('Snippet is empty', 'error'); return; }
+					const enc = new TextEncoder();
+					const chunks = [];
+					for (const line of lines) {
+						if (enc.encode(line).length <= 480) { chunks.push({ text: line, label: line }); continue; }
+						let buf = '', part = 1;
+						for (const ch of line) {
+							if (enc.encode(buf + ch).length > 480) {
+								chunks.push({ text: buf, label: line.slice(0, 36) + '… (part ' + part + ')' });
+								buf = ch; part++;
+							} else buf += ch;
+						}
+						if (buf) chunks.push({ text: buf, label: line.slice(0, 36) + '… (part ' + part + ')' });
+					}
+					const items = [];
+					for (const c of chunks) {
+						try {
+							const canvas = document.createElement('canvas');
+							_QR.toCanvas(canvas, c.text, { width: 500, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+							items.push({ label: c.label, url: canvas.toDataURL('image/png') });
+						} catch (e) {}
+					}
+					if (!items.length) { showToast?.('Could not generate QR codes', 'error'); return; }
+					const cols = 3, sizeMm = 40;
+					const cells = items.map((it) => '<div class="cell"><img src="' + it.url + '" /><div class="label">' + escHtml(it.label) + '</div></div>').join('');
+					const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + escHtml(s.title || 'Snippet') + ' — QR</title><style>' +
+						'@page{size:A4;margin:10mm}*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#000}' +
+						'.grid{display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:6mm}' +
+						'.cell{display:flex;flex-direction:column;align-items:center;padding:3mm;border:1px solid #ddd;border-radius:2mm;page-break-inside:avoid;break-inside:avoid}' +
+						'.cell img{width:' + sizeMm + 'mm;height:' + sizeMm + 'mm;display:block}' +
+						'.label{font-size:8pt;text-align:center;word-break:break-word;margin-top:1mm;line-height:1.1}' +
+						'</style></head><body><div class="grid">' + cells + '</div></body></html>';
+					const w = window.open('', '_blank');
+					if (!w) { showToast?.('Popup blocked — allow popups to print', 'error'); return; }
+					w.document.open(); w.document.write(html); w.document.close();
+					setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 400);
+				}
+
 
 				let _snipEditId = null;
 				let _snipActiveTag = '';
@@ -13350,7 +13401,7 @@ body {
 									${s.use_count ? `<span class="snip-use-count" title="Used ${s.use_count} time${s.use_count !== 1 ? 's' : ''}">×${s.use_count}</span>` : ''}
 									<div class="snip-item-actions">
 										<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
-										<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
+										<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button><button class="btn btn-small" data-action="qr" data-sid="${escHtml(s.id)}" title="Print QR codes (one per line)">QR</button>
 										<button class="btn btn-small" data-action="edit" data-sid="${escHtml(s.id)}" title="Edit">✏</button>
 										<button class="btn btn-small" data-action="del" data-sid="${escHtml(s.id)}" title="Delete">🗑</button>
 									</div>
@@ -13372,7 +13423,7 @@ body {
 								${s.use_count ? `<span class="snip-use-count" title="Used ${s.use_count} time${s.use_count !== 1 ? 's' : ''}">×${s.use_count}</span>` : ''}
 								<div class="snip-item-actions">
 									<button class="btn btn-small" data-action="insert" data-sid="${escHtml(s.id)}" title="Insert into current note">→ Note</button>
-									<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button>
+									<button class="btn btn-small" data-action="copy" data-sid="${escHtml(s.id)}" title="Copy to clipboard">Copy</button><button class="btn btn-small" data-action="qr" data-sid="${escHtml(s.id)}" title="Print QR codes (one per line)">QR</button>
 									<button class="btn btn-small" data-action="edit" data-sid="${escHtml(s.id)}" title="Edit">✏</button>
 									<button class="btn btn-small" data-action="del" data-sid="${escHtml(s.id)}" title="Delete">🗑</button>
 								</div>
@@ -14167,7 +14218,7 @@ body {
 						if (ta && s) { ta.innerHTML += (ta.innerHTML ? '<br><br>' : '') + s.body.replace(/\n/g, '<br>'); scheduleDocSave?.(); showToast('Inserted into note', 'success'); selectTab('tab-notes'); }
 						const ii = snips.findIndex(x => x.id === sid);
 						if (ii >= 0) { snips[ii].use_count = (snips[ii].use_count || 0) + 1; snips[ii].last_used = Date.now(); saveSnippets(snips); }
-					} else if (action === 'pin') {
+					} else if (action === 'qr') { if (s) printSnippetQr(s); } else if (action === 'pin') {
 						const pi = snips.findIndex(x => x.id === sid);
 						if (pi >= 0) { snips[pi].pinned = !snips[pi].pinned; saveSnippets(snips); renderSnippets(); }
 					} else if (action === 'edit') {
