@@ -13307,21 +13307,21 @@ body {
 					for (const c of chunks) {
 						try {
 							const canvas = document.createElement('canvas');
-							_QR.toCanvas(canvas, c.text, { width: 900, margin: 6, color: { dark: '#000000', light: '#ffffff' } });
+							_QR.toCanvas(canvas, c.text, { width: 800, margin: 4, color: { dark: '#000000', light: '#ffffff' } });
 							items.push({ label: c.label, url: canvas.toDataURL('image/png') });
 						} catch (e) {}
 					}
 					if (!items.length) { showToast?.('Could not generate QR codes', 'error'); return; }
 					const cells = items.map((it) => '<div class="cell"><img src="' + it.url + '" /><div class="label">' + escHtml(it.label) + '</div></div>').join('');
 					const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + escHtml(s.title || 'Snippet') + ' — QR</title><style>' +
-						'@page{size:A4;margin:12mm}' +
+						'@page{size:A4;margin:10mm}' +
 						'*{box-sizing:border-box}' +
 						'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#111}' +
-						'.hdr{font-size:12pt;font-weight:700;margin:0 0 6mm}' +
-						'.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8mm}' +
-						'.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:9mm 7mm;min-height:118mm;border:1px dashed #bdbdbd;border-radius:14mm;page-break-inside:avoid;break-inside:avoid}' +
-						'.cell img{width:72mm;height:72mm;display:block}' +
-						'.label{font-size:9.5pt;line-height:1.3;font-weight:600;margin-top:5mm;word-break:break-word;max-width:100%}' +
+						'.hdr{font-size:11pt;font-weight:700;margin:0 0 4mm}' +
+						'.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm}' +
+						'.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6mm 5mm;min-height:72mm;border:1px dashed #bdbdbd;border-radius:10mm;page-break-inside:avoid;break-inside:avoid}' +
+						'.cell img{width:48mm;height:48mm;display:block}' +
+						'.label{font-size:8.5pt;line-height:1.25;font-weight:600;margin-top:3mm;word-break:break-word;max-width:100%}' +
 						'</style></head><body><div class="hdr">' + escHtml(s.title || 'Snippet') + '</div><div class="grid">' + cells + '</div></body></html>';
 					const w = window.open('', '_blank');
 					if (!w) { showToast?.('Popup blocked — allow popups to print', 'error'); return; }
