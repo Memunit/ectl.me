@@ -8768,9 +8768,7 @@ header { align-items: center; }
 						const snb = body && body.SerialNumberBOM;
 						const out = [];
 						const sp = (snb && Array.isArray(snb.spare_part)) ? snb.spare_part : [];
-						for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn) out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_enhance_desc || p.spare_part_description || '', ProductName: '', ProductNumber: '' }); }
-						const uc = (snb && Array.isArray(snb.unit_configuration)) ? snb.unit_configuration : [];
-						for (const p of uc) { const pn = p.part_number; if (pn) out.push({ PartNumber: pn, Category: '', Description: p.part_description || '', ProductName: '', ProductNumber: p.parent_part_number || '' }); }
+						const seen = new Set(); for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn && !seen.has(pn)) { seen.add(pn); out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_part_description || p.spare_enhance_desc || '', ProductName: '', ProductNumber: '' }); } }
 						return out;
 					}
 
@@ -8778,19 +8776,6 @@ header { align-items: center; }
 					// then load the product's parts (or the serial's own parts).
 					async function searchSerial(sn) {
 						pendingSerial = null;
-						const mapped = loadSerials()[sn];
-						if (mapped && mapped.productNumber) {
-							const cached = loadDB()[mapped.productNumber];
-							if (cached && cached.parts && cached.parts.length) {
-								qEl.value = sn;
-								showParts(cached.productName || mapped.productName || mapped.productNumber, cached.parts, mapped.productNumber);
-								setStatus('Serial ' + sn + ' → ' + (cached.productName || mapped.productName || mapped.productNumber) + ' (saved). Loaded instantly.');
-								return true;
-							}
-							qEl.value = sn;
-							const ok = await lookupPN(mapped.productNumber).catch(() => false);
-							if (ok) { setStatus('Serial ' + sn + ' → ' + (mapped.productName || mapped.productNumber) + ' (saved mapping).'); return true; }
-						}
 
 						setStatus('Looking up serial ' + sn + '…');
 						const data = await callProxy({ sn: sn });
@@ -8800,17 +8785,23 @@ header { align-items: center; }
 
 						if (cands.length === 1) {
 							const prod = cands[0];
+							const pn = prod.ProductNumber;
 							const sm = loadSerials();
-							sm[sn] = { productNumber: prod.ProductNumber, productName: prod.ProductName, savedAt: Date.now() };
+							sm[sn] = { productNumber: pn, productName: prod.ProductName, savedAt: Date.now() };
 							saveSerials(sm);
 							qEl.value = sn;
-							try {
-								const ok = await lookupPN(prod.ProductNumber);
-								if (!ok && snParts.length) showParts(prod.ProductName || prod.ProductNumber, snParts, prod.ProductNumber);
-								setStatus('Serial ' + sn + ' → ' + (prod.ProductName || prod.ProductNumber) + ' (' + prod.ProductNumber + '). Model saved.');
-							} catch (e) {
-								if (snParts.length) { showParts(prod.ProductName || prod.ProductNumber, snParts, prod.ProductNumber); setStatus('Serial ' + sn + ' → ' + prod.ProductNumber + ' (from serial parts).'); }
-								else throw e;
+							if (snParts.length) {
+								const db = loadDB();
+								db[pn] = { productNumber: pn, productName: prod.ProductName || '', savedAt: Date.now(), parts: snParts };
+								saveDB(db);
+								showParts(prod.ProductName || pn, snParts, pn);
+								setStatus('Serial ' + sn + ' → ' + (prod.ProductName || pn) + ' (' + pn + ') — ' + snParts.length + ' spare parts.');
+							} else {
+								try {
+									const ok = await lookupPN(pn);
+									if (!ok) setStatus('No spare parts found for ' + sn + '.');
+									else setStatus('Serial ' + sn + ' → ' + (prod.ProductName || pn) + ' (' + pn + ').');
+								} catch (e) { setStatus('Error: ' + e.message); }
 							}
 							renderSaved();
 							return true;
@@ -18091,9 +18082,7 @@ function _applySlash(cmd, ta) {
 				const snb = body && body.SerialNumberBOM;
 				const out = [];
 				const sp = (snb && Array.isArray(snb.spare_part)) ? snb.spare_part : [];
-				for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn) out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_enhance_desc || p.spare_part_description || '', ProductName: '', ProductNumber: '' }); }
-				const uc = (snb && Array.isArray(snb.unit_configuration)) ? snb.unit_configuration : [];
-				for (const p of uc) { const pn = p.part_number; if (pn) out.push({ PartNumber: pn, Category: '', Description: p.part_description || '', ProductName: '', ProductNumber: p.parent_part_number || '' }); }
+				const seen = new Set(); for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn && !seen.has(pn)) { seen.add(pn); out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_part_description || p.spare_enhance_desc || '', ProductName: '', ProductNumber: '' }); } }
 				return out;
 			}
 
@@ -18264,7 +18253,6 @@ function _applySlash(cmd, ta) {
 					return;
 				}
 				const saved = loadSerials()[sn];
-				if (saved && saved.productNumber) { hpStatus.textContent = 'Serial ' + sn + ' → ' + saved.productNumber + ' (saved).'; await loadHPParts(saved.productNumber); return; }
 				hpStatus.textContent = 'Resolving serial ' + sn + '…';
 				try {
 					const qs = new URLSearchParams({ sn: sn }).toString();
@@ -18276,21 +18264,19 @@ function _applySlash(cmd, ta) {
 						const sm = loadSerials();
 						sm[sn] = { productNumber: pn, productName: cands[0].ProductName, savedAt: Date.now() };
 						saveSerials(sm);
-						const ok = await loadHPParts(pn);
-						if (!ok) {
-							const snParts = partsFromSerial(data && data.Body);
-							if (snParts.length) {
-								const hd = hpDB();
-								hd[pn] = { productNumber: pn, productName: cands[0].ProductName || '', savedAt: Date.now(), parts: snParts };
-								try { localStorage.setItem('ectl_hp_parts_v1', JSON.stringify(hd)); } catch (e) {}
-								hpParts = snParts;
-								hpPnEl.value = pn;
-								const m = cur(); if (m) { m.hpProductNumber = pn; save(); }
-								clearSelection();
-								renderHPParts();
-								renderSummary();
-								hpStatus.textContent = 'Serial ' + sn + ' → ' + (cands[0].ProductName || pn) + ' (' + pn + ') — ' + snParts.length + ' unit parts loaded.';
-							}
+						await loadHPParts(pn);
+						const snParts = partsFromSerial(data && data.Body);
+						if (snParts.length) {
+							hpParts = snParts;
+							const hd = hpDB();
+							hd[pn] = { productNumber: pn, productName: cands[0].ProductName || '', savedAt: Date.now(), parts: hpParts };
+							try { localStorage.setItem('ectl_hp_parts_v1', JSON.stringify(hd)); } catch (e) {}
+							hpPnEl.value = pn;
+							const m = cur(); if (m) { m.hpProductNumber = pn; save(); }
+							clearSelection();
+							renderHPParts();
+							renderSummary();
+							hpStatus.textContent = 'Serial ' + sn + ' → ' + (cands[0].ProductName || pn) + ' (' + pn + ') — ' + hpParts.length + ' parts.';
 						}
 					} else if (cands.length > 1 && candsEl) {
 						candsEl.innerHTML = '<option value="">Pick a product…</option>' + cands.map((c) => '<option value="' + esc(c.ProductNumber) + '">' + esc(c.ProductNumber + (c.ProductName ? ' — ' + c.ProductName : '')) + '</option>').join('');
