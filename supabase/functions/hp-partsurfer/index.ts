@@ -41,6 +41,9 @@ function buildInput(url: URL): string | null {
 	const q = (url.searchParams.get('q') || '').trim();
 	const path = (url.searchParams.get('path') || '').trim();
 
+	if (sn && pn) {
+		return `/SerialNumber/GetSerialNumber/${encodeURIComponent(sn)}/ProductNumber/${encodeURIComponent(pn)}/country/${COUNTRY}/usertype/${USERTYPE}`;
+	}
 	if (pn) {
 		return `/Product/GetProduct/${encodeURIComponent(pn)}/country/${COUNTRY}/usertype/${USERTYPE}`;
 	}

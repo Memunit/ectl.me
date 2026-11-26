@@ -8818,7 +8818,7 @@ header { align-items: center; }
 						const data = await callProxy({ sn: sn });
 						const body = data && data.Body;
 						const cands = candidateProducts(body);
-						const snParts = partsFromSerial(body);
+						let snParts = partsFromSerial(body);
 
 						if (cands.length === 1) {
 							const prod = cands[0];
@@ -8827,6 +8827,7 @@ header { align-items: center; }
 							sm[sn] = { productNumber: pn, productName: prod.ProductName, savedAt: Date.now() };
 							saveSerials(sm);
 							qEl.value = sn;
+							if (!snParts.length) { try { const d2 = await callProxy({ sn: sn, pn: pn }); snParts = partsFromSerial(d2 && d2.Body); } catch (e) {} }
 							if (snParts.length) {
 								const db = loadDB();
 								db[pn] = { productNumber: pn, productName: prod.ProductName || '', savedAt: Date.now(), parts: snParts };
@@ -8963,6 +8964,25 @@ header { align-items: center; }
 						qEl.value = pn;
 						try {
 							searchBtn.disabled = true;
+							if (pendingSerial) {
+								try {
+									const d2 = await callProxy({ sn: pendingSerial, pn: pn });
+									const sp = partsFromSerial(d2 && d2.Body);
+									if (sp.length) {
+										const db = loadDB(); const existing = db[pn] || {};
+										db[pn] = { productNumber: pn, productName: existing.productName || '', savedAt: Date.now(), parts: sp };
+										saveDB(db);
+										showParts(existing.productName || pn, sp, pn);
+										const sm = loadSerials();
+										sm[pendingSerial] = { productNumber: pn, productName: existing.productName || '', savedAt: Date.now() };
+										saveSerials(sm);
+										setStatus('Saved: serial ' + pendingSerial + ' → ' + (existing.productName || pn) + ' (' + pn + ') — ' + sp.length + ' spare parts.');
+										pendingSerial = null;
+										renderSaved();
+										return;
+									}
+								} catch (e) {}
+							}
 							const ok = await lookupPN(pn);
 							if (ok && pendingSerial) {
 								const m = loadDB()[pn] || {};
@@ -18128,6 +18148,14 @@ function _applySlash(cmd, ta) {
 				return out;
 			}
 
+			async function fetchSerialParts(sn, pn) {
+				try {
+					const qs = new URLSearchParams({ sn: sn, pn: pn }).toString();
+					const res = await fetch(SUPABASE_URL + '/functions/v1/hp-partsurfer?' + qs, { headers: { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' } });
+					const data = await res.json();
+					return partsFromSerial(data && data.Body);
+				} catch (e) { return []; }
+			}
 			function normModel(s) {
 				return String(s || '').toLowerCase()
 					.replace(/\b(hp|hewlett|packard|pc|nb|notebook|all|k12|sps|series|business|computer)\b/g, ' ')
@@ -18372,6 +18400,14 @@ function _applySlash(cmd, ta) {
 					sm[sn] = { productNumber: chosenPn, productName: (sm[sn] && sm[sn].productName) || '', savedAt: Date.now() };
 					saveSerials(sm);
 					await loadHPParts(chosenPn);
+					const sp = await fetchSerialParts(sn, chosenPn);
+					if (sp.length) {
+						hpParts = sp;
+						const hd = hpDB();
+						hd[chosenPn] = { productNumber: chosenPn, productName: (loadSerials()[sn] && loadSerials()[sn].productName) || '', savedAt: Date.now(), parts: sp };
+						try { localStorage.setItem('ectl_hp_parts_v1', JSON.stringify(hd)); } catch (e) {}
+						clearSelection(); renderHPParts(); renderSummary();
+					}
 					const nm = lastCandNames[chosenPn];
 					const mt = nm ? autoSelectModel(nm, chosenPn) : null;
 					hpStatus.textContent = 'Serial ' + sn + ' → ' + (nm || chosenPn) + ' (' + chosenPn + ')' + (hpParts.length ? (' — ' + hpParts.length + ' parts') : '') + modelNote(mt);
@@ -18390,7 +18426,8 @@ function _applySlash(cmd, ta) {
 						sm[sn] = { productNumber: pn, productName: cands[0].ProductName, savedAt: Date.now() };
 						saveSerials(sm);
 						await loadHPParts(pn);
-						const snParts = partsFromSerial(data && data.Body);
+						let snParts = partsFromSerial(data && data.Body);
+						if (!snParts.length) snParts = await fetchSerialParts(sn, pn);
 						if (snParts.length) {
 							hpParts = snParts;
 							const hd = hpDB();
