@@ -4684,6 +4684,10 @@ header { align-items: center; }
 								<span class="tool-label" id="rep-hp-status"></span>
 							</div>
 
+							<div class="tool-row" style="margin-top:8px;flex-wrap:wrap;gap:12px;align-items:center">
+								<label class="tool-check"><input type="checkbox" id="rep-time-fee" /> Time fee (1 000 kr)</label>
+								<span class="tool-label">adds 1 000 kr to the total</span>
+							</div>
 							<div id="rep-summary" style="margin-top:6px"></div>
 
 							<div class="tool-row" id="rep-parts-filter-row" style="margin-top:8px" hidden>
@@ -18057,11 +18061,13 @@ function _applySlash(cmd, ta) {
 			const summaryEl = $('rep-summary'), partsListEl = $('rep-parts-list');
 			const partsFilterEl = $('rep-parts-filter');
 			const partsFilterRow = $('rep-parts-filter-row');
+			const timeFeeEl = $('rep-time-fee');
 			const hpPnEl = $('rep-hp-pn'), hpSavedEl = $('rep-hp-saved'), hpStatus = $('rep-hp-status'), candsEl = $('rep-serial-cands');
 			let db = load();
 			let currentKey = null;
 			let hpParts = [];        // parts for the current machine (from HP)
 			const selected = {};     // PartNumber -> true
+			let lastCandNames = {};  // productNumber -> name (for multi-product serials)
 
 			const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 			function load() { try { const d = JSON.parse(localStorage.getItem(R_KEY)); return (d && d.models) ? d : { models: {}, partPrices: {} }; } catch (e) { return { models: {}, partPrices: {} }; } }
@@ -18097,6 +18103,52 @@ function _applySlash(cmd, ta) {
 				const sp = (snb && Array.isArray(snb.spare_part)) ? snb.spare_part : [];
 				const seen = new Set(); for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn && !seen.has(pn)) { seen.add(pn); out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_part_description || p.spare_enhance_desc || '', ProductName: '', ProductNumber: '' }); } }
 				return out;
+			}
+
+			function normModel(s) {
+				return String(s || '').toLowerCase()
+					.replace(/\b(hp|hewlett|packard|pc|nb|notebook|all|k12|sps|series|business|computer)\b/g, ' ')
+					.replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+			}
+			function modelTokens(s) {
+				const n = normModel(s);
+				return new Set(n ? n.split(' ').filter((w) => w.length >= 2) : []);
+			}
+			function modelScore(a, b) {
+				const A = modelTokens(a), B = modelTokens(b);
+				if (!A.size || !B.size) return 0;
+				let inter = 0; A.forEach((w) => { if (B.has(w)) inter++; });
+				const dice = (2 * inter) / (A.size + B.size);
+				const na = normModel(a), nb = normModel(b);
+				const bonus = na && nb ? (na === nb ? 0.3 : (na.includes(nb) || nb.includes(na) ? 0.15 : 0)) : 0;
+				return dice + bonus;
+			}
+			function autoSelectModel(productName, productNumber) {
+				const models = db.models || {};
+				const keys = Object.keys(models);
+				if (!keys.length) return null;
+				let best = null, bestScore = 0;
+				if (productNumber) {
+					const pn = normModel(productNumber);
+					for (const k of keys) { if (pn && normModel(models[k].model).includes(pn)) { best = k; bestScore = 9; break; } }
+				}
+				if (!best && productName) {
+					for (const k of keys) { const sc = modelScore(models[k].model, productName); if (sc > bestScore) { bestScore = sc; best = k; } }
+				}
+				if (!best || bestScore < 0.7) return null;
+				currentKey = best;
+				if (modelSel) modelSel.value = best;
+				const m = cur();
+				if (m && productNumber) { m.hpProductNumber = productNumber; save(); }
+				if (timeFeeEl) timeFeeEl.checked = !!(m && m.timeFee);
+				clearSelection();
+				renderHPParts();
+				renderSummary();
+				return { key: best, model: cur(), score: bestScore };
+			}
+			function modelNote(mt) {
+				if (mt) return ' · model: ' + ((mt.model && mt.model.model) || mt.key);
+				return Object.keys(db.models || {}).length ? ' · no model match' : ' · import price table to match model';
 			}
 
 			// ── Import from Excel (tab-separated) / CSV ──
@@ -18206,6 +18258,7 @@ function _applySlash(cmd, ta) {
 			}
 			function loadModelUI() {
 				const m = cur();
+				if (timeFeeEl) timeFeeEl.checked = !!(m && m.timeFee);
 				clearSelection();
 				if (m && m.hpProductNumber) { hpPnEl.value = m.hpProductNumber; loadHPParts(m.hpProductNumber); }
 				else { hpParts = []; hpPnEl.value = ''; renderHPParts(); }
@@ -18213,6 +18266,7 @@ function _applySlash(cmd, ta) {
 				if (serialEl.value) autoDecodeSerial();
 			}
 			modelSel.addEventListener('change', () => { currentKey = modelSel.value; loadModelUI(); });
+			timeFeeEl?.addEventListener('change', () => { const m = cur(); if (m) { m.timeFee = timeFeeEl.checked; save(); } renderSummary(); });
 
 			// ── HP parts (linked to the HP PartSurfer tab data) ──
 			function renderSavedHpOptions() {
@@ -18264,6 +18318,9 @@ function _applySlash(cmd, ta) {
 					sm[sn] = { productNumber: chosenPn, productName: (sm[sn] && sm[sn].productName) || '', savedAt: Date.now() };
 					saveSerials(sm);
 					await loadHPParts(chosenPn);
+					const nm = lastCandNames[chosenPn];
+					const mt = nm ? autoSelectModel(nm, chosenPn) : null;
+					hpStatus.textContent = 'Serial ' + sn + ' → ' + (nm || chosenPn) + ' (' + chosenPn + ')' + (hpParts.length ? (' — ' + hpParts.length + ' parts') : '') + modelNote(mt);
 					return;
 				}
 				const saved = loadSerials()[sn];
@@ -18290,9 +18347,11 @@ function _applySlash(cmd, ta) {
 							clearSelection();
 							renderHPParts();
 							renderSummary();
-							hpStatus.textContent = 'Serial ' + sn + ' → ' + (cands[0].ProductName || pn) + ' (' + pn + ') — ' + hpParts.length + ' parts.';
 						}
+						const mt = autoSelectModel(cands[0].ProductName, pn);
+						hpStatus.textContent = 'Serial ' + sn + ' → ' + (cands[0].ProductName || pn) + ' (' + pn + ')' + (hpParts.length ? (' — ' + hpParts.length + ' parts') : '') + modelNote(mt);
 					} else if (cands.length > 1 && candsEl) {
+						lastCandNames = Object.fromEntries(cands.map((c) => [c.ProductNumber, c.ProductName || '']));
 						candsEl.innerHTML = '<option value="">Pick a product…</option>' + cands.map((c) => '<option value="' + esc(c.ProductNumber) + '">' + esc(c.ProductNumber + (c.ProductName ? ' — ' + c.ProductName : '')) + '</option>').join('');
 						candsEl.dataset.serial = sn;
 						candsEl.style.display = 'inline-block';
@@ -18426,8 +18485,10 @@ function _applySlash(cmd, ta) {
 					total += price;
 					rows.push({ pn: pn, desc: p ? p.Description : '', cat: p ? p.Category : '', price: price });
 				}
+				const fee = (m.timeFee ? 1000 : 0);
+				total += fee;
 				const verdict = (limit != null && rows.length) ? (total <= limit ? 'repair' : 'dispose') : null;
-				return { m, year, limit, total, rows, verdict };
+				return { m, year, limit, total, rows, verdict, fee };
 			}
 			function renderSummary() {
 				const m = cur();
@@ -18440,8 +18501,9 @@ function _applySlash(cmd, ta) {
 				const vColor = r.verdict === 'repair' ? '#1a7f37' : (r.verdict === 'dispose' ? '#b42318' : 'inherit');
 				const vText = r.verdict === 'repair' ? '✅ REPAIR (Reparera)' : (r.verdict === 'dispose' ? '⛔ DISPOSE (Skrota/Ersätt)' : '—');
 				const rowsHtml = r.rows.map((x) => '<div style="display:flex;justify-content:space-between;gap:8px"><span>' + esc(x.pn) + ' <span class="tool-label">' + esc(x.cat) + '</span></span><strong>' + fmt(x.price) + '</strong></div>').join('');
+				const feeHtml = r.fee ? '<div style="display:flex;justify-content:space-between"><span>Time fee</span><strong>' + fmt(r.fee) + '</strong></div>' : '';
 				summaryEl.innerHTML = '<div style="border:1px solid var(--panel-border);border-radius:var(--radius-sm);padding:10px;display:flex;flex-direction:column;gap:4px;font-size:0.86rem">' +
-					rowsHtml +
+					rowsHtml + feeHtml +
 					'<div style="display:flex;justify-content:space-between;border-top:1px solid var(--panel-border);padding-top:4px;margin-top:2px"><span><strong>Total</strong></span><strong>' + fmt(r.total) + '</strong></div>' +
 					'<div style="display:flex;justify-content:space-between"><span>Limit' + (r.year ? ' (year ' + r.year + ')' : '') + '</span><strong>' + (r.limit != null ? fmt(r.limit) : '—') + '</strong></div>' +
 					'<div style="display:flex;justify-content:space-between;margin-top:4px"><span><strong>Decision</strong></span><strong style="color:' + vColor + '">' + vText + '</strong></div>' +
@@ -18460,6 +18522,7 @@ function _applySlash(cmd, ta) {
 					lines.push('Parts:');
 					for (const x of r.rows) lines.push('- ' + x.pn + (x.desc ? (' — ' + x.desc) : '') + (x.price ? (' — ' + fmt(x.price)) : ''));
 				}
+				if (r.fee) lines.push('Time fee: ' + fmt(r.fee));
 				lines.push('Estimated cost: ' + fmt(r.total));
 				if (r.limit != null) lines.push('Repair limit (year ' + r.year + '): ' + fmt(r.limit));
 				lines.push('Decision: ' + (r.verdict === 'repair' ? 'REPAIR' : (r.verdict === 'dispose' ? 'DISPOSE' : '—')));
