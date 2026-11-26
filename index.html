@@ -3941,6 +3941,14 @@ header { align-items: center; }
 #rep-parts-list .rep-part-pn { font-family: 'IBM Plex Mono', ui-monospace, monospace; white-space: nowrap; }
 #rep-parts-list .rep-part-desc { flex: 1; min-width: 0; color: var(--muted); }
 		</style>
+		<style id="rep-jira-modal">
+.rep-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.rep-modal-overlay[hidden] { display: none !important; }
+.rep-modal { width: min(780px, 100%); max-height: 90vh; display: flex; flex-direction: column; gap: 10px; background: var(--card-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.rep-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#rep-jira-text { min-height: 320px; max-height: 60vh; resize: vertical; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.82rem; line-height: 1.45; }
+.rep-modal-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+		</style>
 	</head>
 
 	<body>
@@ -4696,7 +4704,7 @@ header { align-items: center; }
 							<div id="rep-parts-list" style="margin-top:6px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:0"><span class="tool-label">Load a machine's HP parts above to pick parts.</span></div>
 
 							<div class="tool-row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
-								<button class="btn btn-small" id="rep-jira" type="button">📋 Copy Jira list</button>
+								<button class="btn btn-small" id="rep-jira" type="button" title="Preview &amp; edit the Jira-ready text">📋 Jira text</button>
 							</div>
 						</div>
 					</div>
@@ -6771,7 +6779,21 @@ header { align-items: center; }
 	</div>
 
 	<!-- ══ AI ASSISTANT MODAL ════════════════════════════════════════ -->
-	<div id="ai-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="AI writing assistant">
+		<div id="rep-jira-overlay" class="rep-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="Jira-ready text">
+		<div class="rep-modal">
+			<div class="rep-modal-head">
+				<strong>Jira-ready text</strong>
+				<button class="btn btn-small" id="rep-jira-close" type="button" aria-label="Close">✕</button>
+			</div>
+			<textarea class="input" id="rep-jira-text" spellcheck="false" placeholder="Jira-ready text…"></textarea>
+			<div class="rep-modal-actions">
+				<button class="btn btn-accent btn-small" id="rep-jira-copy" type="button">📋 Copy</button>
+				<button class="btn btn-small" id="rep-jira-regen" type="button">↻ Regenerate</button>
+				<span class="tool-label" id="rep-jira-modal-status"></span>
+			</div>
+		</div>
+	</div>
+<div id="ai-modal-overlay" hidden role="dialog" aria-modal="true" aria-label="AI writing assistant">
 		<div id="ai-modal">
 			<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
 				<h3 style="margin:0;flex:1;font-size:0.95rem">&#129302; AI Writing Assistant</h3>
@@ -18511,9 +18533,9 @@ function _applySlash(cmd, ta) {
 			}
 
 			// ── Jira-ready copy ──
-			$('rep-jira')?.addEventListener('click', () => {
-				const m = cur(); if (!m) return;
-				const r = calc(); if (!r) return;
+			function buildJiraText() {
+				const m = cur(); if (!m) return '';
+				const r = calc(); if (!r) return '';
 				const sn = serialEl.value.trim();
 				const lines = [];
 				lines.push('Model: ' + label(m) + (sn ? ('  ·  Serial: ' + sn) : ''));
@@ -18526,8 +18548,32 @@ function _applySlash(cmd, ta) {
 				lines.push('Estimated cost: ' + fmt(r.total));
 				if (r.limit != null) lines.push('Repair limit (year ' + r.year + '): ' + fmt(r.limit));
 				lines.push('Decision: ' + (r.verdict === 'repair' ? 'REPAIR' : (r.verdict === 'dispose' ? 'DISPOSE' : '—')));
-				navigator.clipboard?.writeText(lines.join('\n')).catch(() => {});
-				importStatus.textContent = 'Jira-ready list copied.';
+				return lines.join('\n');
+			}
+			const jiraOverlay = document.getElementById('rep-jira-overlay');
+			const jiraTextArea = document.getElementById('rep-jira-text');
+			const jiraModalStatus = document.getElementById('rep-jira-modal-status');
+			function openJiraPreview() {
+				const text = buildJiraText();
+				if (!text) { if (importStatus) importStatus.textContent = 'Pick a model first.'; return; }
+				if (jiraTextArea) jiraTextArea.value = text;
+				if (jiraModalStatus) jiraModalStatus.textContent = '';
+				if (jiraOverlay) jiraOverlay.hidden = false;
+				if (jiraTextArea) jiraTextArea.focus();
+			}
+			function closeJiraPreview() { if (jiraOverlay) jiraOverlay.hidden = true; }
+			$('rep-jira')?.addEventListener('click', openJiraPreview);
+			$('rep-jira-close')?.addEventListener('click', closeJiraPreview);
+			jiraOverlay?.addEventListener('click', (e) => { if (e.target === jiraOverlay) closeJiraPreview(); });
+			document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && jiraOverlay && !jiraOverlay.hidden) closeJiraPreview(); });
+			$('rep-jira-copy')?.addEventListener('click', () => {
+				const text = jiraTextArea ? jiraTextArea.value : '';
+				navigator.clipboard?.writeText(text).catch(() => {});
+				if (jiraModalStatus) jiraModalStatus.textContent = 'Copied';
+			});
+			$('rep-jira-regen')?.addEventListener('click', () => {
+				const text = buildJiraText();
+				if (text && jiraTextArea) { jiraTextArea.value = text; if (jiraModalStatus) jiraModalStatus.textContent = 'Regenerated'; }
 			});
 
 			renderModels();
