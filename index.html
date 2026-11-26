@@ -18146,6 +18146,21 @@ function _applySlash(cmd, ta) {
 				const bonus = na && nb ? (na === nb ? 0.3 : (na.includes(nb) || nb.includes(na) ? 0.15 : 0)) : 0;
 				return dice + bonus;
 			}
+			function modelCodeCandidates(s) {
+				const t = String(s || '').toUpperCase();
+				const out = [];
+				const re = /(\d+)\s*G\s*(\d{1,2})/g;
+				let m;
+				while ((m = re.exec(t)) !== null) {
+					const digits = m[1];
+					const gen = 'G' + m[2];
+					const nums = new Set();
+					if (digits.length >= 4) nums.add(digits.slice(-4));
+					if (digits.length >= 3) nums.add(digits.slice(-3));
+					for (const n of nums) out.push({ num: n, gen: gen });
+				}
+				return out;
+			}
 			function autoSelectModel(productName, productNumber) {
 				const models = db.models || {};
 				const keys = Object.keys(models);
@@ -18154,6 +18169,22 @@ function _applySlash(cmd, ta) {
 				if (productNumber) {
 					const pn = normModel(productNumber);
 					for (const k of keys) { if (pn && normModel(models[k].model).includes(pn)) { best = k; bestScore = 9; break; } }
+				}
+				if (!best) {
+					const pCodes = modelCodeCandidates(productName);
+					if (pCodes.length) {
+						let cBest = null, cScore = -1;
+						for (const k of keys) {
+							const mCodes = modelCodeCandidates(models[k].model);
+							let hit = false;
+							for (const pc of pCodes) { for (const mc of mCodes) { if (pc.num === mc.num && pc.gen === mc.gen) { hit = true; break; } } if (hit) break; }
+							if (hit) {
+								const sc = 5 + modelScore(models[k].model, productName);
+								if (sc > cScore) { cScore = sc; cBest = k; }
+							}
+						}
+						if (cBest) { best = cBest; bestScore = cScore; }
+					}
 				}
 				if (!best && productName) {
 					for (const k of keys) { const sc = modelScore(models[k].model, productName); if (sc > bestScore) { bestScore = sc; best = k; } }
