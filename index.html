@@ -18090,6 +18090,7 @@ function _applySlash(cmd, ta) {
 			let hpParts = [];        // parts for the current machine (from HP)
 			const selected = {};     // PartNumber -> true
 			let lastCandNames = {};  // productNumber -> name (for multi-product serials)
+			let lastDecodedSerial = '';
 
 			const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 			function load() { try { const d = JSON.parse(localStorage.getItem(R_KEY)); return (d && d.models) ? d : { models: {}, partPrices: {} }; } catch (e) { return { models: {}, partPrices: {} }; } }
@@ -18475,17 +18476,30 @@ function _applySlash(cmd, ta) {
 				const year = pool.reduce((best, y) => (Math.abs(y - base) < Math.abs(best - base) ? y : best), pool[0]);
 				return { year: year, week: wk, dateISO: isoWeekDate(year, wk).toISOString().slice(0, 10) };
 			}
-			function autoDecodeSerial() {
+			function autoDecodeSerial(force) {
 				const sn = serialEl.value.trim().toUpperCase();
 				const dn = $('rep-decode-note');
-				if (!sn) { if (dn) dn.textContent = ''; return; }
-				if (startEl.value && startEl.dataset.auto !== '1') return; // don't override a real date
+				if (!sn) {
+					if (dn) dn.textContent = '';
+					if (startEl.dataset.auto === '1') { startEl.value = ''; startEl.dataset.auto = ''; renderSummary(); }
+					lastDecodedSerial = '';
+					return;
+				}
+				const isNewSerial = sn !== lastDecodedSerial;
+				const manualDate = !!startEl.value && startEl.dataset.auto !== '1';
+				if (manualDate && !isNewSerial && !force) return;
 				const m = cur();
 				const my = (m && m.year) ? parseInt(m.year, 10) : null;
 				const dec = decodeSerialDate(sn, my);
-				if (!dec) { if (dn) dn.textContent = 'Serial date not recognised — enter the warranty start manually.'; return; }
+				if (!dec) {
+					if (dn) dn.textContent = 'Serial date not recognised — enter the warranty start manually.';
+					if (startEl.dataset.auto === '1') { startEl.value = ''; startEl.dataset.auto = ''; renderSummary(); }
+					lastDecodedSerial = sn;
+					return;
+				}
 				startEl.value = dec.dateISO;
 				startEl.dataset.auto = '1';
+				lastDecodedSerial = sn;
 				if (dn) dn.textContent = 'Estimated from serial: manufactured week ' + dec.week + ' of ' + dec.year + ' (' + dec.dateISO + '). Actual warranty may start later — adjust if you know it.';
 				renderSummary();
 			}
