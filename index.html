@@ -3933,6 +3933,14 @@ header { align-items: center; }
 .brand-tl { color: var(--logo-tl); }
 		</style>
 		<script src="/qrcode.min.js"></script>
+		<style id="repair-parts">
+#rep-parts-list .rep-part-group { position: sticky; top: 0; background: var(--card-bg); z-index: 1; font-weight: 600; font-size: 0.78rem; color: var(--muted); padding: 6px 2px 3px; margin-top: 2px; }
+#rep-parts-list .rep-part-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; padding: 5px 6px; border-bottom: 1px solid var(--panel-border); border-radius: 3px; }
+#rep-parts-list .rep-part-row.alt { background: var(--accent-glow); }
+#rep-parts-list .rep-part-row:hover { background: var(--btn-hover); }
+#rep-parts-list .rep-part-pn { font-family: 'IBM Plex Mono', ui-monospace, monospace; white-space: nowrap; }
+#rep-parts-list .rep-part-desc { flex: 1; min-width: 0; color: var(--muted); }
+		</style>
 	</head>
 
 	<body>
@@ -4678,7 +4686,10 @@ header { align-items: center; }
 
 							<div id="rep-summary" style="margin-top:6px"></div>
 
-							<div id="rep-parts-list" style="margin-top:8px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:2px"><span class="tool-label">Load a machine's HP parts above to pick parts.</span></div>
+							<div class="tool-row" id="rep-parts-filter-row" style="margin-top:8px" hidden>
+								<input class="input" id="rep-parts-filter" type="search" placeholder="Filter parts — part #, category, description…" aria-label="Filter parts" style="width:100%" />
+							</div>
+							<div id="rep-parts-list" style="margin-top:6px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:0"><span class="tool-label">Load a machine's HP parts above to pick parts.</span></div>
 
 							<div class="tool-row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
 								<button class="btn btn-small" id="rep-jira" type="button">📋 Copy Jira list</button>
@@ -18044,6 +18055,8 @@ function _applySlash(cmd, ta) {
 			const importText = $('rep-import-text'), importStatus = $('rep-import-status');
 			const serialEl = $('rep-serial'), startEl = $('rep-start'), yearSel = $('rep-year'), ageNote = $('rep-age-note');
 			const summaryEl = $('rep-summary'), partsListEl = $('rep-parts-list');
+			const partsFilterEl = $('rep-parts-filter');
+			const partsFilterRow = $('rep-parts-filter-row');
 			const hpPnEl = $('rep-hp-pn'), hpSavedEl = $('rep-hp-saved'), hpStatus = $('rep-hp-status'), candsEl = $('rep-serial-cands');
 			let db = load();
 			let currentKey = null;
@@ -18212,6 +18225,7 @@ function _applySlash(cmd, ta) {
 				pn = String(pn || '').trim().toUpperCase();
 				if (!pn) return;
 				hpStatus.textContent = 'Loading HP parts for ' + pn + '…';
+				if (partsFilterEl) partsFilterEl.value = '';
 				try {
 					let parts = null;
 					const hd = hpDB();
@@ -18295,17 +18309,26 @@ function _applySlash(cmd, ta) {
 			candsEl?.addEventListener('change', () => { if (candsEl.value && candsEl.dataset.serial) resolveSerial(candsEl.dataset.serial, candsEl.value); });
 
 			function renderHPParts() {
-				if (!hpParts.length) { partsListEl.innerHTML = '<span class="tool-label">Load a machine\'s HP parts above to pick parts.</span>'; return; }
+				const hasParts = !!(hpParts && hpParts.length);
+				if (partsFilterRow) partsFilterRow.hidden = !hasParts;
+				if (!hasParts) { partsListEl.innerHTML = '<span class="tool-label">Load a machine\'s HP parts above to pick parts.</span>'; return; }
+				const q = partsFilterEl ? partsFilterEl.value.trim().toLowerCase() : '';
+				const filtered = hpParts.filter((p) => {
+					if (!q) return true;
+					return ((p.PartNumber || '') + ' ' + (p.Category || '') + ' ' + (p.Description || '')).toLowerCase().indexOf(q) !== -1;
+				});
+				if (!filtered.length) { partsListEl.innerHTML = '<span class="tool-label">No parts match “' + esc(q) + '”.</span>'; return; }
 				const groups = {};
-				for (const p of hpParts) { const c = p.Category || 'Other'; (groups[c] = groups[c] || []).push(p); }
-				let html = '';
+				for (const p of filtered) { const c = p.Category || 'Other'; (groups[c] = groups[c] || []).push(p); }
+				let html = ''; let rowIdx = 0;
 				for (const c of Object.keys(groups).sort()) {
-					html += '<div style="font-weight:600;font-size:0.78rem;margin-top:6px;color:var(--muted)">' + esc(c) + '</div>';
+					html += '<div class="rep-part-group">' + esc(c) + '</div>';
 					for (const p of groups[c]) {
 						const pn = p.PartNumber;
 						const checked = selected[pn] ? ' checked' : '';
 						const price = (db.partPrices && db.partPrices[pn] != null) ? db.partPrices[pn] : '';
-						html += '<div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;padding:2px 0"><input type="checkbox" data-hp-part="' + esc(pn) + '"' + checked + ' /><span style="font-family:monospace;white-space:nowrap">' + esc(pn) + '</span><span style="flex:1;color:var(--muted)">' + esc(p.Description) + '</span><input class="input" type="number" min="0" step="1" data-hp-price="' + esc(pn) + '" placeholder="price" value="' + esc(price) + '" style="width:90px" /><span class="tool-label">kr</span></div>';
+						const alt = (rowIdx++ % 2) ? ' alt' : '';
+						html += '<div class="rep-part-row' + alt + '"><input type="checkbox" data-hp-part="' + esc(pn) + '"' + checked + ' /><span class="rep-part-pn">' + esc(pn) + '</span><span class="rep-part-desc">' + esc(p.Description) + '</span><button class="btn btn-small" data-rep-copy="' + esc(pn) + '" type="button" title="Copy part number + description">Copy</button><input class="input" type="number" min="0" step="1" data-hp-price="' + esc(pn) + '" placeholder="price" value="' + esc(price) + '" style="width:86px" /><span class="tool-label">kr</span></div>';
 					}
 				}
 				partsListEl.innerHTML = html;
@@ -18323,6 +18346,15 @@ function _applySlash(cmd, ta) {
 				if (cb.checked) selected[pn] = true; else delete selected[pn];
 				renderSummary();
 			});
+			partsListEl.addEventListener('click', (e) => {
+				const b = e.target.closest('[data-rep-copy]'); if (!b) return;
+				const pn = b.getAttribute('data-rep-copy');
+				const p = (hpParts || []).find((x) => x.PartNumber === pn);
+				const text = pn + (p && p.Description ? (' — ' + p.Description) : '');
+				navigator.clipboard?.writeText(text).catch(() => {});
+				const o = b.textContent; b.textContent = '✓'; setTimeout(() => { b.textContent = o; }, 1000);
+			});
+			partsFilterEl?.addEventListener('input', renderHPParts);
 
 			// ── Age ──
 			function computeYear() {
