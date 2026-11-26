@@ -8755,25 +8755,23 @@ header { align-items: center; }
 							if (!v) return;
 							if (Array.isArray(v)) v.forEach(push);
 							else if (typeof v === 'object') {
-								const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id;
-								const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || '';
+								const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id || v.product_no;
+								const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || v.user_name || '';
 								if (pn) out.push({ ProductNumber: String(pn), ProductName: name });
 							}
 						};
-						if (body) { push(body.ProductBOM); push(body.SNRProductLists); }
+						if (body) { push(body.ProductBOM); push(body.SNRProductLists); push(body.SerialNumberBOM && body.SerialNumberBOM.wwsnrsinput); }
 						const seen = new Set();
 						return out.filter((p) => (seen.has(p.ProductNumber) ? false : (seen.add(p.ProductNumber), true)));
 					}
 					function partsFromSerial(body) {
 						const snb = body && body.SerialNumberBOM;
+						const out = [];
 						const sp = (snb && Array.isArray(snb.spare_part)) ? snb.spare_part : [];
-						return sp.filter((p) => p && (p.spare_part_no || p.part_number)).map((p) => ({
-							PartNumber: p.spare_part_no || p.part_number || '',
-							Category: p.sp_category || '',
-							Description: p.spare_enhance_desc || p.spare_part_description || '',
-							ProductName: '',
-							ProductNumber: '',
-						}));
+						for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn) out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_enhance_desc || p.spare_part_description || '', ProductName: '', ProductNumber: '' }); }
+						const uc = (snb && Array.isArray(snb.unit_configuration)) ? snb.unit_configuration : [];
+						for (const p of uc) { const pn = p.part_number; if (pn) out.push({ PartNumber: pn, Category: '', Description: p.part_description || '', ProductName: '', ProductNumber: p.parent_part_number || '' }); }
+						return out;
 					}
 
 					// Resolve a serial to its model/product number, cache the mapping,
@@ -18079,14 +18077,24 @@ function _applySlash(cmd, ta) {
 					if (!v) return;
 					if (Array.isArray(v)) v.forEach(push);
 					else if (typeof v === 'object') {
-						const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id;
-						const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || '';
+						const pn = v.ProductNumber || v.product_number || v.product_Id || v.product_id || v.product_no;
+						const name = v.ProductName || v.product_name || v.product_Desc || v.product_desc || v.user_name || '';
 						if (pn) out.push({ ProductNumber: String(pn), ProductName: name });
 					}
 				};
-				if (body) { push(body.ProductBOM); push(body.SNRProductLists); }
+				if (body) { push(body.ProductBOM); push(body.SNRProductLists); push(body.SerialNumberBOM && body.SerialNumberBOM.wwsnrsinput); }
 				const seen = new Set();
 				return out.filter((p) => (seen.has(p.ProductNumber) ? false : (seen.add(p.ProductNumber), true)));
+			}
+
+			function partsFromSerial(body) {
+				const snb = body && body.SerialNumberBOM;
+				const out = [];
+				const sp = (snb && Array.isArray(snb.spare_part)) ? snb.spare_part : [];
+				for (const p of sp) { const pn = p.spare_part_no || p.part_number; if (pn) out.push({ PartNumber: pn, Category: p.sp_category || '', Description: p.spare_enhance_desc || p.spare_part_description || '', ProductName: '', ProductNumber: '' }); }
+				const uc = (snb && Array.isArray(snb.unit_configuration)) ? snb.unit_configuration : [];
+				for (const p of uc) { const pn = p.part_number; if (pn) out.push({ PartNumber: pn, Category: '', Description: p.part_description || '', ProductName: '', ProductNumber: p.parent_part_number || '' }); }
+				return out;
 			}
 
 			// ── Import from Excel (tab-separated) / CSV ──
@@ -18232,7 +18240,8 @@ function _applySlash(cmd, ta) {
 					renderHPParts();
 					renderSummary();
 					hpStatus.textContent = parts.length ? (parts.length + ' parts loaded for ' + pn + ' — tick the ones needed.') : ('No parts found for ' + pn + '.');
-				} catch (e) { hpStatus.textContent = 'Error: ' + e.message; }
+					return parts.length > 0;
+				} catch (e) { hpStatus.textContent = 'Error: ' + e.message; return false; }
 			}
 			$('rep-hp-load')?.addEventListener('click', () => {
 				const pn = hpPnEl.value.trim() || hpSavedEl.value;
@@ -18267,7 +18276,22 @@ function _applySlash(cmd, ta) {
 						const sm = loadSerials();
 						sm[sn] = { productNumber: pn, productName: cands[0].ProductName, savedAt: Date.now() };
 						saveSerials(sm);
-						await loadHPParts(pn);
+						const ok = await loadHPParts(pn);
+						if (!ok) {
+							const snParts = partsFromSerial(data && data.Body);
+							if (snParts.length) {
+								const hd = hpDB();
+								hd[pn] = { productNumber: pn, productName: cands[0].ProductName || '', savedAt: Date.now(), parts: snParts };
+								try { localStorage.setItem('ectl_hp_parts_v1', JSON.stringify(hd)); } catch (e) {}
+								hpParts = snParts;
+								hpPnEl.value = pn;
+								const m = cur(); if (m) { m.hpProductNumber = pn; save(); }
+								clearSelection();
+								renderHPParts();
+								renderSummary();
+								hpStatus.textContent = 'Serial ' + sn + ' → ' + (cands[0].ProductName || pn) + ' (' + pn + ') — ' + snParts.length + ' unit parts loaded.';
+							}
+						}
 					} else if (cands.length > 1 && candsEl) {
 						candsEl.innerHTML = '<option value="">Pick a product…</option>' + cands.map((c) => '<option value="' + esc(c.ProductNumber) + '">' + esc(c.ProductNumber + (c.ProductName ? ' — ' + c.ProductName : '')) + '</option>').join('');
 						candsEl.dataset.serial = sn;
