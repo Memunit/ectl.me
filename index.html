@@ -13170,15 +13170,15 @@ body {
 					// Fetch all rows from the usernames table and merge any unknown ones into localStorage
 					async function importUsernamesTable() {
 						const token = activeAccessToken;
-						if (!token) return;
 						try {
-							const res = await fetch(`${SUPABASE_URL}/rest/v1/usernames?select=username,email`, {
-								headers: {
-									apikey: SUPABASE_ANON_KEY,
-									Authorization: `Bearer ${token}`,
-									Accept: 'application/json',
-								},
-							});
+							const url = `${SUPABASE_URL}/rest/v1/usernames?select=username,email`;
+							const headers = { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' };
+							if (token) headers.Authorization = `Bearer ${token}`;
+							let res = await fetch(url, { headers });
+							if (!res.ok && token) {
+								// Fall back to the public lookup policy (no token) if the session token is stale.
+								res = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' } });
+							}
 							if (!res.ok) return;
 							const rows = await res.json();
 							if (!Array.isArray(rows)) return;
